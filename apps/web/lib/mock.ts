@@ -3,6 +3,7 @@ import type {
   DuatScore,
   Rubric,
   SessionRecord,
+  Transcript,
 } from "@ticdss/shared-types";
 
 export const MOCK_SESSIONS: SessionRecord[] = [
@@ -224,6 +225,73 @@ export const MOCK_EVIDENCE: Record<
     { speaker: "student", text: "痛的程度大概多少？" },
     { speaker: "patient", text: "蠻痛的。" },
   ],
+};
+
+export const MOCK_TRANSCRIPTS: Record<string, Transcript[]> = {
+  "sess-001": [
+    {
+      id: "tr-001",
+      sessionId: "sess-001",
+      speaker: "student",
+      text: "您好，請問今天哪裡不舒服？",
+      audioPath: null,
+      startedMs: 0,
+      endedMs: 2500,
+      createdAt: "2026-05-27T08:30:05Z",
+    },
+    {
+      id: "tr-002",
+      sessionId: "sess-001",
+      speaker: "patient",
+      text: "我胸口悶悶的，已經痛了快一個小時。",
+      audioPath: null,
+      startedMs: 3000,
+      endedMs: 7200,
+      createdAt: "2026-05-27T08:30:12Z",
+    },
+    {
+      id: "tr-003",
+      sessionId: "sess-001",
+      speaker: "student",
+      text: "請問疼痛的位置主要在哪裡？會不會延伸到別的地方？",
+      audioPath: null,
+      startedMs: 8000,
+      endedMs: 12500,
+      createdAt: "2026-05-27T08:30:20Z",
+    },
+    {
+      id: "tr-004",
+      sessionId: "sess-001",
+      speaker: "patient",
+      text: "在胸口正中央這邊，有時候會延伸到左手臂內側。",
+      audioPath: null,
+      startedMs: 13000,
+      endedMs: 18000,
+      createdAt: "2026-05-27T08:30:28Z",
+    },
+    {
+      id: "tr-005",
+      sessionId: "sess-001",
+      speaker: "student",
+      text: "這種痛的感覺像什麼？是刺痛、悶痛還是壓迫感？",
+      audioPath: null,
+      startedMs: 19000,
+      endedMs: 23500,
+      createdAt: "2026-05-27T08:30:36Z",
+    },
+    {
+      id: "tr-006",
+      sessionId: "sess-001",
+      speaker: "patient",
+      text: "像有人壓在胸口上一樣，悶悶緊緊的。",
+      audioPath: null,
+      startedMs: 24000,
+      endedMs: 28000,
+      createdAt: "2026-05-27T08:30:44Z",
+    },
+  ],
+  "sess-002": [],
+  "sess-003": [],
 };
 
 export const MOCK_ADVOCATE_REPORTS: Record<string, string> = {

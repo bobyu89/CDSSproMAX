@@ -5,11 +5,13 @@ import type {
   GraderAction,
   Rubric,
   SessionRecord,
+  Transcript,
 } from "@ticdss/shared-types";
 import {
   MOCK_DUAT_SCORES,
   MOCK_RUBRIC,
   MOCK_SESSIONS,
+  MOCK_TRANSCRIPTS,
 } from "./mock";
 
 const API_URL =
@@ -88,4 +90,91 @@ export async function fetchRubric(_rubricId: string): Promise<Rubric> {
     undefined,
     MOCK_RUBRIC,
   );
+}
+
+// --- Transcripts ----------------------------------------------------------
+// Backend `TranscriptOut` uses snake_case; shared `Transcript` is camelCase.
+// Normalize at the boundary so UI components never see snake_case.
+
+interface RawTranscript {
+  id: string;
+  session_id: string;
+  speaker: "student" | "patient";
+  text: string;
+  audio_path: string | null;
+  started_ms: number;
+  ended_ms: number;
+  created_at: string;
+}
+
+function normalizeTranscript(raw: RawTranscript): Transcript {
+  return {
+    id: raw.id,
+    sessionId: raw.session_id,
+    speaker: raw.speaker,
+    text: raw.text,
+    audioPath: raw.audio_path,
+    startedMs: raw.started_ms,
+    endedMs: raw.ended_ms,
+    createdAt: raw.created_at,
+  };
+}
+
+export async function fetchTranscripts(
+  sessionId: string,
+): Promise<Transcript[]> {
+  const fallback = MOCK_TRANSCRIPTS[sessionId] ?? [];
+  try {
+    const res = await fetch(
+      `${API_URL}/sessions/${sessionId}/transcripts`,
+      { cache: "no-store" },
+    );
+    if (!res.ok) return fallback;
+    const raw = (await res.json()) as RawTranscript[];
+    return raw.map(normalizeTranscript);
+  } catch {
+    return fallback;
+  }
+}
+
+export interface AppendTranscriptPayload {
+  speaker: "student" | "patient";
+  text: string;
+  audio_path?: string | null;
+  started_ms?: number;
+  ended_ms?: number;
+}
+
+export async function appendTranscript(
+  sessionId: string,
+  payload: AppendTranscriptPayload,
+): Promise<Transcript> {
+  // Optimistic local-only transcript used when backend is unreachable.
+  const localFallback: Transcript = {
+    id: `local-${Date.now()}`,
+    sessionId,
+    speaker: payload.speaker,
+    text: payload.text,
+    audioPath: payload.audio_path ?? null,
+    startedMs: payload.started_ms ?? 0,
+    endedMs: payload.ended_ms ?? 0,
+    createdAt: new Date().toISOString(),
+  };
+
+  try {
+    const res = await fetch(
+      `${API_URL}/sessions/${sessionId}/transcripts`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        cache: "no-store",
+      },
+    );
+    if (!res.ok) return localFallback;
+    const raw = (await res.json()) as RawTranscript;
+    return normalizeTranscript(raw);
+  } catch {
+    return localFallback;
+  }
 }

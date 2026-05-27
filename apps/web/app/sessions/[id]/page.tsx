@@ -3,9 +3,16 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { fetchSessionDetail, type SessionDetail } from "@/lib/api";
+import {
+  fetchSessionDetail,
+  fetchTranscripts,
+  type SessionDetail,
+} from "@/lib/api";
 import { MOCK_CASE_TITLES } from "@/lib/mock";
 import { GradingCard } from "@/components/GradingCard";
+import { RecordButton } from "@/components/RecordButton";
+import { TranscriptList } from "@/components/TranscriptList";
+import type { Transcript } from "@ticdss/shared-types";
 
 function durationMinutes(started: string, ended: string | null): string {
   if (!ended) return "進行中";
@@ -17,10 +24,12 @@ export default function SessionDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id ?? "";
   const [detail, setDetail] = useState<SessionDetail | null>(null);
+  const [transcripts, setTranscripts] = useState<Transcript[]>([]);
 
   useEffect(() => {
     if (!id) return;
     fetchSessionDetail(id).then(setDetail);
+    fetchTranscripts(id).then(setTranscripts);
   }, [id]);
 
   if (!detail) {
@@ -73,6 +82,37 @@ export default function SessionDetailPage() {
           </div>
         </dl>
       </div>
+
+      <section className="mb-8">
+        <h2 className="mb-3 text-lg font-semibold text-slate-900">
+          問診對話
+        </h2>
+        {session.phase === "inquiry" ? (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+              <RecordButton
+                sessionId={session.id}
+                onAppended={(t) =>
+                  setTranscripts((prev) => [...prev, t])
+                }
+              />
+              <p className="text-center text-sm text-slate-500">
+                按住按鈕說話，放開後系統會自動辨識並記錄。
+              </p>
+            </div>
+            <TranscriptList transcripts={transcripts} />
+          </div>
+        ) : (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+            目前階段為 {session.phase}，不可錄音。
+            {transcripts.length > 0 && (
+              <div className="mt-3">
+                <TranscriptList transcripts={transcripts} />
+              </div>
+            )}
+          </div>
+        )}
+      </section>
 
       <h2 className="mb-3 text-lg font-semibold text-slate-900">
         評分項目（{scores.length}）
