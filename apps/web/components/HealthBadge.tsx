@@ -48,8 +48,8 @@ export function HealthBadge() {
 
   if (state.status === "loading") {
     return (
-      <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-        <span className="h-2 w-2 animate-pulse rounded-full bg-slate-400" />
+      <span className="inline-flex items-center gap-2 rounded-full bg-bg-surface px-3 py-1 text-xs font-medium text-ink-soft">
+        <span className="h-2 w-2 animate-pulse rounded-full bg-ink-muted" />
         檢查中…
       </span>
     );
@@ -57,16 +57,16 @@ export function HealthBadge() {
 
   if (state.status === "error") {
     return (
-      <span className="inline-flex items-center gap-2 rounded-full bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700">
-        <span className="h-2 w-2 rounded-full bg-rose-500" />
+      <span className="inline-flex items-center gap-2 rounded-full bg-danger-soft px-3 py-1 text-xs font-medium text-danger">
+        <span className="h-2 w-2 rounded-full bg-danger" />
         後端未回應：{state.message}
       </span>
     );
   }
 
   return (
-    <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
-      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+    <span className="inline-flex items-center gap-2 rounded-full bg-brand-100 px-3 py-1 text-xs font-medium text-brand-600">
+      <span className="h-2 w-2 rounded-full bg-brand-500" />
       {state.app} v{state.version} ({state.env})
     </span>
   );

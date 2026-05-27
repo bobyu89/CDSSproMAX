@@ -13,6 +13,7 @@ from src.routers.auth import _make_token
 def _fake_participant() -> Participant:
     p = Participant()
     p.id = uuid.uuid4()
+    p.participant_code = "T001"
     p.role = "teacher"
     p.name = "Tester"
     return p
@@ -21,17 +22,19 @@ def _fake_participant() -> Participant:
 def test_token_round_trip():
     settings = get_settings()
     p = _fake_participant()
-    token = _make_token(p)
+    token, expires_at = _make_token(p)
     decoded = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
     assert decoded["sub"] == str(p.id)
+    assert decoded["code"] == "T001"
     assert decoded["role"] == "teacher"
     assert decoded["name"] == "Tester"
-    assert decoded["exp"] > int(datetime.now(timezone.utc).timestamp())
+    assert decoded["exp"] == expires_at
+    assert expires_at > int(datetime.now(timezone.utc).timestamp())
 
 
 def test_token_invalid_signature_rejected():
     p = _fake_participant()
-    token = _make_token(p)
+    token, _ = _make_token(p)
     try:
         jwt.decode(token, "wrong-secret", algorithms=["HS256"])
     except jwt.InvalidSignatureError:

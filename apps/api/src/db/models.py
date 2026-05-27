@@ -40,6 +40,7 @@ class Participant(Base):
     __tablename__ = "participants"
 
     id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=_uuid)
+    participant_code: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
     role: Mapped[str] = mapped_column(
         SAEnum("student", "teacher", "admin", name="participant_role"),
         nullable=False,

@@ -1,12 +1,13 @@
-// Thin API client for the TICDSS backend.
-// Falls back to mock data when the backend is unreachable or returns non-2xx.
+"use client";
+
 import type {
+  ArbiterDecision,
   DuatScore,
-  GraderAction,
   Rubric,
   SessionRecord,
   Transcript,
 } from "@ticdss/shared-types";
+import { useAuthStore } from "./authStore";
 import {
   MOCK_DUAT_SCORES,
   MOCK_RUBRIC,
@@ -14,167 +15,298 @@ import {
   MOCK_TRANSCRIPTS,
 } from "./mock";
 
-const API_URL =
+export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
 
-async function safeFetch<T>(
-  path: string,
-  init: RequestInit | undefined,
-  fallback: T,
-): Promise<T> {
-  try {
-    const res = await fetch(`${API_URL}${path}`, {
-      cache: "no-store",
-      ...init,
-    });
-    if (!res.ok) return fallback;
-    return (await res.json()) as T;
-  } catch {
-    return fallback;
+// ─── HTTP helpers ────────────────────────────────────────────────────────
+
+export class ApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+    this.name = "ApiError";
   }
 }
 
-export async function fetchSessions(): Promise<SessionRecord[]> {
-  return safeFetch<SessionRecord[]>("/sessions", undefined, MOCK_SESSIONS);
+function authHeader(): Record<string, string> {
+  const token = useAuthStore.getState().token;
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export interface SessionDetail {
-  session: SessionRecord;
-  scores: DuatScore[];
+async function request<T>(
+  path: string,
+  init: RequestInit = {},
+): Promise<T> {
+  const resp = await fetch(`${API_URL}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeader(),
+      ...(init.headers || {}),
+    },
+    cache: "no-store",
+  });
+  if (!resp.ok) {
+    let detail = "";
+    try {
+      detail = (await resp.json())?.detail ?? "";
+    } catch {
+      detail = await resp.text();
+    }
+    throw new ApiError(resp.status, detail || `HTTP ${resp.status}`);
+  }
+  return (await resp.json()) as T;
+}
+
+// ─── Auth ────────────────────────────────────────────────────────────────
+
+export interface LoginResult {
+  token: string;
+  expires_at: number;
+  participant: {
+    id: string;
+    participant_code: string;
+    role: "student" | "teacher" | "admin";
+    name: string;
+  };
+}
+
+export async function loginApi(code: string, password: string): Promise<LoginResult> {
+  return request<LoginResult>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ code, password }),
+  });
+}
+
+// ─── Sessions ────────────────────────────────────────────────────────────
+
+export async function fetchSessions(): Promise<SessionRecord[]> {
+  try {
+    const rows = await request<Array<{
+      id: string;
+      participant_id: string;
+      case_id: string;
+      case_title?: string | null;
+      mode: "practice" | "exam";
+      phase: SessionRecord["phase"];
+      started_at: string;
+      ended_at: string | null;
+    }>>("/sessions");
+    return rows.map((r) => ({
+      id: r.id,
+      participantId: r.participant_id,
+      caseId: r.case_id,
+      mode: r.mode,
+      phase: r.phase,
+      startedAt: r.started_at,
+      endedAt: r.ended_at,
+    }));
+  } catch {
+    return MOCK_SESSIONS;
+  }
 }
 
 export async function fetchSessionDetail(
-  id: string,
-): Promise<SessionDetail | null> {
-  const fallbackSession =
-    MOCK_SESSIONS.find((s) => s.id === id) ?? MOCK_SESSIONS[0];
-  const fallback: SessionDetail = {
-    session: fallbackSession,
-    scores: MOCK_DUAT_SCORES[id] ?? MOCK_DUAT_SCORES["sess-001"] ?? [],
-  };
-  return safeFetch<SessionDetail>(`/sessions/${id}`, undefined, fallback);
-}
-
-export interface GradeItemPayload {
-  action: GraderAction;
-  finalScore: number | null;
-  reason: string | null;
-}
-
-export async function gradeItem(
   sessionId: string,
-  scoreId: string,
-  action: GraderAction,
-  finalScore: number | null,
-  reason: string | null,
-): Promise<{ ok: boolean }> {
+): Promise<{ session: SessionRecord; scores: DuatScore[] }> {
   try {
-    const res = await fetch(
-      `${API_URL}/sessions/${sessionId}/grading`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scoreId, action, finalScore, reason }),
-        cache: "no-store",
+    const session = (await request<{
+      id: string;
+      participant_id: string;
+      case_id: string;
+      mode: SessionRecord["mode"];
+      phase: SessionRecord["phase"];
+      started_at: string;
+      ended_at: string | null;
+    }>(`/sessions/${sessionId}`));
+    const scoresRaw = await request<Array<{
+      id: string;
+      rubric_item_id: string;
+      e_confidence: number | null;
+      s_score: number | null;
+      a_advocate_score: number | null;
+      arbiter_decision: string | null;
+      arbiter_confidence: string | null;
+      final_score: number | null;
+      grader_action: string | null;
+    }>>(`/sessions/${sessionId}/duat/scores`);
+    return {
+      session: {
+        id: session.id,
+        participantId: session.participant_id,
+        caseId: session.case_id,
+        mode: session.mode,
+        phase: session.phase,
+        startedAt: session.started_at,
+        endedAt: session.ended_at,
       },
-    );
-    return { ok: res.ok };
+      scores: scoresRaw.map((s) => ({
+        id: s.id,
+        sessionId,
+        rubricItemId: s.rubric_item_id,
+        eConfidence: s.e_confidence,
+        sScore: s.s_score,
+        aAdvocateScore: s.a_advocate_score,
+        arbiterDecision: (s.arbiter_decision as DuatScore["arbiterDecision"]) ?? null,
+        arbiterConfidence: (s.arbiter_confidence as DuatScore["arbiterConfidence"]) ?? null,
+        finalScore: s.final_score,
+        graderAction: (s.grader_action as DuatScore["graderAction"]) ?? null,
+        graderReason: null,
+      })),
+    };
   } catch {
-    return { ok: false };
+    const session = MOCK_SESSIONS.find((s) => s.id === sessionId) ?? MOCK_SESSIONS[0];
+    return { session, scores: MOCK_DUAT_SCORES[session.id] ?? [] };
   }
 }
 
-export async function fetchRubric(_rubricId: string): Promise<Rubric> {
-  return safeFetch<Rubric>(
-    `/rubrics/${_rubricId}`,
-    undefined,
-    MOCK_RUBRIC,
-  );
+export async function createSession(caseId: string, mode: "practice" | "exam"): Promise<SessionRecord> {
+  const r = await request<{
+    id: string;
+    participant_id: string;
+    case_id: string;
+    mode: "practice" | "exam";
+    phase: SessionRecord["phase"];
+    started_at: string;
+    ended_at: string | null;
+  }>("/sessions", {
+    method: "POST",
+    body: JSON.stringify({ case_id: caseId, mode }),
+  });
+  return {
+    id: r.id,
+    participantId: r.participant_id,
+    caseId: r.case_id,
+    mode: r.mode,
+    phase: r.phase,
+    startedAt: r.started_at,
+    endedAt: r.ended_at,
+  };
 }
 
-// --- Transcripts ----------------------------------------------------------
-// Backend `TranscriptOut` uses snake_case; shared `Transcript` is camelCase.
-// Normalize at the boundary so UI components never see snake_case.
+export async function advancePhase(sessionId: string): Promise<{
+  new_phase: SessionRecord["phase"];
+  time_limit_s: number | null;
+}> {
+  return request(`/sessions/${sessionId}/advance`, { method: "POST" });
+}
 
-interface RawTranscript {
+// ─── Transcripts ─────────────────────────────────────────────────────────
+
+function normalizeTranscript(t: {
   id: string;
   session_id: string;
-  speaker: "student" | "patient";
+  speaker: string;
   text: string;
   audio_path: string | null;
   started_ms: number;
   ended_ms: number;
   created_at: string;
-}
-
-function normalizeTranscript(raw: RawTranscript): Transcript {
+}): Transcript {
   return {
-    id: raw.id,
-    sessionId: raw.session_id,
-    speaker: raw.speaker,
-    text: raw.text,
-    audioPath: raw.audio_path,
-    startedMs: raw.started_ms,
-    endedMs: raw.ended_ms,
-    createdAt: raw.created_at,
+    id: t.id,
+    sessionId: t.session_id,
+    speaker: t.speaker as Transcript["speaker"],
+    text: t.text,
+    audioPath: t.audio_path,
+    startedMs: t.started_ms,
+    endedMs: t.ended_ms,
+    createdAt: t.created_at,
   };
 }
 
-export async function fetchTranscripts(
-  sessionId: string,
-): Promise<Transcript[]> {
-  const fallback = MOCK_TRANSCRIPTS[sessionId] ?? [];
+export async function fetchTranscripts(sessionId: string): Promise<Transcript[]> {
   try {
-    const res = await fetch(
-      `${API_URL}/sessions/${sessionId}/transcripts`,
-      { cache: "no-store" },
+    const rows = await request<Parameters<typeof normalizeTranscript>[0][]>(
+      `/sessions/${sessionId}/transcripts`,
     );
-    if (!res.ok) return fallback;
-    const raw = (await res.json()) as RawTranscript[];
-    return raw.map(normalizeTranscript);
+    return rows.map(normalizeTranscript);
   } catch {
-    return fallback;
+    return MOCK_TRANSCRIPTS[sessionId] ?? [];
   }
-}
-
-export interface AppendTranscriptPayload {
-  speaker: "student" | "patient";
-  text: string;
-  audio_path?: string | null;
-  started_ms?: number;
-  ended_ms?: number;
 }
 
 export async function appendTranscript(
   sessionId: string,
-  payload: AppendTranscriptPayload,
+  payload: {
+    speaker: "student" | "patient";
+    text: string;
+    audio_path?: string | null;
+    started_ms?: number;
+    ended_ms?: number;
+  },
 ): Promise<Transcript> {
-  // Optimistic local-only transcript used when backend is unreachable.
-  const localFallback: Transcript = {
-    id: `local-${Date.now()}`,
-    sessionId,
-    speaker: payload.speaker,
-    text: payload.text,
-    audioPath: payload.audio_path ?? null,
-    startedMs: payload.started_ms ?? 0,
-    endedMs: payload.ended_ms ?? 0,
-    createdAt: new Date().toISOString(),
-  };
-
   try {
-    const res = await fetch(
-      `${API_URL}/sessions/${sessionId}/transcripts`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-        cache: "no-store",
-      },
+    const row = await request<Parameters<typeof normalizeTranscript>[0]>(
+      `/sessions/${sessionId}/transcripts`,
+      { method: "POST", body: JSON.stringify(payload) },
     );
-    if (!res.ok) return localFallback;
-    const raw = (await res.json()) as RawTranscript;
-    return normalizeTranscript(raw);
+    return normalizeTranscript(row);
   } catch {
-    return localFallback;
+    return {
+      id: `mock-${Date.now()}`,
+      sessionId,
+      speaker: payload.speaker,
+      text: payload.text,
+      audioPath: payload.audio_path ?? null,
+      startedMs: payload.started_ms ?? 0,
+      endedMs: payload.ended_ms ?? 0,
+      createdAt: new Date().toISOString(),
+    };
   }
+}
+
+// ─── Cases ───────────────────────────────────────────────────────────────
+
+export interface CaseSummary {
+  id: string;
+  code: string;
+  title: string;
+  chief_complaint: string;
+}
+
+export async function fetchCases(): Promise<CaseSummary[]> {
+  try {
+    return await request<CaseSummary[]>("/cases");
+  } catch {
+    return [
+      { id: "mock-1", code: "CASE-01", title: "急性胸痛 — 冠心症疑似", chief_complaint: "62 歲男性突發胸痛" },
+      { id: "mock-2", code: "CASE-04", title: "右下腹痛 — 闌尾炎", chief_complaint: "28 歲女性右下腹痛" },
+      { id: "mock-3", code: "CASE-22", title: "發燒解尿異常 — 腎盂腎炎", chief_complaint: "45 歲女性發燒合併解尿不適" },
+    ];
+  }
+}
+
+// ─── DUAT scoring + grading ──────────────────────────────────────────────
+
+export async function scoreAllLqqopera(sessionId: string, caseContext = ""): Promise<unknown[]> {
+  return request(`/sessions/${sessionId}/duat/score-all-lqqopera`, {
+    method: "POST",
+    body: JSON.stringify({ rubric_item_id: "lqqopera.location", case_context: caseContext }),
+  });
+}
+
+export async function gradeItem(
+  sessionId: string,
+  scoreId: string,
+  payload: { action: "accept" | "modify" | "reject"; final_score?: number; reason?: string },
+): Promise<{ score_id: string; action: string; final_score: number | null; grader_id: string }> {
+  return request(`/sessions/${sessionId}/scores/${scoreId}/grade`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+// ─── Rubric ──────────────────────────────────────────────────────────────
+
+export async function fetchRubric(_rubricId: string): Promise<Rubric> {
+  return MOCK_RUBRIC;
+}
+
+// ─── UI helper ───────────────────────────────────────────────────────────
+
+export function deriveArbiterPillColor(d: ArbiterDecision | null): "emerald" | "amber" | "rose" | "slate" {
+  if (!d) return "slate";
+  if (d.action === "accept") return "emerald";
+  if (d.action === "flag") return "amber";
+  return "rose";
 }

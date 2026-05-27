@@ -1,7 +1,8 @@
-"""Auth — minimal JWT login.
+"""Auth — code+password login (mirrors cdss-training's participant_code flow).
 
-Wave 1 scope: password-based login against ``participants`` table, returns
-a JWT bearer token. No registration flow yet (seed users via script).
+Wave 1 scope: participant_code-based login (e.g. P001, T001, ADMIN001),
+returns a JWT bearer token + expires_at timestamp the frontend store
+uses for auto-expiry.
 """
 
 from __future__ import annotations
@@ -13,8 +14,8 @@ import bcrypt
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic import BaseModel, EmailStr
-from sqlalchemy import select
+from pydantic import BaseModel
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import get_settings
@@ -26,47 +27,67 @@ bearer_scheme = HTTPBearer(auto_error=False)
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    code: str  # participant_code, e.g. "P001"
     password: str
 
 
+class ParticipantPublic(BaseModel):
+    id: uuid.UUID
+    participant_code: str
+    role: str
+    name: str
+
+
 class LoginResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-    participant_id: uuid.UUID
-    role: str
-    name: str
+    token: str
+    expires_at: int  # unix seconds
+    participant: ParticipantPublic
 
 
-class MeResponse(BaseModel):
-    participant_id: uuid.UUID
-    role: str
-    name: str
+class MeResponse(ParticipantPublic):
+    pass
 
 
-def _make_token(participant: Participant) -> str:
+def _make_token(p: Participant) -> tuple[str, int]:
     settings = get_settings()
+    exp_dt = datetime.now(timezone.utc) + timedelta(hours=settings.jwt_expire_hours)
+    expires_at = int(exp_dt.timestamp())
     payload = {
-        "sub": str(participant.id),
-        "role": participant.role,
-        "name": participant.name,
-        "exp": datetime.now(timezone.utc) + timedelta(hours=settings.jwt_expire_hours),
+        "sub": str(p.id),
+        "code": p.participant_code,
+        "role": p.role,
+        "name": p.name,
+        "exp": expires_at,
     }
-    return jwt.encode(payload, settings.jwt_secret, algorithm=settings.jwt_algorithm)
+    return (
+        jwt.encode(payload, settings.jwt_secret, algorithm=settings.jwt_algorithm),
+        expires_at,
+    )
 
 
 @router.post("/login", response_model=LoginResponse)
 async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)) -> LoginResponse:
-    p = await db.scalar(select(Participant).where(Participant.email == payload.email))
+    code = payload.code.strip()
+    p = await db.scalar(
+        select(Participant).where(
+            or_(Participant.participant_code == code, Participant.email == code)
+        )
+    )
     if p is None or p.hashed_password is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="invalid credentials")
     if not bcrypt.checkpw(payload.password.encode(), p.hashed_password.encode()):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="invalid credentials")
+
+    token, expires_at = _make_token(p)
     return LoginResponse(
-        access_token=_make_token(p),
-        participant_id=p.id,
-        role=p.role,
-        name=p.name,
+        token=token,
+        expires_at=expires_at,
+        participant=ParticipantPublic(
+            id=p.id,
+            participant_code=p.participant_code,
+            role=p.role,
+            name=p.name,
+        ),
     )
 
 
@@ -108,4 +129,6 @@ def require_role(*allowed: str):
 
 @router.get("/me", response_model=MeResponse)
 async def me(p: Participant = Depends(get_current_participant)) -> MeResponse:
-    return MeResponse(participant_id=p.id, role=p.role, name=p.name)
+    return MeResponse(
+        id=p.id, participant_code=p.participant_code, role=p.role, name=p.name
+    )

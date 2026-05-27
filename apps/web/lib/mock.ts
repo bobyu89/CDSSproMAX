@@ -294,6 +294,102 @@ export const MOCK_TRANSCRIPTS: Record<string, Transcript[]> = {
   "sess-003": [],
 };
 
+// ─── Admin / participant mocks ───────────────────────────────────────────
+
+export interface MockParticipant {
+  id: string;
+  code: string;
+  name: string;
+  role: "student" | "teacher" | "admin";
+  sessionCount: number;
+  meanScore: number;
+  lastLoginAt: string;
+}
+
+export const MOCK_PARTICIPANTS: MockParticipant[] = [
+  {
+    id: "stu-2025-001",
+    code: "P001",
+    name: "王雅雯",
+    role: "student",
+    sessionCount: 12,
+    meanScore: 4.3,
+    lastLoginAt: "2026-05-27T08:30:00Z",
+  },
+  {
+    id: "stu-2025-014",
+    code: "P002",
+    name: "陳柏宇",
+    role: "student",
+    sessionCount: 9,
+    meanScore: 3.8,
+    lastLoginAt: "2026-05-26T14:10:00Z",
+  },
+  {
+    id: "stu-2025-022",
+    code: "P003",
+    name: "林思妤",
+    role: "student",
+    sessionCount: 15,
+    meanScore: 4.6,
+    lastLoginAt: "2026-05-27T09:05:00Z",
+  },
+  {
+    id: "stu-2025-031",
+    code: "P004",
+    name: "張詠淳",
+    role: "student",
+    sessionCount: 7,
+    meanScore: 3.5,
+    lastLoginAt: "2026-05-25T16:42:00Z",
+  },
+  {
+    id: "stu-2025-045",
+    code: "P005",
+    name: "黃彥廷",
+    role: "student",
+    sessionCount: 11,
+    meanScore: 4.1,
+    lastLoginAt: "2026-05-27T07:15:00Z",
+  },
+  {
+    id: "tea-2025-001",
+    code: "T001",
+    name: "吳玟臻 老師",
+    role: "teacher",
+    sessionCount: 0,
+    meanScore: 0,
+    lastLoginAt: "2026-05-27T10:00:00Z",
+  },
+  {
+    id: "adm-2025-001",
+    code: "A001",
+    name: "系統管理員",
+    role: "admin",
+    sessionCount: 0,
+    meanScore: 0,
+    lastLoginAt: "2026-05-27T11:20:00Z",
+  },
+];
+
+export interface MockAdminDashboard {
+  totalParticipants: number;
+  totalSessions: number;
+  meanScore: number;
+  completionRate: number; // 0-1
+  perParticipantScores: { code: string; name: string; meanScore: number }[];
+}
+
+export const MOCK_ADMIN_DASHBOARD: MockAdminDashboard = {
+  totalParticipants: 5,
+  totalSessions: 54,
+  meanScore: 4.06,
+  completionRate: 0.83,
+  perParticipantScores: MOCK_PARTICIPANTS.filter((p) => p.role === "student").map(
+    (p) => ({ code: p.code, name: p.name, meanScore: p.meanScore }),
+  ),
+};
+
 export const MOCK_ADVOCATE_REPORTS: Record<string, string> = {
   "ds-001":
     "S-Agent 給予 5 分，依據完整定位與輻射敘述。對抗審查無顯著反例，建議接受。",

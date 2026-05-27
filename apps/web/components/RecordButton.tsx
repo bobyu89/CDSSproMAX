@@ -171,15 +171,15 @@ export function RecordButton({ sessionId, onAppended }: Props) {
   let label = "🎙 按住錄音";
   let ariaLabel = "按住以開始錄音，放開停止";
   let cls =
-    "bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white";
+    "bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white";
   if (isRecording) {
     label = `● 錄音中 ${(elapsedMs / 1000).toFixed(1)}s`;
     ariaLabel = "錄音中，放開以停止";
-    cls = "bg-red-600 text-white animate-pulse";
+    cls = "bg-danger text-white animate-pulse";
   } else if (isBusy) {
     label = "⏳ 辨識中…";
     ariaLabel = "正在辨識語音";
-    cls = "bg-slate-400 text-white cursor-wait";
+    cls = "bg-ink-muted text-white cursor-wait";
   }
 
   return (
@@ -199,14 +199,14 @@ export function RecordButton({ sessionId, onAppended }: Props) {
         onPointerCancel={handleUp}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
-        className={`select-none rounded-full px-8 py-6 text-lg font-semibold shadow-md transition focus:outline-none focus-visible:ring-4 focus-visible:ring-sky-300 ${cls}`}
+        className={`select-none rounded-full px-8 py-6 text-lg font-semibold shadow-md transition focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-200 ${cls}`}
       >
         {label}
       </button>
       {errorMsg && (
         <p
           role="alert"
-          className="max-w-xs text-center text-sm text-red-600"
+          className="max-w-xs text-center text-sm text-danger"
         >
           {errorMsg}
         </p>

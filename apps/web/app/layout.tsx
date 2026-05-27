@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Nav } from "@/components/Nav";
+import { AppShell } from "@/components/AppShell";
 
 export const metadata: Metadata = {
-  title: "TICDSS",
-  description: "Multi-agent OSCE assessment for nurse practitioners",
+  title: "TICDSS 臨床推理訓練系統",
+  description:
+    "Technology-Integrated CDSS — multi-agent OSCE assessment for nurse practitioners",
 };
 
 export default function RootLayout({
@@ -12,9 +13,8 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-TW">
-      <body className="bg-slate-50 text-slate-900 antialiased">
-        <Nav />
-        {children}
+      <body className="bg-bg text-ink antialiased min-h-screen">
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );
