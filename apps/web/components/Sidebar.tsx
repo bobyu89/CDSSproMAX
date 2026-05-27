@@ -29,6 +29,10 @@ const PARTICIPANT_NAV: NavItem[] = [
   { to: "/history", label: "歷史記錄", Icon: Clock },
 ];
 
+const ADMIN_EXTRA_NAV: NavItem[] = [
+  { to: "/admin/calibration", label: "標籤校準", Icon: Shield },
+];
+
 const ADMIN_NAV: NavItem[] = [
   { to: "/admin", label: "管理後台", Icon: Shield },
 ];
@@ -40,7 +44,8 @@ export function Sidebar() {
   const logout = useAuthStore((s) => s.logout);
   const role = useAuthStore((s) => s.role);
   const participantCode = useAuthStore((s) => s.participantCode);
-  const navItems = role === "admin" ? ADMIN_NAV : PARTICIPANT_NAV;
+  const navItems =
+    role === "admin" ? [...ADMIN_NAV, ...ADMIN_EXTRA_NAV] : PARTICIPANT_NAV;
 
   const handleLogout = () => {
     logout();

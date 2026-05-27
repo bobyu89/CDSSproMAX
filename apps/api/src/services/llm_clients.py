@@ -34,6 +34,66 @@ def prompt_hash(*parts: str) -> str:
 
 # === Gemini ================================================================
 
+async def gemini_generate_json_multimodal(
+    *,
+    model: str,
+    prompt: str,
+    images_b64: list[str],
+    system_instruction: str | None = None,
+) -> dict[str, Any]:
+    """Call Gemini with one or more inline images + a text prompt → parsed JSON.
+
+    Each entry of ``images_b64`` can be either a raw base64 string or a
+    full data URL (``data:image/jpeg;base64,...``). MIME type defaults to
+    image/jpeg unless inferred from a data URL.
+    """
+    import base64
+
+    from google import genai
+    from google.genai import types
+
+    settings = get_settings()
+    if not settings.google_api_key:
+        raise RuntimeError("GOOGLE_API_KEY not configured")
+
+    client = genai.Client(api_key=settings.google_api_key)
+
+    parts: list[Any] = [prompt]
+    for b64 in images_b64:
+        mime = "image/jpeg"
+        data = b64
+        if data.startswith("data:") and "," in data:
+            header, data = data.split(",", 1)
+            try:
+                mime = header.split(":", 1)[1].split(";", 1)[0] or "image/jpeg"
+            except IndexError:
+                pass
+        try:
+            raw = base64.b64decode(data)
+        except Exception:
+            continue
+        parts.append(types.Part.from_bytes(data=raw, mime_type=mime))
+
+    config = types.GenerateContentConfig(
+        system_instruction=system_instruction,
+        response_mime_type="application/json",
+        temperature=0.2,
+    )
+
+    response = await client.aio.models.generate_content(
+        model=model,
+        contents=parts,
+        config=config,
+    )
+
+    text = response.text or ""
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError as exc:
+        logger.error("Gemini multimodal returned non-JSON: %s", text[:500])
+        raise RuntimeError(f"Gemini multimodal JSON parse failed: {exc}") from exc
+
+
 async def gemini_generate_json(
     *,
     model: str,

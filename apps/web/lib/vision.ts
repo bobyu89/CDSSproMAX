@@ -144,35 +144,49 @@ export async function runVAgent(
     durationSeconds?: number;
   },
 ): Promise<VAgentResult> {
-  const r = await request<{
-    rubric_item_id: string;
-    action_correct: boolean;
-    technique_score: number;
-    duration_adequate: boolean;
-    evidence_frames: number[];
-    notes: string;
-    model_version: string;
-  }>(`/vision/sessions/${sessionId}/v-agent`, {
-    method: "POST",
-    body: JSON.stringify({
-      rubric_item_id: payload.rubricItemId,
-      target_action: payload.targetAction,
-      target_region: payload.targetRegion,
-      student_intent: payload.studentIntent ?? "",
-      detected_regions: payload.detectedRegions ?? [],
-      keyframes_b64: payload.keyframesB64 ?? [],
-      duration_seconds: payload.durationSeconds ?? 0,
-    }),
-  });
-  return {
-    rubricItemId: r.rubric_item_id,
-    actionCorrect: r.action_correct,
-    techniqueScore: r.technique_score,
-    durationAdequate: r.duration_adequate,
-    evidenceFrames: r.evidence_frames,
-    notes: r.notes,
-    modelVersion: r.model_version,
-  };
+  try {
+    const r = await request<{
+      rubric_item_id: string;
+      action_correct: boolean;
+      technique_score: number;
+      duration_adequate: boolean;
+      evidence_frames: number[];
+      notes: string;
+      model_version: string;
+    }>(`/vision/sessions/${sessionId}/v-agent`, {
+      method: "POST",
+      body: JSON.stringify({
+        rubric_item_id: payload.rubricItemId,
+        target_action: payload.targetAction,
+        target_region: payload.targetRegion,
+        student_intent: payload.studentIntent ?? "",
+        detected_regions: payload.detectedRegions ?? [],
+        keyframes_b64: payload.keyframesB64 ?? [],
+        duration_seconds: payload.durationSeconds ?? 0,
+      }),
+    });
+    return {
+      rubricItemId: r.rubric_item_id,
+      actionCorrect: r.action_correct,
+      techniqueScore: r.technique_score,
+      durationAdequate: r.duration_adequate,
+      evidenceFrames: r.evidence_frames,
+      notes: r.notes,
+      modelVersion: r.model_version,
+    };
+  } catch {
+    // Graceful fallback — same pattern as the rest of api.ts. Lets the UI
+    // surface a "V-Agent 未連線" hint instead of crashing the flow.
+    return {
+      rubricItemId: payload.rubricItemId,
+      actionCorrect: (payload.detectedRegions ?? []).includes(payload.targetRegion),
+      techniqueScore: 0,
+      durationAdequate: (payload.durationSeconds ?? 0) >= 3,
+      evidenceFrames: [],
+      notes: "[fallback] V-Agent 服務未連線，無語意評核",
+      modelVersion: "fallback",
+    };
+  }
 }
 
 // ─── Mock fallback ───────────────────────────────────────────────────────

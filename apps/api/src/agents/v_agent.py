@@ -1,11 +1,15 @@
-"""V-Agent — Vision Reviewer (Gemini 3.5 Flash Vision).
+"""V-Agent — Vision Reviewer (Gemini 3.5 Flash, multimodal).
 
-Wave 1.5 shell: input/output schemas + Gemini SDK wiring with stub mode.
-Real keyframe upload (base64) happens here once the frontend is sending
-camera bursts.
+Per Protocol design:
+  Position is verified by Layer 1 (ArUco markers). V-Agent grades ONLY
+  operation quality (correct action, technique, duration) from keyframes.
 
-Position is already verified by Layer 1 (ArUco markers). V-Agent grades
-ONLY the operation quality (correct action, technique, duration).
+Stub vs real:
+  - If ``keyframes_b64`` is empty OR Google API key is missing, the
+    agent returns a deterministic stub (so the pipeline can be exercised
+    without GPU / camera / API key).
+  - Otherwise it calls Gemini 3.5 Flash via the multimodal helper
+    ``gemini_generate_json_multimodal`` in services/llm_clients.py.
 """
 
 from __future__ import annotations
@@ -18,7 +22,10 @@ from pydantic import BaseModel, Field
 
 from src.agents.base import Agent, AgentResult
 from src.config import get_settings
-from src.services.llm_clients import prompt_hash
+from src.services.llm_clients import (
+    gemini_generate_json_multimodal,
+    prompt_hash,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -68,13 +75,34 @@ def _clamp_unit(value: Any) -> float:
     return max(0.0, min(1.0, f))
 
 
-class VAgent(Agent[VAgentInput, VAgentOutput]):
-    """Gemini 3.5 Flash multimodal vision reviewer.
+def _stub_output(payload: VAgentInput, model_id: str, reason: str) -> VAgentOutput:
+    """Deterministic fallback used when we can't reach Gemini Vision."""
+    intent_match = (
+        payload.target_region in payload.detected_regions
+        and bool(payload.detected_regions)
+    )
+    user_payload = (
+        f"rubric_item_id={payload.rubric_item_id} "
+        f"target={payload.target_action}@{payload.target_region} "
+        f"detected={payload.detected_regions} "
+        f"frames={len(payload.keyframes_b64)} "
+        f"duration={payload.duration_seconds:.1f}s"
+    )
+    return VAgentOutput(
+        agent_name="V-Agent",
+        model_version=f"{model_id} (stub: {reason})",
+        prompt_hash=prompt_hash(reason, user_payload),
+        rubric_item_id=payload.rubric_item_id,
+        action_correct=intent_match,
+        technique_score=0.5 if intent_match else 0.0,
+        duration_adequate=payload.duration_seconds >= 3.0,
+        evidence_frames=[],
+        notes=f"[stub:{reason}] V-Agent fallback — pipeline exercised without real vision call.",
+    )
 
-    Wave 1.5 status: stub returns deterministic zero-confidence output.
-    Real implementation lands when google-genai multimodal upload is
-    wired in (next iteration).
-    """
+
+class VAgent(Agent[VAgentInput, VAgentOutput]):
+    """Gemini 3.5 Flash multimodal vision reviewer."""
 
     name = "V-Agent"
 
@@ -82,46 +110,60 @@ class VAgent(Agent[VAgentInput, VAgentOutput]):
         settings = get_settings()
         self.model_id = settings.v_agent_model
         self._system_prompt = _load_system_prompt()
-        # Flag to make stub vs real obvious in audit logs
-        self._stub = True
 
     async def run(self, payload: VAgentInput) -> VAgentOutput:
-        # ──────────────────────────────────────────────────────────────
-        # Wave 1.5 STUB: returns deterministic output so the pipeline can
-        # be exercised end-to-end (frontend sends keyframes → backend
-        # writes audit + duat_scores → grading UI reads result).
-        #
-        # When ready to flip to real, replace the body below with:
-        #   data = await gemini_generate_json(
-        #       model=self.model_id,
-        #       prompt=...,
-        #       system_instruction=self._system_prompt,
-        #       contents=[ ...frames as Part... ],
-        #   )
-        # google-genai multimodal API takes inline image bytes — see
-        # https://ai.google.dev/gemini-api/docs/vision
-        # ──────────────────────────────────────────────────────────────
-        intent_match = (
-            payload.target_region in payload.detected_regions
-            and bool(payload.detected_regions)
+        settings = get_settings()
+
+        # ── Decide whether to hit the real API ──────────────────────────
+        if not payload.keyframes_b64:
+            return _stub_output(payload, self.model_id, "no-keyframes")
+        if not settings.google_api_key:
+            return _stub_output(payload, self.model_id, "no-api-key")
+
+        # ── Build the user prompt body ──────────────────────────────────
+        user_prompt = (
+            f"Rubric item id: {payload.rubric_item_id}\n"
+            f"Target action: {payload.target_action}\n"
+            f"Target region: {payload.target_region}\n"
+            f"Student declared intent: {payload.student_intent or '(none)'}\n"
+            f"Marker-detected regions during action: {payload.detected_regions}\n"
+            f"Total duration: {payload.duration_seconds:.1f} seconds\n"
+            f"Number of keyframes attached: {len(payload.keyframes_b64)} "
+            "(in chronological order, ~equal time spacing)\n\n"
+            "Judge action correctness, technique quality, and duration adequacy. "
+            "Position is already verified by markers — do not regrade it.\n"
+            "Reply with the JSON schema described in the system prompt."
         )
-        user_payload = (
-            f"rubric_item_id={payload.rubric_item_id} "
-            f"target={payload.target_action}@{payload.target_region} "
-            f"detected={payload.detected_regions} "
-            f"intent={payload.student_intent!r} "
-            f"frames={len(payload.keyframes_b64)} "
-            f"duration={payload.duration_seconds:.1f}s"
-        )
+
+        # ── Call Gemini multimodal ──────────────────────────────────────
+        try:
+            data = await gemini_generate_json_multimodal(
+                model=self.model_id,
+                prompt=user_prompt,
+                images_b64=payload.keyframes_b64,
+                system_instruction=self._system_prompt,
+            )
+        except Exception as exc:  # pragma: no cover - network / API errors
+            logger.warning("V-Agent Gemini call failed: %s", exc)
+            return _stub_output(payload, self.model_id, f"api-error:{type(exc).__name__}")
+
+        # ── Parse + clamp ───────────────────────────────────────────────
+        evidence_raw = data.get("evidence_frames", []) or []
+        evidence: list[int] = []
+        for v in evidence_raw:
+            try:
+                evidence.append(int(v))
+            except (TypeError, ValueError):
+                continue
 
         return VAgentOutput(
             agent_name=self.name,
-            model_version=f"{self.model_id} (stub)",
-            prompt_hash=prompt_hash(self._system_prompt, user_payload),
+            model_version=self.model_id,
+            prompt_hash=prompt_hash(self._system_prompt, user_prompt),
             rubric_item_id=payload.rubric_item_id,
-            action_correct=intent_match,
-            technique_score=0.5 if intent_match else 0.0,
-            duration_adequate=payload.duration_seconds >= 3.0,
-            evidence_frames=[],
-            notes="[stub] V-Agent not yet wired to Gemini Vision multimodal API",
+            action_correct=bool(data.get("action_correct", False)),
+            technique_score=_clamp_unit(data.get("technique_score", 0.0)),
+            duration_adequate=bool(data.get("duration_adequate", False)),
+            evidence_frames=evidence,
+            notes=str(data.get("notes", ""))[:300],
         )

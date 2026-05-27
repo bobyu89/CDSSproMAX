@@ -1,7 +1,5 @@
 """MarkerDetector — graceful degradation + occlusion tracking semantics."""
 
-import pytest
-
 from src.vision.anatomy_map import AnatomyRegion
 from src.vision.marker_detector import (
     DetectionResult,
@@ -35,6 +33,35 @@ def test_occluded_regions_above_threshold():
     assert regions == [AnatomyRegion.PMI]
 
 
+def test_occluded_regions_above_max_window_treated_as_absent():
+    """Bug fix from review: marker seen once long ago must NOT be reported
+    as touched forever. After max_touch_window_s (default 8s), the marker
+    is considered just absent (out of frame / lighting issue)."""
+    last_seen = {1: 50.0}  # 50s ago — way past 8s window
+    regions = occluded_regions(last_seen, now=100.0)
+    assert regions == []
+
+
+def test_occluded_regions_at_max_window_still_touched():
+    # gap == max_touch_window_s → still counts (inclusive upper bound)
+    last_seen = {1: 92.0}  # 8.0s ago
+    regions = occluded_regions(last_seen, now=100.0)
+    assert regions == [AnatomyRegion.PMI]
+
+
+def test_occluded_regions_custom_max_window():
+    last_seen = {1: 95.0}  # 5s ago
+    # With max=3, marker is considered absent
+    assert (
+        occluded_regions(last_seen, now=100.0, max_touch_window_s=3.0) == []
+    )
+    # With max=10, still touched
+    assert (
+        occluded_regions(last_seen, now=100.0, max_touch_window_s=10.0)
+        == [AnatomyRegion.PMI]
+    )
+
+
 def test_occluded_regions_ignores_unmapped_ids():
     last_seen = {1: 98.0, 999: 0.0}  # 999 not in ANATOMY_MARKERS
     regions = occluded_regions(last_seen, now=100.0)
@@ -55,8 +82,7 @@ def test_multiple_regions_touched_simultaneously():
     assert regions == [AnatomyRegion.ABD_RUQ.value, AnatomyRegion.PMI.value]
 
 
-@pytest.mark.asyncio
-async def test_get_marker_detector_is_singleton():
+def test_get_marker_detector_is_singleton():
     from src.vision.marker_detector import get_marker_detector
 
     a = get_marker_detector()

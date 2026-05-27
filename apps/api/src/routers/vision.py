@@ -17,9 +17,12 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.agents.v_agent import VAgent, VAgentInput
 from src.audit import AuditEventType, get_audit_logger
-from src.db.models import Participant
+from src.db.models import Participant, PeObservation, Session as DbSession
+from src.db.session import get_db
 from src.routers.auth import get_current_participant
 from src.vision import (
     ANATOMY_MARKERS,
@@ -204,13 +207,24 @@ async def track_sample(
 async def run_v_agent(
     session_id: uuid.UUID,
     payload: VAgentRequest,
+    db: AsyncSession = Depends(get_db),
     _: Participant = Depends(get_current_participant),
 ) -> VAgentResponse:
     """Run V-Agent on a captured keyframe burst.
 
-    Wave 1.5: V-Agent is a stub (see v_agent.py). When the real Gemini
-    Vision call lands, this route doesn't need to change.
+    On every call we:
+      1. Validate the session exists.
+      2. Run V-Agent (real Gemini Vision when keyframes + API key present;
+         deterministic stub otherwise — see v_agent.py).
+      3. Persist a PeObservation row (so /history can replay later).
+      4. Emit a vision.v_agent_scored audit event.
     """
+    from sqlalchemy import select
+
+    db_session = await db.scalar(select(DbSession).where(DbSession.id == session_id))
+    if db_session is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="session not found")
+
     v = VAgent()
     out = await v.run(
         VAgentInput(
@@ -224,7 +238,25 @@ async def run_v_agent(
         )
     )
 
-    # Audit (best effort — no DB row yet because PeObservation table lands later)
+    # Persist as PeObservation — keyframe_paths left empty in Wave 1.5
+    # (object storage backend lands in Wave 2; for now we keep audit_log
+    # as the canonical record of what happened).
+    obs = PeObservation(
+        session_id=session_id,
+        rubric_item_id=payload.rubric_item_id,
+        student_intent=payload.student_intent or None,
+        target_region=payload.target_region,
+        detected_regions=list(payload.detected_regions),
+        duration_seconds=payload.duration_seconds,
+        v_action_correct=out.action_correct,
+        v_technique_score=out.technique_score,
+        v_duration_adequate=out.duration_adequate,
+        v_notes=out.notes,
+        keyframe_paths=[],
+    )
+    db.add(obs)
+    await db.flush()
+
     await get_audit_logger().log(
         session_id=session_id,
         event_type=AuditEventType.VISION_V_AGENT_SCORED,
@@ -232,12 +264,14 @@ async def run_v_agent(
         prompt_hash=out.prompt_hash,
         model_version=out.model_version,
         payload={
+            "observation_id": str(obs.id),
             "action_correct": out.action_correct,
             "technique_score": out.technique_score,
             "duration_adequate": out.duration_adequate,
             "n_keyframes": len(payload.keyframes_b64),
             "duration_seconds": payload.duration_seconds,
         },
+        db=db,
     )
 
     return VAgentResponse(
@@ -249,6 +283,43 @@ async def run_v_agent(
         notes=out.notes,
         model_version=out.model_version,
     )
+
+
+@router.get(
+    "/sessions/{session_id}/observations",
+    response_model=list[dict[str, Any]],
+)
+async def list_observations(
+    session_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    _: Participant = Depends(get_current_participant),
+) -> list[dict[str, Any]]:
+    """List all PE observations recorded for a session."""
+    from sqlalchemy import select
+
+    rows = (
+        await db.execute(
+            select(PeObservation)
+            .where(PeObservation.session_id == session_id)
+            .order_by(PeObservation.created_at.asc())
+        )
+    ).scalars().all()
+    return [
+        {
+            "id": str(r.id),
+            "rubric_item_id": r.rubric_item_id,
+            "student_intent": r.student_intent,
+            "target_region": r.target_region,
+            "detected_regions": r.detected_regions,
+            "duration_seconds": r.duration_seconds,
+            "v_action_correct": r.v_action_correct,
+            "v_technique_score": r.v_technique_score,
+            "v_duration_adequate": r.v_duration_adequate,
+            "v_notes": r.v_notes,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+        }
+        for r in rows
+    ]
 
 
 @router.delete("/sessions/{session_id}/track")

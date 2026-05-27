@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Camera, CameraOff, Loader2 } from "lucide-react";
-import type { MarkerDetection } from "@ticdss/shared-types";
-import { detectMarkers } from "@/lib/vision";
+import type { AnatomyRegion, MarkerDetection } from "@ticdss/shared-types";
+import { detectMarkers, postTrackSample, resetTracker } from "@/lib/vision";
 import { MarkerOverlay } from "./MarkerOverlay";
 
 interface Props {
@@ -11,33 +11,48 @@ interface Props {
   detectIntervalMs?: number;
   /** Called every time markers are re-detected. */
   onDetections?: (detections: MarkerDetection[]) => void;
+  /** When provided, the component also posts visible IDs to the per-
+   *  session tracker and exposes "currently touched" regions. */
+  sessionId?: string;
+  onTouchedRegionsChange?: (regions: AnatomyRegion[]) => void;
   /** Stop polling & free the webcam stream. */
   active?: boolean;
+  /** Optional: bypass tracker calls (useful for the calibration page). */
+  trackingDisabled?: boolean;
 }
 
 /**
- * Wave 1.5 skeleton — webcam preview + marker detection overlay.
+ * Wave 1.5 — webcam preview + marker detection overlay + tracker.
  *
- * Posts a JPEG frame to /vision/markers/detect every N ms. When the
- * backend has OpenCV installed the overlay shows real marker boxes;
- * without OpenCV the backend returns empty detections and the overlay
- * stays clean — UI doesn't break.
+ * Per-tick flow when `sessionId` is provided:
+ *   1. capture JPEG from <video>
+ *   2. POST /vision/markers/detect → MarkerDetection[]
+ *   3. POST /vision/sessions/{id}/track → currently touched regions
+ *   4. fire callbacks
+ *
+ * In-flight guard: skips a tick if the previous call hasn't returned.
+ * This prevents request pileup when the backend is slow.
  */
 export function CameraCapture({
   detectIntervalMs = 500,
   onDetections,
+  sessionId,
+  onTouchedRegionsChange,
   active = true,
+  trackingDisabled = false,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const inFlightRef = useRef<boolean>(false);
 
   const [state, setState] = useState<"idle" | "starting" | "running" | "error">(
     "idle",
   );
   const [error, setError] = useState<string | null>(null);
   const [detections, setDetections] = useState<MarkerDetection[]>([]);
+  const [touchedRegions, setTouchedRegions] = useState<AnatomyRegion[]>([]);
   const [backend, setBackend] = useState<"opencv" | "stub">("stub");
   const [frameDims, setFrameDims] = useState<{ w: number; h: number }>({
     w: 640,
@@ -57,7 +72,11 @@ export function CameraCapture({
     }
     setState("idle");
     setDetections([]);
-  }, []);
+    setTouchedRegions([]);
+    if (sessionId && !trackingDisabled) {
+      void resetTracker(sessionId);
+    }
+  }, [sessionId, trackingDisabled]);
 
   const start = useCallback(async () => {
     if (state === "running" || state === "starting") return;
@@ -87,6 +106,7 @@ export function CameraCapture({
   // ── Detection polling loop ───────────────────────────────────────────
 
   const captureAndDetect = useCallback(async () => {
+    if (inFlightRef.current) return; // backend slower than poll rate — skip
     if (!videoRef.current || !canvasRef.current) return;
     const v = videoRef.current;
     const c = canvasRef.current;
@@ -97,18 +117,28 @@ export function CameraCapture({
     const ctx = c.getContext("2d");
     if (!ctx) return;
     ctx.drawImage(v, 0, 0, c.width, c.height);
-    const dataUrl = c.toDataURL("image/jpeg", 0.7);
+    const dataUrl = c.toDataURL("image/jpeg", 0.55);
 
+    inFlightRef.current = true;
     try {
       const result = await detectMarkers(dataUrl);
       setDetections(result.detections);
       setBackend(result.backend);
       setFrameDims({ w: result.frameW || c.width, h: result.frameH || c.height });
       onDetections?.(result.detections);
+
+      if (sessionId && !trackingDisabled) {
+        const ids = result.detections.map((d) => d.arucoId);
+        const track = await postTrackSample(sessionId, ids);
+        setTouchedRegions(track.touchedRegions);
+        onTouchedRegionsChange?.(track.touchedRegions);
+      }
     } catch {
       // swallow — keep camera running even if backend is down
+    } finally {
+      inFlightRef.current = false;
     }
-  }, [onDetections]);
+  }, [onDetections, onTouchedRegionsChange, sessionId, trackingDisabled]);
 
   useEffect(() => {
     if (state !== "running" || !active) {
@@ -143,7 +173,12 @@ export function CameraCapture({
                   : "bg-amber-50 text-amber-700"
               }`}
             >
-              {backend === "opencv" ? "標籤偵測中" : "STUB（後端未啟用 OpenCV）"}
+              {backend === "opencv" ? "偵測中" : "STUB（後端未啟用 OpenCV）"}
+            </span>
+          )}
+          {state === "running" && touchedRegions.length > 0 && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-100 text-brand-600">
+              觸碰中 · {touchedRegions.length}
             </span>
           )}
         </div>
@@ -153,6 +188,7 @@ export function CameraCapture({
             onClick={start}
             className="px-3 py-1.5 rounded-md text-xs font-semibold bg-brand-500 text-white hover:opacity-90 disabled:opacity-50 flex items-center gap-1.5"
             disabled={state === "starting"}
+            aria-label="啟動攝影機"
           >
             {state === "starting" ? (
               <Loader2 size={14} className="animate-spin" />
@@ -166,6 +202,7 @@ export function CameraCapture({
             type="button"
             onClick={stop}
             className="px-3 py-1.5 rounded-md text-xs font-semibold bg-bg-muted text-ink-soft hover:bg-brand-100 flex items-center gap-1.5"
+            aria-label="停止攝影機"
           >
             <CameraOff size={14} />
             停止
@@ -196,16 +233,19 @@ export function CameraCapture({
             </div>
           </div>
         )}
-        {/* hidden capture canvas */}
         <canvas ref={canvasRef} className="hidden" />
       </div>
 
       <p className="text-[11px] text-ink-muted mt-2 leading-relaxed">
-        Wave 1.5 骨架：ArUco 標籤偵測 + V-Agent 視覺評核
-        目前後端為 stub 模式（顯示 STUB 標籤即為未啟用 OpenCV／V-Agent）。
-        正式版需在後端安裝 <code className="px-1 bg-bg-muted rounded">opencv-python</code>
-        並開啟 V-Agent。
+        Wave 1.5 骨架：ArUco 標籤偵測 + V-Agent 視覺評核。
+        若顯示 STUB 表示後端未安裝 OpenCV（執行
+        <code className="px-1 bg-bg-muted rounded mx-1">uv sync --extra vision</code>
+        補裝）。
       </p>
     </div>
   );
 }
+
+// Expose a method to grab a one-shot keyframe — used by StepPE to build
+// a burst for V-Agent. Returns a JPEG data URL (or null if not running).
+export type CameraSnapshot = (() => string | null) | null;

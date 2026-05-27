@@ -8,7 +8,9 @@ from src.agents.v_agent import VAgent, VAgentInput
 pytestmark = pytest.mark.asyncio
 
 
-async def test_v_agent_stub_marks_action_correct_when_intent_matches():
+async def test_v_agent_stub_no_keyframes_marks_intent_match():
+    """When no keyframes are provided we deterministically fall back to
+    intent-match stub so the pipeline can be exercised end-to-end."""
     v = VAgent()
     out = await v.run(
         VAgentInput(
@@ -25,6 +27,7 @@ async def test_v_agent_stub_marks_action_correct_when_intent_matches():
     assert 0.0 <= out.technique_score <= 1.0
     assert out.duration_adequate is True
     assert "stub" in out.model_version.lower()
+    assert "no-keyframes" in out.model_version
 
 
 async def test_v_agent_stub_rejects_when_region_not_detected():

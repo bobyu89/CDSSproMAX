@@ -1,23 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Activity } from "lucide-react";
+import { ArrowRight, Activity, Sparkles } from "lucide-react";
+import type { AnatomyRegion, VAgentResult } from "@ticdss/shared-types";
 import { useCdssStore } from "@/lib/cdssStore";
+import { VisionPeAssist } from "./VisionPeAssist";
 
 interface PeItem {
   key: string;
   label: string;
   expected: string;
+  /** Wave 1.5 — anatomy region for ArUco + V-Agent (optional; some PE
+   *  items like GCS don't have a single body marker). */
+  targetRegion?: AnatomyRegion;
+  /** Action the V-Agent should expect (auscultation, palpation, etc). */
+  targetAction?: string;
+  /** Rubric item id matching data/rubrics/pe.json — used by V-Agent. */
+  rubricItemId?: string;
 }
 
 const PE_GROUPS: { title: string; items: PeItem[] }[] = [
   {
     title: "心血管",
     items: [
-      { key: "cv.inspect", label: "視診（頸靜脈、水腫）", expected: "頸靜脈無怒張，雙下肢無凹陷性水腫" },
-      { key: "cv.palpate", label: "觸診（PMI、震顫）", expected: "PMI 在第五肋間鎖骨中線，無震顫" },
-      { key: "cv.auscult", label: "聽診（S1/S2、雜音）", expected: "S1 S2 規律，無明顯雜音、無 S3/S4" },
+      {
+        key: "cv.inspect",
+        label: "視診（頸靜脈、水腫）",
+        expected: "頸靜脈無怒張，雙下肢無凹陷性水腫",
+        targetRegion: "jvp",
+        targetAction: "inspection",
+        rubricItemId: "pe.cardio.jvp",
+      },
+      {
+        key: "cv.palpate",
+        label: "觸診（PMI、震顫）",
+        expected: "PMI 在第五肋間鎖骨中線，無震顫",
+        targetRegion: "pmi",
+        targetAction: "palpation",
+        rubricItemId: "pe.cardio.palpation",
+      },
+      {
+        key: "cv.auscult",
+        label: "聽診（S1/S2、雜音）",
+        expected: "S1 S2 規律，無明顯雜音、無 S3/S4",
+        targetRegion: "pmi",
+        targetAction: "auscultation",
+        rubricItemId: "pe.cardio.auscultation",
+      },
       { key: "cv.vitals", label: "生命徵象", expected: "BP 138/86 mmHg，HR 96 bpm 規律，SpO₂ 96%" },
     ],
   },
@@ -25,16 +55,51 @@ const PE_GROUPS: { title: string; items: PeItem[] }[] = [
     title: "呼吸",
     items: [
       { key: "rs.inspect", label: "視診（呼吸型態）", expected: "呼吸速率 22/min，無 retraction" },
-      { key: "rs.percuss", label: "叩診", expected: "兩側胸壁共鳴音對稱" },
-      { key: "rs.auscult", label: "聽診", expected: "兩側肺野呼吸音清晰，無 wheezing/crackles" },
+      {
+        key: "rs.percuss",
+        label: "叩診",
+        expected: "兩側胸壁共鳴音對稱",
+        targetRegion: "right_lower_lung",
+        targetAction: "percussion",
+        rubricItemId: "pe.lung.percussion",
+      },
+      {
+        key: "rs.auscult",
+        label: "聽診",
+        expected: "兩側肺野呼吸音清晰，無 wheezing/crackles",
+        targetRegion: "right_lower_lung",
+        targetAction: "auscultation",
+        rubricItemId: "pe.lung.auscultation",
+      },
     ],
   },
   {
     title: "腹部",
     items: [
-      { key: "gi.inspect", label: "視診", expected: "腹部平坦，無可見蠕動或腫塊" },
-      { key: "gi.auscult", label: "聽診（腸音）", expected: "腸音正常，每分鐘約 8 次" },
-      { key: "gi.palpate", label: "觸診（壓痛、反彈痛）", expected: "右下腹輕度壓痛，無明顯反彈痛" },
+      {
+        key: "gi.inspect",
+        label: "視診",
+        expected: "腹部平坦，無可見蠕動或腫塊",
+        targetRegion: "abdomen_ruq",
+        targetAction: "inspection",
+        rubricItemId: "pe.abdomen.inspection",
+      },
+      {
+        key: "gi.auscult",
+        label: "聽診（腸音）",
+        expected: "腸音正常，每分鐘約 8 次",
+        targetRegion: "abdomen_ruq",
+        targetAction: "auscultation",
+        rubricItemId: "pe.abdomen.auscultation",
+      },
+      {
+        key: "gi.palpate",
+        label: "觸診（壓痛、反彈痛）",
+        expected: "右下腹輕度壓痛，無明顯反彈痛",
+        targetRegion: "abdomen_rlq",
+        targetAction: "palpation",
+        rubricItemId: "pe.abdomen.palpation",
+      },
     ],
   },
   {
@@ -49,8 +114,11 @@ const PE_GROUPS: { title: string; items: PeItem[] }[] = [
 
 export function StepPE() {
   const [selected, setSelected] = useState<string[]>([]);
+  const [visionMode, setVisionMode] = useState<boolean>(false);
+  const [visionResults, setVisionResults] = useState<Record<string, VAgentResult>>({});
   const setPeSelections = useCdssStore((s) => s.setPeSelections);
   const setStep = useCdssStore((s) => s.setStep);
+  const sessionId = useCdssStore((s) => s.sessionId);
 
   const toggle = (k: string) =>
     setSelected((cur) =>
@@ -60,6 +128,30 @@ export function StepPE() {
   const allItems: PeItem[] = PE_GROUPS.flatMap((g) => g.items);
   const expectedFor = (k: string) =>
     allItems.find((i) => i.key === k)?.expected ?? "";
+
+  // Wave 1.5 — items eligible for V-Agent assist (have a targetRegion).
+  const visionTargets = useMemo(() => {
+    const out: Record<
+      string,
+      { rubricItemId: string; targetAction: string; targetRegion: AnatomyRegion; label: string }
+    > = {};
+    for (const item of allItems) {
+      if (
+        item.targetRegion &&
+        item.targetAction &&
+        item.rubricItemId &&
+        selected.includes(item.key)
+      ) {
+        out[item.key] = {
+          rubricItemId: item.rubricItemId,
+          targetAction: item.targetAction,
+          targetRegion: item.targetRegion,
+          label: item.label,
+        };
+      }
+    }
+    return out;
+  }, [allItems, selected]);
 
   const confirm = () => {
     setPeSelections(selected);
@@ -141,9 +233,61 @@ export function StepPE() {
         ))}
       </div>
 
+      {/* Wave 1.5 vision toggle */}
+      {sessionId && Object.keys(visionTargets).length > 0 && (
+        <div className="mb-6 rounded-xl border border-brand-300 bg-brand-50 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-brand-600" />
+              <p className="text-sm font-semibold text-ink">
+                啟用攝影機評估 (Wave 1.5)
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setVisionMode((v) => !v)}
+              className={[
+                "px-3 py-1.5 rounded-md text-xs font-semibold transition-colors",
+                visionMode
+                  ? "bg-brand-600 text-white"
+                  : "bg-white text-brand-600 border border-brand-300",
+              ].join(" ")}
+            >
+              {visionMode ? "已啟用" : "啟用"}
+            </button>
+          </div>
+          <p className="text-[11px] text-ink-soft mt-2 leading-relaxed">
+            選擇了 {Object.keys(visionTargets).length} 個含解剖位置的項目。
+            啟用後可使用攝影機 + ArUco 標籤 + V-Agent 進行半身假人實作評估。
+            未啟用則沿用練習模式的模擬結果。
+          </p>
+        </div>
+      )}
+
+      {visionMode && sessionId && Object.keys(visionTargets).length > 0 && (
+        <div className="mb-6">
+          <VisionPeAssist
+            sessionId={sessionId}
+            itemTargets={visionTargets}
+            onResult={(key, r) =>
+              setVisionResults((cur) => ({ ...cur, [key]: r }))
+            }
+          />
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <p className="text-xs text-ink-muted">
           已選 <span className="font-bold text-brand-600">{selected.length}</span> 項
+          {Object.keys(visionResults).length > 0 && (
+            <>
+              {" · 已完成攝影機評核 "}
+              <span className="font-bold text-emerald-700">
+                {Object.keys(visionResults).length}
+              </span>
+              {" 項"}
+            </>
+          )}
         </p>
         <button
           type="button"

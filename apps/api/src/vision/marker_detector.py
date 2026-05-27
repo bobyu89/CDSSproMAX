@@ -122,25 +122,38 @@ def occluded_regions(
     last_seen: dict[int, float],
     now: float,
     occlusion_threshold_s: float = 1.5,
+    max_touch_window_s: float = 8.0,
 ) -> list[AnatomyRegion]:
-    """Helper for the per-session marker tracker: which regions have been
-    occluded (i.e. *not* detected) for ≥ threshold seconds?
+    """Helper for the per-session marker tracker: which regions are
+    currently being touched?
+
+    A region is considered "touched" if its marker:
+      1. was visible at some point AND
+      2. has been *missing* for at least ``occlusion_threshold_s`` seconds AND
+      3. was visible within the last ``max_touch_window_s`` seconds.
+
+    Condition (3) avoids the bug where a marker that was seen once
+    (lighting glitch, partial start-up) and then permanently disappears
+    is forever reported as "touched". After ``max_touch_window_s`` we
+    treat the marker as simply absent (out of frame, lighting, etc.).
 
     Args:
         last_seen: { aruco_id: epoch_seconds_last_visible }
         now: current epoch seconds
-        occlusion_threshold_s: how long a marker must stay missing before
-            we call the region "touched".
+        occlusion_threshold_s: lower bound — minimum occlusion gap.
+        max_touch_window_s: upper bound — if the marker hasn't been
+            visible recently, it's "absent" not "touched".
 
     Returns:
-        List of AnatomyRegion currently considered touched. Markers
-        outside ANATOMY_MARKERS are ignored.
+        List of AnatomyRegion currently being touched. Markers outside
+        ANATOMY_MARKERS are ignored.
     """
     out: list[AnatomyRegion] = []
     for aid, spec in ANATOMY_MARKERS.items():
         ts = last_seen.get(aid)
         if ts is None:
             continue  # never seen — student hasn't started, or marker absent
-        if now - ts >= occlusion_threshold_s:
+        gap = now - ts
+        if occlusion_threshold_s <= gap <= max_touch_window_s:
             out.append(spec.region)
     return out

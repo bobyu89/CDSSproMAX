@@ -23,7 +23,12 @@ class AnatomyRegion(str, Enum):
     PULMONIC = "pulmonic_area"  # 肺動脈瓣（左胸骨第二肋）
     ERBS_POINT = "erbs_point"  # Erb's point（左胸骨第三肋）
     TRICUSPID = "tricuspid_area"  # 三尖瓣（左胸骨下緣）
-    MITRAL = "mitral_area"  # 二尖瓣 = PMI 附近
+    # NOTE: MITRAL ≈ PMI — for OSCE scoring purposes the二尖瓣 listening
+    # point is the same physical location as PMI, so we don't allocate
+    # a separate ArUco marker. Rubric items targeting "mitral_area"
+    # should treat detection of PMI as the matching region. Kept in the
+    # enum for completeness so future rubrics can name it explicitly.
+    MITRAL = "mitral_area"
 
     # 頸部
     JVP = "jvp"  # 頸靜脈壓
