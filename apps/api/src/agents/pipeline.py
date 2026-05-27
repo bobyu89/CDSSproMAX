@@ -10,6 +10,11 @@ S-Agent and A-Agent each consume the Evidence Bundle INDEPENDENTLY and run
 in parallel via ``asyncio.gather``. The Consensus Arbiter (rule-based, NOT
 an LLM) is what compares their outputs.
 
+Wave 1.7: for **PE rubric items** (type = "pe"), the pipeline skips the
+LQQOPERA-style E/S/A path and routes through `apply_pe_fusion()` instead,
+which combines marker-based position evidence with the V-Agent verdict.
+The output still lands in `duat_scores` so grading UI is unified.
+
 Every step emits a Langfuse span (when configured) and an audit-log event
 keyed on ``session_id``.
 """
@@ -17,7 +22,7 @@ keyed on ``session_id``.
 from __future__ import annotations
 
 import uuid
-from typing import Any
+from typing import Any, Iterable
 
 from pydantic import BaseModel
 
@@ -26,7 +31,9 @@ import asyncio
 from src.agents.a_agent import AAgent, AAgentInput, AAgentOutput
 from src.agents.arbiter import ArbiterDecision, arbitrate
 from src.agents.e_agent import EAgent, EAgentInput, EAgentOutput
+from src.agents.pe_fusion import PeFusionResult, fuse as fuse_pe
 from src.agents.s_agent import SAgent, SAgentInput, SAgentOutput
+from src.agents.v_agent import VAgentOutput
 from src.audit import AuditEventType, get_audit_logger
 from src.observability import trace_span
 
@@ -39,6 +46,83 @@ class DuatItemResult(BaseModel):
     score: SAgentOutput
     advocate: AAgentOutput
     arbiter: ArbiterDecision
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PE-track fusion (Wave 1.7) — single source of truth for "how an arbiter
+# decision is derived from ArUco + V-Agent". The vision router uses this
+# helper so the rule is testable and reusable from any caller (including
+# the re-score endpoint).
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def is_pe_rubric_item(rubric_item: dict[str, Any]) -> bool:
+    """Heuristic: a PE rubric item has a body_region/expected_action field.
+
+    LQQOPERA items only carry `dimension` + criteria; PE items additionally
+    name an anatomy region and a physical action. We use that to route in
+    ``score_item``.
+    """
+    return bool(
+        rubric_item.get("body_region") or rubric_item.get("expected_action")
+    )
+
+
+def derive_arbiter_for_pe(
+    *,
+    position_correct: bool,
+    action_correct: bool,
+    has_any_detection: bool,
+) -> tuple[str, str]:
+    """Return (arbiter_decision, arbiter_confidence) for a PE fusion result.
+
+    Position is deterministic (markers) so confidence is high when
+    everything agrees. When markers fired but on the wrong region we flag
+    for human review. No detections at all → force_human.
+    """
+    if position_correct and action_correct:
+        return "accept", "high"
+    if has_any_detection:
+        return "flag", "medium"
+    return "force_human", "low"
+
+
+def apply_pe_fusion(
+    *,
+    target_region: str,
+    detected_regions: Iterable[str],
+    v_agent: VAgentOutput,
+) -> tuple[PeFusionResult, str, str, dict[str, Any]]:
+    """Compute fused score + arbiter decision + cot_json for a PE item.
+
+    Returns:
+        (fusion, arbiter_decision, arbiter_confidence, cot_json) where
+        cot_json is the dict that should be persisted to
+        ``DuatScore.s_cot_json``.
+    """
+    detected = list(detected_regions or [])
+    fusion = fuse_pe(
+        target_region=target_region,
+        detected_regions=detected,
+        v_agent=v_agent,
+    )
+    arbiter_decision, arbiter_confidence = derive_arbiter_for_pe(
+        position_correct=fusion.position_correct,
+        action_correct=v_agent.action_correct,
+        has_any_detection=bool(detected),
+    )
+    cot_json: dict[str, Any] = {
+        "source": "pe_fusion",
+        "rationale": fusion.rationale,
+        "raw_score": fusion.raw_score,
+        "position_correct": fusion.position_correct,
+        "v_agent_notes": v_agent.notes,
+        "v_action_correct": v_agent.action_correct,
+        "v_technique_score": v_agent.technique_score,
+        "v_duration_adequate": v_agent.duration_adequate,
+        "model_version": v_agent.model_version,
+    }
+    return fusion, arbiter_decision, arbiter_confidence, cot_json
 
 
 class DuatPipeline:

@@ -49,6 +49,22 @@ PE 評分採「**ArUco 解位置 + V-Agent 解手法**」雙層：
 - V-Agent 為 Wave 1.5 階段 stub — 真接 Gemini Vision multimodal 在 Wave 1.6
 - 詳見 `docs/architecture/vision-pipeline.md`
 
+### 3b. Wave 3 — HRV signal (skeleton)
+
+第一個生理訊號 vertical slice。**HRV 是 Wave 3 範圍**，作為 Fusion Engine 三大訊號之一（Prosody + HRV + Vision）。
+
+| 元件 | 位置 | 角色 |
+|---|---|---|
+| BLE client | `apps/web/lib/bluetoothHrv.ts` | Polar H10 Heart Rate Service 0x180D / Measurement 0x2A37 |
+| Sidecar UI | `apps/web/components/physio/HRVMonitor.tsx` | 嵌入 `StepPE` 的 compact 監視器 |
+| 時間域指標 | `apps/api/src/physio/hrv.py` | SDNN / RMSSD / pNN50 / mean_hr + state_proxy |
+| 儲存 | `physio_samples` 表（migration 0003） | `(session_id, timestamp_ms)` 索引 |
+| 端點 | `apps/api/src/routers/physio.py` | ingest / hrv / timeseries / admin wipe |
+
+**重要**：HRV 目前**僅作監測**，**尚未**寫入 DUAT 評分鏈。Fusion Engine
+（合併 HRV/prosody/vision → LearnerState → 餵 S/A-Agent context）是
+Wave 3 下一步工作，不在此 skeleton 範圍內。詳見 `docs/architecture/hrv-pipeline.md`。
+
 ### 4. 技術棧
 
 | 層 | 技術 | 不可換 |

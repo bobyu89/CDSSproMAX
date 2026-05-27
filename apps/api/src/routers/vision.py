@@ -19,7 +19,7 @@ from pydantic import BaseModel, Field
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.agents.pe_fusion import fuse as fuse_pe
+from src.agents.pipeline import apply_pe_fusion
 from src.agents.v_agent import VAgent, VAgentInput
 from src.audit import AuditEventType, get_audit_logger
 from src.db.models import DuatScore, Participant, PeObservation, Session as DbSession
@@ -277,12 +277,14 @@ async def run_v_agent(
     db.add(obs)
     await db.flush()
 
-    # ── Fuse markers + V-Agent into a 0-5 score and upsert into duat_scores
-    fusion = fuse_pe(
+    # ── Fuse markers + V-Agent → DuatScore upsert
+    # (single source of truth lives in agents/pipeline.py:apply_pe_fusion)
+    fusion, arbiter_decision, arbiter_confidence, cot_json = apply_pe_fusion(
         target_region=payload.target_region,
         detected_regions=payload.detected_regions,
         v_agent=out,
     )
+
     from sqlalchemy import select as _select
 
     existing = await db.scalar(
@@ -291,67 +293,37 @@ async def run_v_agent(
             DuatScore.rubric_item_id == payload.rubric_item_id,
         )
     )
-    fusion_json = {
-        "source": "pe_fusion",
-        "rationale": fusion.rationale,
-        "raw_score": fusion.raw_score,
-        "position_correct": fusion.position_correct,
-        "v_agent_notes": out.notes,
-        "v_action_correct": out.action_correct,
-        "v_technique_score": out.technique_score,
-        "v_duration_adequate": out.duration_adequate,
-        "model_version": out.model_version,
+    e_confidence = (
+        1.0 if fusion.position_correct
+        else (0.5 if payload.detected_regions else 0.0)
+    )
+    e_evidence = {
+        "target_region": payload.target_region,
+        "detected_regions": list(payload.detected_regions),
+        "duration_seconds": payload.duration_seconds,
+        "student_intent": payload.student_intent or None,
     }
     if existing is None:
         db.add(
             DuatScore(
                 session_id=session_id,
                 rubric_item_id=payload.rubric_item_id,
-                # PE has no Evidence Bundle in the LQQOPERA sense — store
-                # detected regions + fusion under e_evidence_json for audit.
-                e_evidence_json={
-                    "target_region": payload.target_region,
-                    "detected_regions": list(payload.detected_regions),
-                    "duration_seconds": payload.duration_seconds,
-                    "student_intent": payload.student_intent or None,
-                },
-                e_confidence=1.0 if fusion.position_correct else (0.5 if payload.detected_regions else 0.0),
+                e_evidence_json=e_evidence,
+                e_confidence=e_confidence,
                 s_score=fusion.score_0_5,
-                s_cot_json=fusion_json,
-                # No adversarial review for PE (Layer 1 deterministic +
-                # Layer 2 V-Agent already covers it). a_advocate_score=0
-                # so Arbiter is dominated by e_confidence.
+                s_cot_json=cot_json,
                 a_advocate_score=0.0,
-                # Pre-compute arbiter decision — full DUAT plumbing on PE
-                # is not needed because position is deterministic.
-                arbiter_decision=(
-                    "accept" if fusion.position_correct and out.action_correct
-                    else "flag" if payload.detected_regions
-                    else "force_human"
-                ),
-                arbiter_confidence=(
-                    "high" if fusion.position_correct and out.action_correct
-                    else "medium" if payload.detected_regions
-                    else "low"
-                ),
+                arbiter_decision=arbiter_decision,
+                arbiter_confidence=arbiter_confidence,
             )
         )
     else:
         existing.s_score = fusion.score_0_5
-        existing.s_cot_json = fusion_json
-        existing.e_confidence = 1.0 if fusion.position_correct else (
-            0.5 if payload.detected_regions else 0.0
-        )
-        existing.arbiter_decision = (
-            "accept" if fusion.position_correct and out.action_correct
-            else "flag" if payload.detected_regions
-            else "force_human"
-        )
-        existing.arbiter_confidence = (
-            "high" if fusion.position_correct and out.action_correct
-            else "medium" if payload.detected_regions
-            else "low"
-        )
+        existing.s_cot_json = cot_json
+        existing.e_confidence = e_confidence
+        existing.e_evidence_json = e_evidence
+        existing.arbiter_decision = arbiter_decision
+        existing.arbiter_confidence = arbiter_confidence
     await db.flush()
 
     await get_audit_logger().log(
@@ -367,6 +339,145 @@ async def run_v_agent(
             "duration_adequate": out.duration_adequate,
             "n_keyframes": len(payload.keyframes_b64),
             "duration_seconds": payload.duration_seconds,
+        },
+        db=db,
+    )
+
+    return VAgentResponse(
+        rubric_item_id=out.rubric_item_id,
+        action_correct=out.action_correct,
+        technique_score=out.technique_score,
+        duration_adequate=out.duration_adequate,
+        evidence_frames=out.evidence_frames,
+        notes=out.notes,
+        model_version=out.model_version,
+        fused_score=fusion.score_0_5,
+        fusion_rationale=fusion.rationale,
+    )
+
+
+@router.post(
+    "/sessions/{session_id}/observations/{observation_id}/re-score",
+    response_model=VAgentResponse,
+)
+async def re_score_observation(
+    session_id: uuid.UUID,
+    observation_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    _: Participant = Depends(get_current_participant),
+) -> VAgentResponse:
+    """Re-run V-Agent + fusion on an existing PeObservation.
+
+    Useful when the V-Agent prompt or model is updated and we want to
+    reconcile historical scores without asking the student to perform
+    the action again. Keyframes are fetched from object storage (no
+    re-upload from the browser).
+    """
+    from sqlalchemy import select
+
+    obs = await db.scalar(
+        select(PeObservation).where(
+            PeObservation.id == observation_id,
+            PeObservation.session_id == session_id,
+        )
+    )
+    if obs is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="observation not found")
+
+    # Fetch keyframes back from S3 if we have URLs.
+    keyframes_b64: list[str] = []
+    if obs.keyframe_paths:
+        try:
+            from src.services.storage import get_storage_client
+
+            storage = get_storage_client()
+            keyframes_b64 = await storage.fetch_keyframes_b64(list(obs.keyframe_paths))
+        except Exception as exc:  # pragma: no cover - storage optional
+            import logging
+            logging.getLogger(__name__).warning(
+                "re-score: fetch_keyframes_b64 failed: %s", exc
+            )
+
+    v = VAgent()
+    out = await v.run(
+        VAgentInput(
+            rubric_item_id=obs.rubric_item_id,
+            target_action="",  # routes have target_action only on initial call;
+            # leave blank for re-score and let V-Agent infer from rubric / notes
+            target_region=obs.target_region,
+            student_intent=obs.student_intent or "",
+            detected_regions=list(obs.detected_regions or []),
+            keyframes_b64=keyframes_b64,
+            duration_seconds=obs.duration_seconds,
+        )
+    )
+
+    # Apply fusion + upsert DuatScore (same pipeline helper as live scoring)
+    fusion, arbiter_decision, arbiter_confidence, cot_json = apply_pe_fusion(
+        target_region=obs.target_region,
+        detected_regions=obs.detected_regions or [],
+        v_agent=out,
+    )
+
+    existing = await db.scalar(
+        select(DuatScore).where(
+            DuatScore.session_id == session_id,
+            DuatScore.rubric_item_id == obs.rubric_item_id,
+        )
+    )
+    e_confidence = (
+        1.0 if fusion.position_correct
+        else (0.5 if obs.detected_regions else 0.0)
+    )
+    e_evidence = {
+        "target_region": obs.target_region,
+        "detected_regions": list(obs.detected_regions or []),
+        "duration_seconds": obs.duration_seconds,
+        "student_intent": obs.student_intent,
+        "re_scored_from_observation_id": str(obs.id),
+    }
+    if existing is None:
+        db.add(
+            DuatScore(
+                session_id=session_id,
+                rubric_item_id=obs.rubric_item_id,
+                e_evidence_json=e_evidence,
+                e_confidence=e_confidence,
+                s_score=fusion.score_0_5,
+                s_cot_json=cot_json,
+                a_advocate_score=0.0,
+                arbiter_decision=arbiter_decision,
+                arbiter_confidence=arbiter_confidence,
+            )
+        )
+    else:
+        existing.s_score = fusion.score_0_5
+        existing.s_cot_json = cot_json
+        existing.e_confidence = e_confidence
+        existing.e_evidence_json = e_evidence
+        existing.arbiter_decision = arbiter_decision
+        existing.arbiter_confidence = arbiter_confidence
+
+    # Update the observation row to reflect the new verdict.
+    obs.v_action_correct = out.action_correct
+    obs.v_technique_score = out.technique_score
+    obs.v_duration_adequate = out.duration_adequate
+    obs.v_notes = out.notes
+
+    await db.flush()
+
+    await get_audit_logger().log(
+        session_id=session_id,
+        event_type=AuditEventType.VISION_V_AGENT_SCORED,
+        rubric_item_id=obs.rubric_item_id,
+        prompt_hash=out.prompt_hash,
+        model_version=out.model_version,
+        payload={
+            "observation_id": str(obs.id),
+            "re_score": True,
+            "n_keyframes": len(keyframes_b64),
+            "fused_score": fusion.score_0_5,
+            "arbiter_decision": arbiter_decision,
         },
         db=db,
     )

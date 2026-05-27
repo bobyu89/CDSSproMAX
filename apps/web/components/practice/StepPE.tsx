@@ -6,6 +6,7 @@ import { ArrowRight, Activity, Sparkles } from "lucide-react";
 import type { AnatomyRegion, VAgentResult } from "@ticdss/shared-types";
 import { useCdssStore } from "@/lib/cdssStore";
 import { VisionPeAssist } from "./VisionPeAssist";
+import { HRVMonitor } from "@/components/physio/HRVMonitor";
 
 interface PeItem {
   key: string;
@@ -261,6 +262,12 @@ export function StepPE() {
             啟用後可使用攝影機 + ArUco 標籤 + V-Agent 進行半身假人實作評估。
             未啟用則沿用練習模式的模擬結果。
           </p>
+        </div>
+      )}
+
+      {sessionId && (
+        <div className="mb-6">
+          <HRVMonitor sessionId={sessionId} compact />
         </div>
       )}
 

@@ -69,7 +69,16 @@ services:
       - |
         mc alias set local http://minio:9000 ${MINIO_ROOT_USER:-ticdss} ${MINIO_ROOT_PASSWORD:-change_me_locally} &&
         mc mb --ignore-existing local/ticdss-keyframes &&
-        mc anonymous set download local/ticdss-keyframes
+        mc anonymous set download local/ticdss-keyframes &&
+        echo "Setting 90-day expiry lifecycle rule..." &&
+        # Remove any prior rule with our id (ignore errors on first run)
+        (mc ilm rule remove --id ticdss-keyframes-90d local/ticdss-keyframes || true) &&
+        mc ilm rule add \
+          --id ticdss-keyframes-90d \
+          --expire-days 90 \
+          local/ticdss-keyframes &&
+        echo "Lifecycle rules:" &&
+        mc ilm rule ls local/ticdss-keyframes
     restart: "no"
 
   langfuse:

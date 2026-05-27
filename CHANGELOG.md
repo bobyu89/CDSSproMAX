@@ -2,6 +2,50 @@
 
 All notable changes to TICDSS. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 
+## [0.3.0-hrv-skeleton] — 2026-05-28
+
+### Added — Wave 3 HRV skeleton
+
+第一個生理訊號 vertical slice 落地。骨架完整覆蓋裝置接入 → 儲存 → 計算 → UI；
+Fusion Engine 整合到 DUAT 評分留給後續 Wave 3 工作。
+
+#### Backend
+- `apps/api/src/physio/`：純 stdlib 時間域 HRV 計算（SDNN / RMSSD / pNN50 / mean HR）
+  + `state_proxy_from_hrv` 將指標映射為 `flow` / `anxious` / `low_engagement` /
+  `ambiguous`（Shaffer & Ginsberg 2017 健康成人短時段參考）。
+- `apps/api/src/routers/physio.py`：4 個端點
+  (`POST /physio/sessions/{sid}/samples`, `GET .../hrv`, `GET .../timeseries`,
+  admin-only `DELETE .../samples`)，全部接 audit logger。
+- `apps/api/src/db/models.py` + alembic `0003_physio`：新增 `physio_samples` 表
+  （`BigInteger timestamp_ms`、quality_flag enum、`(session_id, timestamp_ms)` 索引）。
+- `apps/api/src/audit/schema.py`：3 個新事件
+  (`physio.samples_ingested`, `physio.hrv_computed`, `physio.device_connected`)。
+- 在 `main.py` 註冊 physio router。
+- Tests: `test_hrv.py` — 對手算值校驗 SDNN/RMSSD/pNN50；變異 vs 穩態 sanity；
+  state_proxy 四種分類；空輸入 raise、gap 樣本過濾。
+
+#### Frontend
+- `apps/web/lib/bluetoothHrv.ts`：Polar H10 Web Bluetooth client，解析
+  0x2A37 GATT notification（含 8/16-bit HR flag + 1/1024 s RR 單位轉 ms）。
+- `apps/web/lib/physio.ts`：API client（mock fallback 與 vision.ts 一致）。
+- `apps/web/components/physio/HRVMonitor.tsx`：3 態 UI（disconnected /
+  connecting / connected）、4 大統計磚（HR / SDNN / RMSSD / 狀態徽章）、
+  inline SVG sparkline（最近 60 RR），示範模式（Box-Muller 合成 RR
+  μ=800ms σ=30ms）讓無 BLE 裝置也能跑流程。
+- `apps/web/components/physio/PhysioStateBadge.tsx`：4 + no_data 顏色映射。
+- `packages/shared-types/src/physio.ts`：PhysioSample / TimeDomainSummary /
+  PhysioStateProxy / HrvWindowResult / IngestSampleInput 共用型別。
+- 整合：`StepPE.tsx` 在 vision toggle 上方常駐 `<HRVMonitor compact />`。
+
+#### Docs
+- `docs/architecture/hrv-pipeline.md`：BLE 流程圖、儲存 schema、指標公式 +
+  生理意義、state_proxy 閾值來源、隱私原則、Fusion Engine TODO。
+
+#### 注意
+- HRV **尚未**參與 DUAT 評分（S-Agent context 不變）。Fusion Engine 整合是
+  Wave 3 下一步工作 — 詳見 `docs/architecture/hrv-pipeline.md` 末段 TODO。
+- 不新增任何 Python / npm 依賴。
+
 ## [0.2.0-skeleton] — 2026-05-28
 
 ### Added — Wave 1.5 vision skeleton

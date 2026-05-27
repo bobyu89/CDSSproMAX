@@ -36,6 +36,11 @@ class StorageClient(ABC):
         """Upload a list of base64-encoded JPEGs. Returns the URL list."""
 
     @abstractmethod
+    async def fetch_keyframes_b64(self, urls: list[str]) -> list[str]:
+        """Download a list of stored keyframes and return them as base64
+        strings (without data URL prefix). Used by the re-score endpoint."""
+
+    @abstractmethod
     async def healthcheck(self) -> dict[str, str | bool]:
         ...
 
@@ -50,6 +55,9 @@ class NoopStorage(StorageClient):
         rubric_item_id: str,
         images_b64: list[str],
     ) -> list[str]:
+        return []
+
+    async def fetch_keyframes_b64(self, urls: list[str]) -> list[str]:
         return []
 
     async def healthcheck(self) -> dict[str, str | bool]:
@@ -131,6 +139,44 @@ class S3Storage(StorageClient):
                 )
                 urls.append(self._build_url(key))
         return urls
+
+    async def fetch_keyframes_b64(self, urls: list[str]) -> list[str]:
+        """Re-fetch previously uploaded keyframes from S3 → base64 strings.
+
+        The router only stored public URLs; this helper figures out the
+        bucket key from each URL by stripping known prefixes, then uses
+        S3 GET (not the public URL) to read the object — works even if
+        the bucket is private.
+        """
+        if not urls:
+            return []
+        out: list[str] = []
+        client_cm = await self._client()
+        bucket = self.settings.s3_bucket
+        # Known prefixes that may precede the key in the stored URL.
+        prefixes = []
+        if self.settings.s3_public_base_url:
+            prefixes.append(self.settings.s3_public_base_url.rstrip("/") + "/")
+        if self.settings.s3_endpoint_url:
+            ep = self.settings.s3_endpoint_url.rstrip("/")
+            prefixes.append(f"{ep}/{bucket}/")
+        prefixes.sort(key=len, reverse=True)  # try longest match first
+
+        async with client_cm as s3:
+            for url in urls:
+                key = url
+                for prefix in prefixes:
+                    if key.startswith(prefix):
+                        key = key[len(prefix):]
+                        break
+                try:
+                    resp = await s3.get_object(Bucket=bucket, Key=key)
+                    body = await resp["Body"].read()
+                    out.append(base64.b64encode(body).decode())
+                except Exception as exc:  # pragma: no cover - network
+                    logger.warning("fetch_keyframes_b64 failed for %s: %s", key, exc)
+                    continue
+        return out
 
     async def healthcheck(self) -> dict[str, str | bool]:
         try:

@@ -130,6 +130,35 @@ export async function resetTracker(sessionId: string): Promise<void> {
   }
 }
 
+// ─── Re-score (PeObservation) ───────────────────────────────────────────
+
+export async function reScoreObservation(
+  sessionId: string,
+  observationId: string,
+): Promise<VAgentResult> {
+  return request<{
+    rubric_item_id: string;
+    action_correct: boolean;
+    technique_score: number;
+    duration_adequate: boolean;
+    evidence_frames: number[];
+    notes: string;
+    model_version: string;
+    fused_score: number | null;
+    fusion_rationale: string | null;
+  }>(`/vision/sessions/${sessionId}/observations/${observationId}/re-score`, {
+    method: "POST",
+  }).then((r) => ({
+    rubricItemId: r.rubric_item_id,
+    actionCorrect: r.action_correct,
+    techniqueScore: r.technique_score,
+    durationAdequate: r.duration_adequate,
+    evidenceFrames: r.evidence_frames,
+    notes: r.notes,
+    modelVersion: r.model_version,
+  }));
+}
+
 // ─── V-Agent ────────────────────────────────────────────────────────────
 
 export async function runVAgent(

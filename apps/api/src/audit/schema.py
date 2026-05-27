@@ -25,6 +25,10 @@ class AuditEventType(str, Enum):
     VISION_FRAME_DETECTED = "vision.frame_detected"
     VISION_REGION_TOUCHED = "vision.region_touched"
     VISION_V_AGENT_SCORED = "vision.v_agent_scored"
+    # Wave 3 — physiological signals (HRV skeleton)
+    PHYSIO_SAMPLES_INGESTED = "physio.samples_ingested"
+    PHYSIO_HRV_COMPUTED = "physio.hrv_computed"
+    PHYSIO_DEVICE_CONNECTED = "physio.device_connected"
 
 
 class AuditPayload(BaseModel):

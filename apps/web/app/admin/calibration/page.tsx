@@ -154,6 +154,7 @@ export default function CalibrationPage() {
             detectIntervalMs={400}
             trackingDisabled
             largeIds
+            showHeatmap
             onDetections={handleDetections}
           />
           <div className="mt-3 text-xs text-ink-muted leading-relaxed">

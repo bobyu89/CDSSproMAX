@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Camera, CameraOff, Loader2 } from "lucide-react";
 import type { AnatomyRegion, MarkerDetection } from "@ticdss/shared-types";
 import { detectMarkers, postTrackSample, resetTracker } from "@/lib/vision";
+import { MarkerHeatmap } from "./MarkerHeatmap";
 import { MarkerOverlay } from "./MarkerOverlay";
 
 interface Props {
@@ -21,6 +22,9 @@ interface Props {
   trackingDisabled?: boolean;
   /** Pass-through to MarkerOverlay: render giant IDs for calibration. */
   largeIds?: boolean;
+  /** Render a decaying detection heatmap on top of the camera. Useful
+   *  for the calibration page to spot marker flicker / drift. */
+  showHeatmap?: boolean;
 }
 
 /**
@@ -43,6 +47,7 @@ export function CameraCapture({
   active = true,
   trackingDisabled = false,
   largeIds = false,
+  showHeatmap = false,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -221,6 +226,13 @@ export function CameraCapture({
           playsInline
           aria-label="攝影機預覽"
         />
+        {state === "running" && showHeatmap && (
+          <MarkerHeatmap
+            detections={detections}
+            frameW={frameDims.w}
+            frameH={frameDims.h}
+          />
+        )}
         {state === "running" && (
           <MarkerOverlay
             detections={detections}

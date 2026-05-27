@@ -13,10 +13,12 @@ from typing import Any
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
     JSON,
+    BigInteger,
     DateTime,
     Enum as SAEnum,
     Float,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -211,6 +213,46 @@ class AuditEvent(Base):
     model_version: Mapped[str | None] = mapped_column(String(80), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+# === Physio / HRV (Wave 3) =================================================
+
+
+class PhysioSample(Base):
+    """A single RR-interval sample from a heart-rate monitor (Polar H10, etc.).
+
+    Wave 3: HRV is one of three signals (with prosody and expression) that the
+    future Fusion Engine will combine to estimate learner cognitive state. For
+    now we just persist the stream and expose summary endpoints; Fusion wiring
+    lives outside this skeleton.
+
+    timestamp_ms is epoch milliseconds (BigInteger) because consumer-grade
+    chest straps fire several notifications per second and Postgres `Integer`
+    overflows around year 2038 when you store ms. RR interval is in milliseconds.
+    """
+
+    __tablename__ = "physio_samples"
+
+    id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=_uuid)
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("sessions.id", ondelete="CASCADE"), nullable=False
+    )
+    device_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    timestamp_ms: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    r_to_r_ms: Mapped[int] = mapped_column(Integer, nullable=False)
+    heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    quality_flag: Mapped[str] = mapped_column(
+        SAEnum("good", "noisy", "gap", name="physio_quality_flag"),
+        nullable=False,
+        default="good",
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    __table_args__ = (
+        Index("physio_samples_session_ts_idx", "session_id", "timestamp_ms"),
     )
 
 
