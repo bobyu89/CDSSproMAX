@@ -153,6 +153,7 @@ export default function CalibrationPage() {
           <CameraCapture
             detectIntervalMs={400}
             trackingDisabled
+            largeIds
             onDetections={handleDetections}
           />
           <div className="mt-3 text-xs text-ink-muted leading-relaxed">

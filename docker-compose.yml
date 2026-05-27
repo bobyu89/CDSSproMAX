@@ -37,6 +37,41 @@ services:
         psql -h postgres -U ${POSTGRES_USER:-ticdss} -c "CREATE DATABASE langfuse"
     restart: "no"
 
+  # MinIO — S3-compatible object storage for keyframes (and future audio
+  # blobs). Self-hosted so IRB-protected media never leaves the institution.
+  minio:
+    image: minio/minio:latest
+    container_name: ticdss-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # web console
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-ticdss}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-change_me_locally}
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  minio-bucket-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint:
+      - sh
+      - -c
+      - |
+        mc alias set local http://minio:9000 ${MINIO_ROOT_USER:-ticdss} ${MINIO_ROOT_PASSWORD:-change_me_locally} &&
+        mc mb --ignore-existing local/ticdss-keyframes &&
+        mc anonymous set download local/ticdss-keyframes
+    restart: "no"
+
   langfuse:
     image: langfuse/langfuse:2
     container_name: ticdss-langfuse
@@ -58,4 +93,6 @@ services:
 
 volumes:
   postgres-data:
+    driver: local
+  minio-data:
     driver: local

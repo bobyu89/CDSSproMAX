@@ -51,6 +51,15 @@ class Settings(BaseSettings):
     # === Audit ===
     audit_log_dir: Path = REPO_ROOT / "audit_logs"
 
+    # === Object storage (MinIO / S3) ===
+    storage_backend: str = "none"  # 's3' | 'none'
+    s3_endpoint_url: str = "http://localhost:9000"
+    s3_region: str = "us-east-1"
+    s3_access_key_id: str = ""
+    s3_secret_access_key: str = ""
+    s3_bucket: str = "ticdss-keyframes"
+    s3_public_base_url: str = ""
+
     # === Auth ===
     jwt_secret: str = "change_me_in_production"
     jwt_algorithm: str = "HS256"

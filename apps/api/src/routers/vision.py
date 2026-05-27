@@ -19,9 +19,10 @@ from pydantic import BaseModel, Field
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.agents.pe_fusion import fuse as fuse_pe
 from src.agents.v_agent import VAgent, VAgentInput
 from src.audit import AuditEventType, get_audit_logger
-from src.db.models import Participant, PeObservation, Session as DbSession
+from src.db.models import DuatScore, Participant, PeObservation, Session as DbSession
 from src.db.session import get_db
 from src.routers.auth import get_current_participant
 from src.vision import (
@@ -95,6 +96,9 @@ class VAgentResponse(BaseModel):
     evidence_frames: list[int]
     notes: str
     model_version: str
+    # Fused PE score (0-5) — what gets written to duat_scores
+    fused_score: int | None = None
+    fusion_rationale: str | None = None
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -238,9 +242,25 @@ async def run_v_agent(
         )
     )
 
-    # Persist as PeObservation — keyframe_paths left empty in Wave 1.5
-    # (object storage backend lands in Wave 2; for now we keep audit_log
-    # as the canonical record of what happened).
+    # Persist keyframes to object storage (Wave 1.7 — MinIO / S3). If
+    # storage isn't configured, falls back to an empty list and the
+    # observation is still written.
+    keyframe_paths: list[str] = []
+    if payload.keyframes_b64:
+        try:
+            from src.services.storage import get_storage_client
+
+            storage = get_storage_client()
+            keyframe_paths = await storage.put_keyframes(
+                session_id=session_id,
+                rubric_item_id=payload.rubric_item_id,
+                images_b64=payload.keyframes_b64,
+            )
+        except Exception as exc:  # pragma: no cover — storage backend optional
+            logger = __import__("logging").getLogger(__name__)
+            logger.warning("keyframe storage failed: %s", exc)
+
+    # Persist as PeObservation.
     obs = PeObservation(
         session_id=session_id,
         rubric_item_id=payload.rubric_item_id,
@@ -252,9 +272,86 @@ async def run_v_agent(
         v_technique_score=out.technique_score,
         v_duration_adequate=out.duration_adequate,
         v_notes=out.notes,
-        keyframe_paths=[],
+        keyframe_paths=keyframe_paths,
     )
     db.add(obs)
+    await db.flush()
+
+    # ── Fuse markers + V-Agent into a 0-5 score and upsert into duat_scores
+    fusion = fuse_pe(
+        target_region=payload.target_region,
+        detected_regions=payload.detected_regions,
+        v_agent=out,
+    )
+    from sqlalchemy import select as _select
+
+    existing = await db.scalar(
+        _select(DuatScore).where(
+            DuatScore.session_id == session_id,
+            DuatScore.rubric_item_id == payload.rubric_item_id,
+        )
+    )
+    fusion_json = {
+        "source": "pe_fusion",
+        "rationale": fusion.rationale,
+        "raw_score": fusion.raw_score,
+        "position_correct": fusion.position_correct,
+        "v_agent_notes": out.notes,
+        "v_action_correct": out.action_correct,
+        "v_technique_score": out.technique_score,
+        "v_duration_adequate": out.duration_adequate,
+        "model_version": out.model_version,
+    }
+    if existing is None:
+        db.add(
+            DuatScore(
+                session_id=session_id,
+                rubric_item_id=payload.rubric_item_id,
+                # PE has no Evidence Bundle in the LQQOPERA sense — store
+                # detected regions + fusion under e_evidence_json for audit.
+                e_evidence_json={
+                    "target_region": payload.target_region,
+                    "detected_regions": list(payload.detected_regions),
+                    "duration_seconds": payload.duration_seconds,
+                    "student_intent": payload.student_intent or None,
+                },
+                e_confidence=1.0 if fusion.position_correct else (0.5 if payload.detected_regions else 0.0),
+                s_score=fusion.score_0_5,
+                s_cot_json=fusion_json,
+                # No adversarial review for PE (Layer 1 deterministic +
+                # Layer 2 V-Agent already covers it). a_advocate_score=0
+                # so Arbiter is dominated by e_confidence.
+                a_advocate_score=0.0,
+                # Pre-compute arbiter decision — full DUAT plumbing on PE
+                # is not needed because position is deterministic.
+                arbiter_decision=(
+                    "accept" if fusion.position_correct and out.action_correct
+                    else "flag" if payload.detected_regions
+                    else "force_human"
+                ),
+                arbiter_confidence=(
+                    "high" if fusion.position_correct and out.action_correct
+                    else "medium" if payload.detected_regions
+                    else "low"
+                ),
+            )
+        )
+    else:
+        existing.s_score = fusion.score_0_5
+        existing.s_cot_json = fusion_json
+        existing.e_confidence = 1.0 if fusion.position_correct else (
+            0.5 if payload.detected_regions else 0.0
+        )
+        existing.arbiter_decision = (
+            "accept" if fusion.position_correct and out.action_correct
+            else "flag" if payload.detected_regions
+            else "force_human"
+        )
+        existing.arbiter_confidence = (
+            "high" if fusion.position_correct and out.action_correct
+            else "medium" if payload.detected_regions
+            else "low"
+        )
     await db.flush()
 
     await get_audit_logger().log(
@@ -282,6 +379,8 @@ async def run_v_agent(
         evidence_frames=out.evidence_frames,
         notes=out.notes,
         model_version=out.model_version,
+        fused_score=fusion.score_0_5,
+        fusion_rationale=fusion.rationale,
     )
 
 

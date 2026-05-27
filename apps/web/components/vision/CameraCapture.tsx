@@ -19,6 +19,8 @@ interface Props {
   active?: boolean;
   /** Optional: bypass tracker calls (useful for the calibration page). */
   trackingDisabled?: boolean;
+  /** Pass-through to MarkerOverlay: render giant IDs for calibration. */
+  largeIds?: boolean;
 }
 
 /**
@@ -40,6 +42,7 @@ export function CameraCapture({
   onTouchedRegionsChange,
   active = true,
   trackingDisabled = false,
+  largeIds = false,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -223,6 +226,7 @@ export function CameraCapture({
             detections={detections}
             frameW={frameDims.w}
             frameH={frameDims.h}
+            largeIds={largeIds}
           />
         )}
         {state === "error" && (

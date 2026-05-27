@@ -42,13 +42,23 @@ LANGFUSE_PUBLIC_KEY=pk-lf-...
 LANGFUSE_SECRET_KEY=sk-lf-...
 ```
 
-## 3. 起 Postgres + Langfuse
+## 3. 起 Postgres + Langfuse + MinIO
 
 ```bash
 docker compose up -d
-# 等 30 秒，等 Postgres healthy
+# 等 30 秒，Postgres / Langfuse / MinIO 都會 healthy
 docker compose ps
 ```
+
+| 服務 | URL / Port |
+|---|---|
+| Postgres | `localhost:5433` |
+| Langfuse | <http://localhost:3001> |
+| MinIO console | <http://localhost:9001> （`ticdss` / `change_me_locally`） |
+| MinIO S3 API | <http://localhost:9000> |
+
+MinIO 初始化容器會自動建立 `ticdss-keyframes` bucket 並開放下載權限，
+給 V-Agent 評核的影像會自動寫入這個 bucket。
 
 連線確認：`psql postgresql://ticdss:change_me_locally@localhost:5433/ticdss -c "SELECT 1"`
 

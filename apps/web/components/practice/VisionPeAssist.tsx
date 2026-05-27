@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import type { AnatomyRegion, MarkerDetection, VAgentResult } from "@ticdss/shared-types";
 import { runVAgent } from "@/lib/vision";
 import { CameraCapture } from "@/components/vision/CameraCapture";
+import { IntentRecorder } from "@/components/IntentRecorder";
 
 interface Props {
   sessionId: string;
@@ -156,21 +157,10 @@ export function VisionPeAssist({ sessionId, itemTargets, onResult }: Props) {
       />
 
       <div className="rounded-xl border border-subtle bg-white p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Mic size={16} className="text-brand-500" />
-          <h3 className="text-sm font-semibold text-ink">語音宣告 (Intent-First)</h3>
-        </div>
-        <input
-          type="text"
-          value={intentText}
-          onChange={(e) => setIntentText(e.target.value)}
-          placeholder="例：我要聽右下肺葉的呼吸音"
-          className="w-full px-3 py-2 rounded-lg bg-bg-surface text-sm border-0 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+        <IntentRecorder
+          initialValue={intentText}
+          onTranscribed={(t) => setIntentText(t)}
         />
-        <p className="text-[11px] text-ink-muted mt-1.5">
-          開始示範前先說明您要評估什麼，V-Agent 會用這段宣告對照實際動作。
-          （未來會接 Breeze ASR 自動辨識）
-        </p>
       </div>
 
       <div className="rounded-xl border border-subtle bg-white p-4">
