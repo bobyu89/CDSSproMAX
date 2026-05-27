@@ -34,6 +34,21 @@
 
 **禁止隨意換模型**——論文要求模型版本可追溯，要換得改 Protocol。
 
+### 3a. Wave 1.5 — Vision 雙層設計
+
+PE 評分採「**ArUco 解位置 + V-Agent 解手法**」雙層：
+
+| 層 | 解決 | 技術 | 信心 |
+|---|---|---|---|
+| Layer 1 | 位置 (80%) | OpenCV ArUco DICT_4X4_50 | deterministic |
+| Layer 2 | 手法 (20%) | Gemini 3.5 Flash Vision (V-Agent) | LLM 語意 |
+
+- 15 個 marker 對應半身假人解剖位置 — 定義在 `apps/api/src/vision/anatomy_map.py`
+- 連續遮蔽 ≥ 1.5 秒 = 該位置被觸碰
+- V-Agent 不評位置（職責切割），只評動作正確性 / 技巧 / 持續時間
+- V-Agent 為 Wave 1.5 階段 stub — 真接 Gemini Vision multimodal 在 Wave 1.6
+- 詳見 `docs/architecture/vision-pipeline.md`
+
 ### 4. 技術棧
 
 | 層 | 技術 | 不可換 |

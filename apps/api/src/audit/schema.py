@@ -21,6 +21,10 @@ class AuditEventType(str, Enum):
     DUAT_SCORE_COMPUTED = "duat.score_computed"
     GRADER_ACTION = "grader.action"
     MDRIFT_ALERT = "mdrift.alert"
+    # Wave 1.5 — vision layer events
+    VISION_FRAME_DETECTED = "vision.frame_detected"
+    VISION_REGION_TOUCHED = "vision.region_touched"
+    VISION_V_AGENT_SCORED = "vision.v_agent_scored"
 
 
 class AuditPayload(BaseModel):

@@ -18,6 +18,7 @@ from src.agents.m_agent import MAgent
 from src.agents.o_agent import OAgent
 from src.agents.pipeline import DuatItemResult, DuatPipeline
 from src.agents.s_agent import SAgent
+from src.agents.v_agent import VAgent
 
 __all__ = [
     "AAgent",
@@ -30,5 +31,6 @@ __all__ = [
     "MAgent",
     "OAgent",
     "SAgent",
+    "VAgent",
     "arbitrate",
 ]

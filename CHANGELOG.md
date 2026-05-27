@@ -2,6 +2,61 @@
 
 All notable changes to TICDSS. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 
+## [0.2.0-skeleton] — 2026-05-28
+
+### Added — Wave 1.5 vision skeleton
+
+Frame for the visual evaluation layer landed; implementations are stubs but
+the full API + UI contract is in place so subsequent work can fill in
+without architecture changes.
+
+#### Backend
+- `apps/api/src/vision/`: anatomy_map (15 ArUco IDs → anatomical regions),
+  marker_detector (lazy OpenCV DICT_4X4_50 with stub fallback), frame_capture
+  helpers, occlusion-tracking utility (1.5s threshold → "region touched").
+- `apps/api/src/agents/v_agent.py`: V-Agent (Gemini 3.5 Flash Vision) shell —
+  schemas + prompt + stub return; multimodal SDK wiring marked as next step.
+- `apps/api/src/routers/vision.py`: 5 endpoints (`/vision/anatomy-map`,
+  `/vision/markers/detect`, `/vision/sessions/{id}/track`,
+  `/vision/sessions/{id}/v-agent`, `/vision/health`) + admin tracker reset.
+- `apps/api/src/db/models.py` + alembic `0002_vision`: new `pe_observations`
+  table to persist per-rubric-item V-Agent verdicts and keyframe paths.
+- `apps/api/src/audit/schema.py`: 3 new vision audit events
+  (`vision.frame_detected`, `vision.region_touched`, `vision.v_agent_scored`).
+- `apps/api/pyproject.toml`: optional `[vision]` extra (opencv-python +
+  numpy + reportlab) so the base install stays light.
+- Tests: `test_vision_anatomy_map.py` (invariants), `test_vision_marker_detector.py`
+  (occlusion tracker semantics + cv2-missing graceful degrade),
+  `test_v_agent.py` (stub correctness on intent match / duration / hash).
+
+#### Frontend
+- `apps/web/lib/vision.ts`: typed client for all vision endpoints with
+  mock fallback for offline dev.
+- `apps/web/components/vision/CameraCapture.tsx`: getUserMedia preview +
+  500ms polling detection loop + STUB/OPENCV backend badge.
+- `apps/web/components/vision/MarkerOverlay.tsx`: SVG marker boxes + labels.
+- `apps/web/components/vision/TouchedRegionsPanel.tsx`: live state of all 15
+  markers with "目標" highlight for the expected region.
+- `packages/shared-types/src/vision.ts`: AnatomyRegion / MarkerDetection /
+  FrameDetectResult / TrackSampleResult / VAgentResult shared types.
+- `packages/shared-prompts/v_agent.txt`: V-Agent system prompt (strict JSON
+  schema, position-vs-technique separation).
+
+#### Tooling & docs
+- `scripts/generate_aruco_pdf.py`: produces an A4 PDF with all 15 markers
+  (5×5 cm each) + 繁中 labels + print hints, ready to laminate.
+- `data/aruco/README.md`: marker ↔ region map + printing & calibration
+  walkthrough.
+- `docs/architecture/vision-pipeline.md`: full design rationale for the
+  two-layer (ArUco + V-Agent) split, threshold choices, DUAT integration plan.
+
+### Not yet (Wave 1.6)
+- V-Agent real multimodal call (google-genai inline image bytes)
+- DUAT pipeline integration: V-Agent result fan-in to Consensus Arbiter
+  alongside S/A for PE rubric items
+- StepPE wiring: trigger V-Agent on Intent-First voice declaration
+- Calibration page under /admin for verifying all 15 markers detect
+
 ## [0.1.0] — 2026-05-27
 
 First Wave 1 milestone — end-to-end vertical slice from login through DUAT-scored session, with the evaluation harness and RAG online.
