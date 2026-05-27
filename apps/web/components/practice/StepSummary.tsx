@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Loader2, RotateCcw, Home, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Loader2, RotateCcw, Home, AlertCircle, CheckCircle2, FileText } from "lucide-react";
 import type { DuatScore } from "@ticdss/shared-types";
 import { useCdssStore } from "@/lib/cdssStore";
 import { scoreAllLqqopera } from "@/lib/api";
@@ -237,6 +237,19 @@ export function StepSummary() {
           );
         })}
       </div>
+
+      {sessionId && (
+        <div className="mb-6 flex justify-center">
+          <button
+            type="button"
+            onClick={() => router.push(`/handout/${sessionId}`)}
+            className="px-8 py-4 rounded-xl font-bold text-base text-white flex items-center justify-center gap-2.5 transition-all hover:opacity-90 active:scale-[0.98] bg-brand-600 shadow-cta"
+          >
+            <FileText size={18} />
+            查看完整講義
+          </button>
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <button

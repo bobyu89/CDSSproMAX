@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, FileText } from "lucide-react";
 import type { SessionRecord } from "@ticdss/shared-types";
 import { MOCK_CASE_TITLES } from "@/lib/mock";
 
@@ -61,6 +62,15 @@ export function SessionRow({ session, expanded, onToggle, children }: Props) {
           <ChevronDown size={20} />
         </motion.div>
       </button>
+      <div className="px-6 pb-3 -mt-1 flex">
+        <Link
+          href={`/handout/${session.id}`}
+          onClick={(e) => e.stopPropagation()}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 hover:text-brand-700 hover:underline"
+        >
+          <FileText size={12} /> 查看講義
+        </Link>
+      </div>
       {expanded && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}

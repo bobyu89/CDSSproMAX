@@ -29,6 +29,10 @@ class AuditEventType(str, Enum):
     PHYSIO_SAMPLES_INGESTED = "physio.samples_ingested"
     PHYSIO_HRV_COMPUTED = "physio.hrv_computed"
     PHYSIO_DEVICE_CONNECTED = "physio.device_connected"
+    # Wave 4 — personal handout
+    HANDOUT_GENERATED = "handout.generated"
+    SELF_ASSESSMENT_SUBMITTED = "handout.self_assessment_submitted"
+    CONFIDENCE_PREDICTED = "handout.confidence_predicted"
 
 
 class AuditPayload(BaseModel):

@@ -16,6 +16,7 @@ from src.routers import (
     cases,
     duat,
     grading,
+    handout,
     health,
     physio,
     sessions,
@@ -58,6 +59,7 @@ def create_app() -> FastAPI:
     app.include_router(grading.router)
     app.include_router(admin.router)
     app.include_router(physio.router)
+    app.include_router(handout.router)
     return app
 
 

@@ -119,6 +119,11 @@ class Session(Base):
     )
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
+    # Wave-4 handout cache: stores the JSON-serialised HandoutResponse so that
+    # repeated GETs don't re-burn Claude/Gemini quota. Cleared by the
+    # /handout/regenerate endpoint.
+    generated_handout_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+
     participant: Mapped[Participant] = relationship(back_populates="sessions")
 
 
@@ -253,6 +258,75 @@ class PhysioSample(Base):
 
     __table_args__ = (
         Index("physio_samples_session_ts_idx", "session_id", "timestamp_ms"),
+    )
+
+
+# === Handout (Wave 4) =====================================================
+
+
+class SelfAssessment(Base):
+    """反脆弱 self-assessment form filled by the student after a session.
+
+    Five Likert-1-5 items + three narrative free-text fields. Stored once per
+    (session, participant) — the POST endpoint upserts.
+    """
+
+    __tablename__ = "self_assessments"
+
+    id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=_uuid)
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("sessions.id", ondelete="CASCADE"), nullable=False
+    )
+    participant_id: Mapped[uuid.UUID] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("participants.id", ondelete="CASCADE"), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    q_handled_stress: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    q_learned_from_mistakes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    q_uncertainty_tolerance: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    q_recovery_speed: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    q_growth_orientation: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+    narrative_strengths: Mapped[str | None] = mapped_column(Text, nullable=True)
+    narrative_growth: Mapped[str | None] = mapped_column(Text, nullable=True)
+    narrative_supervisor_question: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    __table_args__ = (
+        Index("self_assessments_session_idx", "session_id"),
+    )
+
+
+class ConfidenceCalibration(Base):
+    """Pre-reveal score prediction → calibration-gap analysis.
+
+    Student records their predicted-self-score *before* the DUAT results are
+    shown. After scoring, ``actual_score_0_5`` and ``calibration_gap`` are
+    computed and persisted; later reads return them as-is.
+    """
+
+    __tablename__ = "confidence_calibrations"
+
+    id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=_uuid)
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("sessions.id", ondelete="CASCADE"), nullable=False
+    )
+    participant_id: Mapped[uuid.UUID] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("participants.id", ondelete="CASCADE"), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    predicted_score_0_5: Mapped[int] = mapped_column(Integer, nullable=False)
+    predicted_at_phase: Mapped[str] = mapped_column(String(40), nullable=False)
+    actual_score_0_5: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    calibration_gap: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+    __table_args__ = (
+        Index("confidence_calibrations_session_idx", "session_id"),
     )
 
 
