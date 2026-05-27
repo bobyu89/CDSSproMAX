@@ -1,0 +1,3 @@
+{"sample_id": "ex001", "rubric_item_id": "lqqopera.location", "case_id": "case_chest_pain_01", "transcript_text": "學員：請問您痛的位置在哪裡？是不是會延伸到其他地方？\n病人：胸口正中間，會傳到左肩。", "case_context": "65 歲男性，主訴胸痛三小時。", "human_score": 5, "human_rater_id": "rater_01"}
+{"sample_id": "ex002", "rubric_item_id": "lqqopera.quality", "case_id": "case_chest_pain_01", "transcript_text": "學員：那痛起來感覺像什麼？\n病人：壓著的感覺。\n學員：好，下一題。", "case_context": "65 歲男性，主訴胸痛三小時。", "human_score": 3, "human_rater_id": "rater_01"}
+{"sample_id": "ex003", "rubric_item_id": "lqqopera.onset", "case_id": "case_chest_pain_01", "transcript_text": "學員：嗯…您今天怎麼了？\n病人：胸口痛。\n學員：好，那我聽診一下。", "case_context": "65 歲男性，主訴胸痛三小時。", "human_score": 1, "human_rater_id": "rater_01"}

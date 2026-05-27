@@ -1,0 +1,588 @@
+system: urological
+display_name: 泌尿系統身體評估
+description: >
+  針對泌尿系統進行系統性身體評估，涵蓋腎臟、輸尿管、膀胱及外生殖器之視診、觸診、叩診、聽診與特殊檢查，
+  用於評估泌尿系統疾病（如腎結石、尿路感染、前列腺疾病、睪丸病變等）之臨床徵象。
+  本評估以專科護理師（NP）執業範圍為基準，涉及隱私部位檢查時特別強調知情同意與隱私維護。
+prerequisites:
+  - 確認病人身分及評估目的，建立治療性溝通關係
+  - 準備適當環境（隱私空間、適當溫度、窗簾遮蔽）
+  - 準備器材：手套、潤滑劑、叩診槌、筆燈/手電筒（透光試驗用）、聽診器
+  - 向病人解釋檢查流程，取得口頭知情同意
+  - 請病人排空膀胱（除非需評估膀胱脹滿）
+  - 洗手並穿戴適當防護裝備
+source_note: "本內容由專科護理師根據臨床經驗自行撰寫，醫學事實參考 StatPearls (CC BY-NC-ND 4.0) 及公開臨床指引"
+
+assessment_sequence:
+  # ===== STEP 1: INSPECTION 視診 =====
+  - step: 1
+    category: inspection
+    display_name: 視診
+    duration_seconds: 180
+    actions:
+      - id: ur_i_01
+        description: 觀察腰部及側腹外觀
+        technique: >
+          請病人取坐姿或站姿，暴露腰背部。從後方觀察雙側腰部（flank area），
+          比較兩側是否對稱，注意有無腫脹、隆起、瘀斑（Grey Turner sign）或皮膚顏色變化。
+        normal: 雙側腰部對稱，無腫脹、瘀斑或皮膚異常
+        abnormal:
+          - finding: 單側腰部腫脹或隆起
+            ddx: [腎臟腫大（hydronephrosis）, 腎周膿瘍（perinephric abscess）, 後腹腔腫瘤]
+            urgency: medium
+          - finding: 側腹瘀斑（Grey Turner sign）
+            ddx: [後腹腔出血, 急性出血性胰臟炎, 腎臟外傷]
+            urgency: high
+        common_mistakes:
+          - 未充分暴露腰背部，遺漏側腹部觀察
+          - 未比較兩側對稱性
+        clinical_pearl: >
+          Grey Turner sign 出現通常代表後腹腔出血已達一定量，需高度警覺，
+          但此徵象可能在出血後 24-48 小時才出現。
+        osce_points: 2
+
+      - id: ur_i_02
+        description: 觀察下腹部外觀（膀胱區域）
+        technique: >
+          請病人平躺，暴露下腹部（恥骨上區 suprapubic area），
+          觀察有無膀胱膨隆（distended bladder）、手術疤痕、造口或皮膚異常。
+        normal: 下腹部平坦，無膀胱膨隆，無手術疤痕
+        abnormal:
+          - finding: 恥骨上區圓形膨隆
+            ddx: [急性尿滯留（acute urinary retention）, 慢性尿滯留, 膀胱腫瘤, 妊娠]
+            urgency: medium
+          - finding: 下腹部手術疤痕
+            ddx: [既往泌尿科手術史, 婦科手術史, 剖腹產史]
+            urgency: low
+        common_mistakes:
+          - 未請病人排空膀胱即開始評估，導致誤判膀胱膨隆
+          - 忽略觀察手術疤痕及造口
+        osce_points: 1
+
+      - id: ur_i_03
+        description: 男性外生殖器視診
+        technique: >
+          取得病人知情同意後，維護病人隱私（拉上隔簾、僅暴露必要區域）。
+          戴上手套，依序觀察：(1) 包皮外觀及是否可翻開（若未割包皮）；
+          (2) 龜頭表面有無潰瘍、分泌物、腫塊；(3) 尿道口（urethral meatus）位置、
+          有無分泌物或紅腫；(4) 陰莖幹部皮膚有無皮疹、硬結、水腫。
+          注意：全程向病人說明每個步驟，維持專業態度。
+        normal: 包皮可正常翻開復位，龜頭表面光滑無潰瘍，尿道口位於龜頭頂端，無分泌物，陰莖皮膚完整
+        abnormal:
+          - finding: 包皮無法翻開（phimosis）或翻開後無法復位（paraphimosis）
+            ddx: [包莖（phimosis）, 嵌頓包莖（paraphimosis）, 反覆感染後纖維化]
+            urgency: high
+          - finding: 尿道口異常分泌物
+            ddx: [淋病（gonorrhea）, 非淋菌性尿道炎（NGU）, 披衣菌感染（chlamydia）]
+            urgency: medium
+          - finding: 龜頭或包皮潰瘍
+            ddx: [梅毒硬性下疳（chancre）, 軟性下疳（chancroid）, 生殖器疱疹（herpes）, 陰莖癌]
+            urgency: medium
+          - finding: 尿道下裂（hypospadias）— 尿道口位於陰莖腹側
+            ddx: [先天性尿道下裂]
+            urgency: low
+        common_mistakes:
+          - 未事先取得知情同意即進行檢查
+          - 檢查時未戴手套
+          - 遺漏觀察尿道口位置
+          - 未維護病人隱私（未拉隔簾）
+        clinical_pearl: >
+          嵌頓包莖（paraphimosis）為泌尿科急症，包皮翻開後卡在冠狀溝無法復位，
+          會造成龜頭水腫及缺血，需立即處理。
+        osce_points: 2
+
+      - id: ur_i_04
+        description: 陰囊外觀視診
+        technique: >
+          維護病人隱私，取得知情同意。觀察陰囊整體外觀，包括：
+          大小是否對稱、皮膚顏色、有無水腫、紅腫、皮疹或靜脈曲張（站立時更明顯）。
+          請病人站立觀察，比較兩側陰囊。
+        normal: 左側陰囊略低於右側為正常，皮膚顏色均勻，無紅腫水腫
+        abnormal:
+          - finding: 陰囊明顯腫大（單側或雙側）
+            ddx: [陰囊水腫（hydrocele）, 疝氣（inguinal hernia）, 睪丸腫瘤, 副睪炎（epididymitis）]
+            urgency: medium
+          - finding: 陰囊皮膚紅腫、溫熱
+            ddx: [急性副睪睪丸炎（epididymo-orchitis）, 睪丸扭轉（testicular torsion）, 壞死性筋膜炎（Fournier's gangrene）]
+            urgency: high
+          - finding: 陰囊內可見蚯蚓狀曲張靜脈（站立時明顯）
+            ddx: [精索靜脈曲張（varicocele）]
+            urgency: low
+        common_mistakes:
+          - 僅在平躺時觀察，遺漏精索靜脈曲張（需站立觀察）
+          - 未比較兩側對稱性
+        clinical_pearl: >
+          右側單獨出現精索靜脈曲張較少見，需考慮右側腎靜脈或下腔靜脈阻塞（如後腹腔腫瘤），
+          應進一步影像學檢查。
+        osce_points: 2
+
+      - id: ur_i_05
+        description: 女性會陰部簡要視診
+        technique: >
+          取得病人知情同意，維護病人隱私（拉上隔簾、僅暴露必要區域），
+          請一位同性別陪伴人員在場。病人取截石位（lithotomy position）或仰臥屈膝位，
+          戴上手套，輕柔分開大陰唇，觀察：(1) 尿道口有無紅腫、分泌物；
+          (2) 外陰皮膚有無潰瘍、皮疹；(3) 有無膀胱或子宮脫垂徵象。
+          注意：全程向病人說明動作，維持專業態度。
+        normal: 尿道口無紅腫，無異常分泌物，外陰皮膚完整，無脫垂徵象
+        abnormal:
+          - finding: 尿道口紅腫伴分泌物
+            ddx: [尿道炎（urethritis）, 泌尿道感染（UTI）, 性傳播感染（STI）]
+            urgency: medium
+          - finding: 用力時可見前壁膨出（cystocele）
+            ddx: [膀胱脫垂（cystocele）, 骨盆底肌無力]
+            urgency: low
+        common_mistakes:
+          - 未取得知情同意或未安排同性別陪伴
+          - 動作過於粗魯，未先告知病人
+          - 未請病人用力以評估脫垂情形
+        osce_points: 2
+
+  # ===== STEP 2: PALPATION 觸診 =====
+  - step: 2
+    category: palpation
+    display_name: 觸診
+    duration_seconds: 300
+    actions:
+      - id: ur_p_01
+        description: 腎臟觸診（bimanual palpation）
+        technique: >
+          病人仰臥，雙膝微屈放鬆腹肌。檢查者站在病人右側：
+          【右腎】左手置於病人右側腰部（第12肋下方）向上托起，右手置於右側肋緣下方，
+          請病人深吸氣，雙手同時向中間靠攏嘗試觸及腎臟下極（ballottement technique）。
+          【左腎】左手繞過病人身體置於左側腰部向上托，右手置於左肋緣下方，同法觸診。
+          注意：左腎位置較高，正常情況下通常摸不到。
+        normal: 右腎下極可能在深吸氣時於瘦長體型者觸及，表面光滑、無壓痛；左腎通常摸不到
+        abnormal:
+          - finding: 腎臟明顯觸及且腫大
+            ddx: [腎水腫（hydronephrosis）, 多囊腎（polycystic kidney disease）, 腎臟腫瘤]
+            urgency: medium
+          - finding: 腎臟觸診時明顯壓痛
+            ddx: [急性腎盂腎炎（pyelonephritis）, 腎周膿瘍, 腎結石合併感染]
+            urgency: high
+          - finding: 觸及不規則硬塊
+            ddx: [腎細胞癌（renal cell carcinoma）, 腎囊腫合併出血]
+            urgency: high
+        common_mistakes:
+          - 未請病人配合深呼吸
+          - 後手（托腰手）位置過低，無法有效將腎臟向前推
+          - 未放鬆腹肌即開始觸診，造成觸診困難
+        clinical_pearl: >
+          正常成人左腎通常摸不到，若左腎可觸及，應考慮腎臟腫大。
+          BMI 較高的病人腎臟觸診困難度增加，不宜過度用力。
+        osce_points: 3
+
+      - id: ur_p_02
+        description: 肋脊角壓痛評估（CVA tenderness）
+        technique: >
+          請病人取坐姿，背向檢查者。以左手掌平放於病人肋脊角
+          （costovertebral angle，第12肋與脊柱交界處），
+          右手握拳以尺側輕叩左手手背。先示範力道於病人肩部，
+          再依序叩擊雙側肋脊角，詢問病人是否有疼痛。
+        normal: 雙側叩擊時無疼痛，僅感受到震動
+        abnormal:
+          - finding: 單側肋脊角叩擊痛（CVA tenderness positive）
+            ddx: [急性腎盂腎炎（pyelonephritis）, 腎結石（nephrolithiasis）, 腎周膿瘍]
+            urgency: high
+          - finding: 雙側肋脊角叩擊痛
+            ddx: [雙側腎盂腎炎, 多囊腎, 全身性感染]
+            urgency: high
+        common_mistakes:
+          - 叩擊力道過重造成病人不適
+          - 未先在病人肩部示範力道
+          - 直接用拳頭叩擊而非透過墊手傳導
+        clinical_pearl: >
+          CVA tenderness 是評估上泌尿道感染及腎結石的重要理學檢查，
+          陽性結果結合發燒及膿尿強烈提示急性腎盂腎炎。
+        osce_points: 2
+
+      - id: ur_p_03
+        description: 膀胱觸診（恥骨上區）
+        technique: >
+          病人仰臥，從恥骨聯合上方開始，以單手或雙手輕柔向下觸診恥骨上區（suprapubic area），
+          評估有無膀胱膨脹。脹滿的膀胱可觸及為光滑、圓形、有彈性的腫塊，
+          由恥骨上方向臍部延伸。同時詢問病人有無壓痛或尿意感。
+        normal: 恥骨上區平軟，無膀胱膨脹觸及，無壓痛
+        abnormal:
+          - finding: 恥骨上區可觸及圓形膨脹腫塊
+            ddx: [急性尿滯留（acute urinary retention）, 慢性尿滯留, 膀胱腫瘤（較少見）]
+            urgency: medium
+          - finding: 恥骨上區壓痛
+            ddx: [急性膀胱炎（cystitis）, 間質性膀胱炎（interstitial cystitis）, 膀胱結石]
+            urgency: medium
+        common_mistakes:
+          - 觸診前未確認病人是否已排尿
+          - 觸診力道過重造成病人不適或誘發排尿反射
+        osce_points: 2
+
+      - id: ur_p_04
+        description: 睪丸觸診
+        technique: >
+          取得知情同意，維護病人隱私。戴上手套，病人可取站立或仰臥姿勢。
+          以拇指和食指、中指輕柔固定睪丸，依序評估：(1) 大小（正常約 4x3x2 cm）；
+          (2) 形狀是否橢圓規則；(3) 表面是否光滑；(4) 硬度（正常如剝殼水煮蛋的彈性）；
+          (5) 有無壓痛；(6) 有無腫塊或硬結。兩側分別觸診並比較。
+          全程告知病人每個步驟，注意動作輕柔。
+        normal: 雙側睪丸大小對稱（左側可略小），表面光滑，質地均勻有彈性，無壓痛、無腫塊
+        abnormal:
+          - finding: 睪丸觸及無痛性硬結或腫塊
+            ddx: [睪丸癌（testicular cancer）, 睪丸囊腫]
+            urgency: high
+          - finding: 睪丸腫大伴劇烈壓痛
+            ddx: [睪丸扭轉（testicular torsion）, 急性睪丸炎（orchitis）, 副睪炎]
+            urgency: critical
+          - finding: 單側睪丸萎縮
+            ddx: [既往睪丸扭轉, 隱睪症術後, 精索靜脈曲張長期影響, 腮腺炎後睪丸炎]
+            urgency: low
+        common_mistakes:
+          - 未取得知情同意
+          - 觸診力道過重造成不必要疼痛
+          - 僅觸診一側而忘記比較兩側
+          - 未評估硬度和表面特徵，僅注意大小
+        clinical_pearl: >
+          睪丸癌好發於 15-35 歲男性，最常見的表現是無痛性睪丸腫塊。
+          任何睪丸硬結都應視為惡性直到證明並非如此，需安排超音波檢查。
+        osce_points: 3
+
+      - id: ur_p_05
+        description: 副睪觸診
+        technique: >
+          維護病人隱私，取得知情同意。以拇指和食指沿睪丸後外側輕柔觸摸副睪
+          （epididymis），從上極（頭部 head）沿體部（body）至下極（尾部 tail），
+          評估有無腫大、硬結或壓痛。兩側分別觸診比較。
+        normal: 副睪質軟，略可觸及於睪丸後外側，無腫大、無壓痛、無硬結
+        abnormal:
+          - finding: 副睪腫大伴明顯壓痛
+            ddx: [急性副睪炎（epididymitis）, 副睪膿瘍]
+            urgency: high
+          - finding: 副睪觸及無痛性硬結或囊腫
+            ddx: [精液囊腫（spermatocele）, 副睪囊腫, 結核性副睪炎（較少見）]
+            urgency: low
+        common_mistakes:
+          - 無法區分副睪與睪丸本體
+          - 未沿副睪全長觸診，僅檢查部分區域
+        clinical_pearl: >
+          急性副睪炎在年輕男性（<35歲）最常見病原為披衣菌和淋病雙球菌，
+          在年長男性則多為大腸桿菌等革蘭氏陰性菌。
+        osce_points: 2
+
+      - id: ur_p_06
+        description: 精索觸診（評估 varicocele）
+        technique: >
+          維護病人隱私，取得知情同意。請病人站立，以拇指和食指沿陰囊上方觸摸精索
+          （spermatic cord），感受精索內構造（輸精管如硬繩索狀）。
+          評估有無擴張的靜脈叢（如觸及蚯蚓狀的團塊即為精索靜脈曲張）。
+          請病人執行 Valsalva maneuver（用力閉氣）觀察有無加重。
+          分級：Grade I 僅 Valsalva 時可觸及；Grade II 站立可觸及；Grade III 肉眼可見。
+        normal: 精索可觸及為條索狀結構，含光滑的輸精管，無擴張靜脈叢
+        abnormal:
+          - finding: 觸及蚯蚓狀擴張靜脈叢（Valsalva 時加重）
+            ddx: [精索靜脈曲張（varicocele）]
+            urgency: low
+          - finding: 精索增粗、壓痛
+            ddx: [精索炎（funiculitis）, 精索扭轉]
+            urgency: medium
+        common_mistakes:
+          - 未請病人站立即進行觸診（平躺時 varicocele 可能消失）
+          - 忘記請病人做 Valsalva maneuver
+          - 未注意右側單獨 varicocele 的臨床意義
+        clinical_pearl: >
+          約 85-90% 的精索靜脈曲張發生在左側，因左側精索靜脈匯入左腎靜脈角度較大。
+          右側單獨出現應高度懷疑後腹腔病變壓迫下腔靜脈。
+        osce_points: 2
+
+      - id: ur_p_07
+        description: 腹股溝淋巴結觸診
+        technique: >
+          以指腹沿腹股溝韌帶（inguinal ligament）走向，輕柔觸診雙側腹股溝淋巴結
+          （水平組及垂直組）。評估淋巴結大小、數量、質地、活動度及有無壓痛。
+        normal: 可觸及少數小型（< 1 cm）、質軟、可移動、無壓痛的淋巴結
+        abnormal:
+          - finding: 淋巴結腫大（> 1.5 cm）、質硬、固定
+            ddx: [轉移性癌（陰莖癌、睪丸癌淋巴轉移）, 淋巴瘤]
+            urgency: high
+          - finding: 淋巴結腫大伴壓痛、溫熱
+            ddx: [感染性淋巴結炎（生殖器感染、下肢感染）, 性傳播感染]
+            urgency: medium
+        common_mistakes:
+          - 觸診區域不完整，僅檢查部分淋巴結群
+          - 未評估淋巴結活動度和質地
+        osce_points: 1
+
+      - id: ur_p_08
+        description: 肛門指診評估前列腺（DRE — Digital Rectal Exam）
+        technique: >
+          【此項檢查需在督導（attending physician 或資深 NP）指導下執行】
+          取得病人知情同意，詳細解釋檢查目的及過程，維護病人隱私。
+          病人可取左側臥位（Sims' position）或站立前傾位。
+          戴手套，食指塗抹充足潤滑劑，輕柔置入肛門，先評估肛門括約肌張力，
+          再將指腹朝前（腹側）觸及前列腺。評估：(1) 大小（正常約核桃大小，約 3x3 cm）；
+          (2) 形狀（雙葉對稱，中央溝可觸及）；(3) 表面（光滑）；(4) 質地（如橡皮般彈性）；
+          (5) 有無壓痛；(6) 有無硬結或結節。
+        normal: 前列腺約核桃大小，雙葉對稱，中央溝可觸及，表面光滑，質地均勻有彈性，無壓痛、無硬結
+        abnormal:
+          - finding: 前列腺瀰漫性腫大但表面光滑
+            ddx: [良性前列腺增生（BPH）]
+            urgency: low
+          - finding: 前列腺觸及硬結或結節
+            ddx: [前列腺癌（prostate cancer）, 前列腺結石, 慢性前列腺炎伴纖維化]
+            urgency: high
+          - finding: 前列腺明顯壓痛、腫脹、溫熱
+            ddx: [急性細菌性前列腺炎（acute bacterial prostatitis）, 前列腺膿瘍]
+            urgency: high
+          - finding: 前列腺不對稱
+            ddx: [前列腺癌, 不對稱性 BPH]
+            urgency: medium
+        common_mistakes:
+          - 未取得知情同意
+          - 未使用足夠潤滑劑
+          - 急性前列腺炎時過度用力按壓（可能導致菌血症）
+          - 未在督導下執行
+          - 未評估肛門括約肌張力（可能遺漏神經病變線索）
+        clinical_pearl: >
+          疑似急性細菌性前列腺炎時，DRE 應極為輕柔，避免過度按摩前列腺，
+          因可能誘發菌血症。此外，PSA 值在急性前列腺炎時也會升高，不宜在此時抽血檢測。
+        osce_points: 3
+
+  # ===== STEP 3: PERCUSSION 叩診 =====
+  - step: 3
+    category: percussion
+    display_name: 叩診
+    duration_seconds: 90
+    actions:
+      - id: ur_pe_01
+        description: 肋脊角叩擊（拳叩法）
+        technique: >
+          此步驟與觸診中的 CVA tenderness 評估手法相同，但在叩診階段再次確認。
+          請病人坐姿背向檢查者，左手掌平放於肋脊角，右手握拳以尺側輕叩手背，
+          雙側依序進行。若觸診階段已執行且結果明確，可不重複。
+        normal: 叩擊時無疼痛
+        abnormal:
+          - finding: 叩擊痛陽性
+            ddx: [腎盂腎炎, 腎結石, 腎周膿瘍]
+            urgency: high
+        common_mistakes:
+          - 與觸診階段重複執行而未加說明
+          - 叩擊力道不一致，兩側比較失準
+        osce_points: 1
+
+      - id: ur_pe_02
+        description: 膀胱叩診（恥骨上區）
+        technique: >
+          病人仰臥，從臍部向恥骨聯合方向進行叩診。正常空膀胱為鼓音（tympany），
+          膀胱脹滿時恥骨上區會出現濁音（dullness），濁音範圍越大代表膀胱越脹。
+          標記濁音上界與恥骨聯合之距離。
+        normal: 恥骨上區呈鼓音，無濁音區域
+        abnormal:
+          - finding: 恥骨上區大範圍濁音（濁音上界高於恥骨聯合 2 指幅以上）
+            ddx: [尿滯留（urinary retention）, 膀胱過度膨脹]
+            urgency: medium
+        common_mistakes:
+          - 叩診前未確認病人排尿狀態
+          - 未由臍部向下依序叩診，無法定位濁音上界
+        clinical_pearl: >
+          臨床上膀胱叩診濁音出現，通常代表膀胱容量已超過 150-200 mL。
+          嚴重脹尿時濁音可延伸至臍部甚至以上。
+        osce_points: 2
+
+  # ===== STEP 4: AUSCULTATION 聽診 =====
+  - step: 4
+    category: auscultation
+    display_name: 聽診
+    duration_seconds: 60
+    actions:
+      - id: ur_a_01
+        description: 腎動脈雜音聽診（renal artery bruit）
+        technique: >
+          病人仰臥，使用聽診器鐘面（bell），分別置於上腹部臍部兩側約 2-3 cm 處
+          （左、右腎動脈投射區），以及側腹部（flank）肋脊角區域。
+          請病人暫時憋氣以減少呼吸音干擾，仔細聆聽有無收縮期或連續性雜音（bruit）。
+        normal: 雙側腎動脈投射區無雜音
+        abnormal:
+          - finding: 單側或雙側收縮期雜音
+            ddx: [腎動脈狹窄（renal artery stenosis）, 腎動脈纖維肌性發育不良（fibromuscular dysplasia）]
+            urgency: medium
+          - finding: 連續性雜音（收縮期延續至舒張期）
+            ddx: [嚴重腎動脈狹窄, 動靜脈廔管（AV fistula）]
+            urgency: high
+        common_mistakes:
+          - 使用膜面而非鐘面聽診（鐘面較適合聽低頻雜音）
+          - 未請病人憋氣，腸蠕動音干擾判讀
+          - 僅聽前方而忽略側腹部
+        clinical_pearl: >
+          腎動脈雜音的敏感度約 40-50%，故聽不到雜音不能排除腎動脈狹窄。
+          若臨床高度懷疑（年輕女性難控制高血壓、肌酐上升），仍需影像學確認。
+        osce_points: 2
+
+  # ===== STEP 5: SPECIAL TESTS 特殊檢查 =====
+  - step: 5
+    category: special_tests
+    display_name: 特殊檢查
+    duration_seconds: 180
+    actions:
+      - id: ur_s_01
+        description: 提睪反射測試（Cremasteric reflex）
+        technique: >
+          維護病人隱私，取得知情同意。病人仰臥，以手指或棉棒輕劃大腿內側上方皮膚
+          （由下向上），觀察同側睪丸是否向上提升（正常反應為同側提睪肌收縮使睪丸上提）。
+          雙側分別測試並比較。
+        normal: 輕劃大腿內側時同側睪丸上提（cremasteric reflex positive）
+        abnormal:
+          - finding: 單側提睪反射消失
+            ddx: [睪丸扭轉（testicular torsion）, 上運動神經元病變, 脊髓 L1-L2 節段病變]
+            urgency: critical
+        common_mistakes:
+          - 刺激部位不正確（應在大腿內側上方，非陰囊）
+          - 未比較兩側反射
+          - 過度依賴此單一測試來排除睪丸扭轉
+        clinical_pearl: >
+          提睪反射消失是睪丸扭轉的重要線索，但此反射在部分正常青春期男性也可能減弱，
+          敏感度約 60-70%。臨床上若高度懷疑睪丸扭轉，不應因反射存在而延遲超音波檢查。
+        osce_points: 2
+
+      - id: ur_s_02
+        description: 陰囊透光試驗（Transillumination test）
+        technique: >
+          維護病人隱私，取得知情同意。在較暗環境中，將筆燈或手電筒緊貼陰囊腫大側後方，
+          從前方觀察光線是否能穿透陰囊。透光陽性（光線可穿透，陰囊呈現紅色透亮）
+          提示內容物為液體（如 hydrocele）；透光陰性（光線無法穿透）提示為實質性腫塊。
+        normal: 正常陰囊無明顯積液，輕微透光或不透光
+        abnormal:
+          - finding: 透光試驗陽性（明顯紅色透亮）
+            ddx: [陰囊水腫（hydrocele）, 精液囊腫（spermatocele）]
+            urgency: low
+          - finding: 透光試驗陰性（腫大但不透光）
+            ddx: [睪丸腫瘤, 血腫（hematocele）, 疝氣內容物（腸段）]
+            urgency: high
+        common_mistakes:
+          - 環境光線太亮，無法判讀透光結果
+          - 手電筒未緊貼皮膚，光線散射
+          - 將透光陽性即視為良性而忽略進一步檢查
+        clinical_pearl: >
+          透光試驗是簡單有效的床邊鑑別工具，但陰囊水腫可合併睪丸腫瘤，
+          故即使透光陽性，仍建議安排超音波確認睪丸本身狀態。
+        osce_points: 2
+
+      - id: ur_s_03
+        description: Prehn's sign（睪丸扭轉 vs 副睪炎鑑別）
+        technique: >
+          維護病人隱私，取得知情同意。病人仰臥，輕柔地將疼痛側睪丸向頭側抬高
+          （模擬抬高陰囊的效果）。觀察疼痛是否減輕：
+          Prehn's sign 陽性 = 抬高後疼痛減輕，傾向副睪炎；
+          Prehn's sign 陰性 = 抬高後疼痛無改善或加劇，傾向睪丸扭轉。
+          注意：此試驗的敏感度和特異度均有限，不能單獨作為診斷依據。
+        normal: 不適用（此為鑑別疼痛原因的測試）
+        abnormal:
+          - finding: Prehn's sign 陰性（抬高後疼痛不減或加劇）
+            ddx: [睪丸扭轉（testicular torsion）]
+            urgency: critical
+          - finding: Prehn's sign 陽性（抬高後疼痛減輕）
+            ddx: [副睪炎（epididymitis）, 副睪睪丸炎]
+            urgency: medium
+        common_mistakes:
+          - 過度依賴此單一測試做出診斷
+          - 動作過於粗魯加重病人疼痛
+          - 未向病人說明此測試的目的
+        clinical_pearl: >
+          Prehn's sign 的臨床價值有爭議，文獻顯示其敏感度和特異度均不足以可靠區分
+          睪丸扭轉與副睪炎。懷疑睪丸扭轉時，應優先安排彩色都普勒超音波（color Doppler ultrasound），
+          切勿因 Prehn's sign 陽性就排除扭轉的可能。
+        osce_points: 2
+
+      - id: ur_s_04
+        description: 尿液外觀評估
+        technique: >
+          收集病人新鮮尿液標本，於良好光線下以透明容器觀察尿液外觀。
+          評估：(1) 顏色（正常為淡黃至琥珀色）；(2) 混濁度（正常為清澈）；
+          (3) 有無沉澱物；(4) 氣味（正常為淡氨味）。記錄觀察結果。
+        normal: 尿液清澈，淡黃至琥珀色，無沉澱物，氣味正常
+        abnormal:
+          - finding: 血尿（肉眼可見紅色或棕色尿液）
+            ddx: [泌尿道感染, 腎結石, 膀胱癌, 腎細胞癌, 腎絲球腎炎, 外傷]
+            urgency: high
+          - finding: 混濁尿液（pyuria）
+            ddx: [泌尿道感染（UTI）, 腎盂腎炎, 性傳播感染]
+            urgency: medium
+          - finding: 深茶色尿液
+            ddx: [脫水, 肝膽疾病（膽紅素尿）, 橫紋肌溶解症（myoglobinuria）]
+            urgency: medium
+          - finding: 氣味異常（惡臭）
+            ddx: [泌尿道感染（尤其 Proteus 或 E. coli）, 膀胱陰道廔管]
+            urgency: medium
+        common_mistakes:
+          - 未在良好光線下觀察，影響顏色判讀
+          - 未記錄尿液收集時間
+          - 忽略藥物或食物對尿液顏色的影響（如 rifampin 橘紅色、甜菜紅色）
+        clinical_pearl: >
+          無痛性肉眼血尿在中老年人應視為膀胱癌的警訊直到排除，
+          即使尿液培養陰性也應安排膀胱鏡和上泌尿道影像學檢查。
+        osce_points: 1
+
+      - id: ur_s_05
+        description: 餘尿評估概念說明（Post-void residual, PVR）
+        technique: >
+          向病人說明餘尿評估的目的：測量排尿後膀胱內殘餘尿量。
+          臨床上使用攜帶式膀胱超音波（bladder scanner）進行非侵入性測量，
+          或以導尿管測量（侵入性）。NP 應了解：
+          (1) 請病人盡量排空膀胱後，於 10 分鐘內以 bladder scanner 測量；
+          (2) 正常 PVR < 50 mL；(3) PVR > 200 mL 為臨床有意義的殘餘尿量。
+          此項為概念說明，實際操作需配合儀器。
+        normal: 排尿後殘餘尿量（PVR）< 50 mL
+        abnormal:
+          - finding: PVR 50-200 mL
+            ddx: [輕度膀胱出口阻塞, 膀胱逼尿肌功能減退, 藥物影響（抗膽鹼藥物）]
+            urgency: low
+          - finding: PVR > 200 mL
+            ddx: [前列腺增生（BPH）導致膀胱出口阻塞, 神經性膀胱（neurogenic bladder）, 尿道狹窄]
+            urgency: medium
+          - finding: PVR > 500 mL
+            ddx: [嚴重膀胱出口阻塞, 膀胱逼尿肌失能, 慢性尿滯留]
+            urgency: high
+        common_mistakes:
+          - 未在排尿後 10 分鐘內測量
+          - 未記錄排尿量與 PVR 的比值
+          - 將單次測量結果視為絕對值（應考慮重複測量）
+        clinical_pearl: >
+          PVR 測量是評估下泌尿道症狀（LUTS）的重要工具。慢性高 PVR 可導致
+          反覆泌尿道感染、腎水腫及腎功能惡化，需積極處理。
+        osce_points: 1
+
+osce_scoring:
+  total_points: 35
+  passing_score: 25
+  time_limit_minutes: 15
+  critical_items:
+    - ur_p_02   # CVA tenderness — 基本腎臟評估
+    - ur_p_04   # 睪丸觸診 — 睪丸扭轉/腫瘤篩檢
+    - ur_s_01   # 提睪反射 — 睪丸扭轉鑑別
+    - ur_p_08   # DRE — 前列腺評估
+    - ur_i_03   # 男性外生殖器視診 — 含知情同意
+
+red_flags:
+  - finding: 急性單側陰囊劇痛（尤其青少年）合併提睪反射消失
+    action: 立即通知泌尿科醫師，疑似睪丸扭轉（testicular torsion），需於 6 小時內手術探查以挽救睪丸
+    urgency: critical
+
+  - finding: 完全無法排尿合併恥骨上區脹痛（急性尿滯留）
+    action: 立即放置導尿管引流，評估原因（BPH、藥物、神經性），記錄引流量，通知醫師
+    urgency: critical
+
+  - finding: 突發劇烈側腹痛放射至腹股溝，合併噁心嘔吐（腎絞痛）
+    action: 立即止痛處理（NSAIDs 或嗎啡），安排緊急腎臟超音波或 CT KUB，監測生命徵象
+    urgency: critical
+
+  - finding: 高燒合併肋脊角壓痛及膿尿（疑似急性腎盂腎炎或敗血性泌尿道感染）
+    action: 採集血液培養及尿液培養，啟動經驗性抗生素治療，監測生命徵象，評估是否合併尿路阻塞
+    urgency: critical
+
+  - finding: 嵌頓包莖（paraphimosis）— 包皮翻開後無法復位，龜頭腫脹發紫
+    action: 嘗試手動復位（施加穩定壓力於龜頭消腫後推回包皮），若失敗立即會診泌尿科進行背側切開術
+    urgency: critical
+
+  - finding: 陰囊皮膚壞死伴捻髮音（crepitus），疑似 Fournier's gangrene
+    action: 立即啟動敗血症處理流程，緊急會診外科手術清創，廣效抗生素治療，此為外科急症
+    urgency: critical
+
+  - finding: 無痛性肉眼血尿（尤其 > 40 歲病人）
+    action: 安排膀胱鏡檢查及上泌尿道影像學（CT urography），排除膀胱癌及腎臟腫瘤
+    urgency: critical

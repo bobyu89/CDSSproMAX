@@ -1,0 +1,25 @@
+{
+  "framework": "LQQOPERA",
+  "version": "1.0.0",
+  "source": "ported from cdss-training/src/cdss/interview_templates.py",
+  "dimension_to_field": {
+    "L": "location",
+    "Q": "quality",
+    "Q2": "quantity",
+    "O": "onset",
+    "P": "precipitation",
+    "E": "exaggerating",
+    "R": "relieving",
+    "A": "accompanying"
+  },
+  "templates": [
+    { "dimension": "L",  "label": "L — 位置",   "question": "請問你哪裡不舒服？是固定一個地方，還是會跑到別的地方？" },
+    { "dimension": "Q",  "label": "Q — 性質",   "question": "可以描述一下這個感覺是什麼樣子嗎？例如悶痛、刺痛、灼熱還是壓迫感？" },
+    { "dimension": "Q2", "label": "Q — 程度",   "question": "如果 0 分是完全不痛、10 分是最痛，現在大約幾分？" },
+    { "dimension": "O",  "label": "O — 發作",   "question": "什麼時候開始的？是突然發生，還是慢慢出現的？" },
+    { "dimension": "P",  "label": "P — 誘發",   "question": "有沒有特別什麼狀況下會變嚴重？例如吃東西、運動、姿勢改變？" },
+    { "dimension": "E",  "label": "E — 延伸",   "question": "這個不舒服有沒有傳到其他地方？例如手臂、背部或下巴？" },
+    { "dimension": "R",  "label": "R — 緩解",   "question": "什麼狀況下會比較舒服？休息、吃藥、改變姿勢有幫助嗎？" },
+    { "dimension": "A",  "label": "A — 伴隨",   "question": "除了這個不舒服之外，還有沒有其他症狀？例如冒汗、噁心、喘不過氣？" }
+  ]
+}

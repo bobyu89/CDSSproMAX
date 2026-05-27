@@ -1,0 +1,828 @@
+system: neurological
+display_name: 神經系統身體評估
+description: >
+  系統性評估中樞與周邊神經系統功能，涵蓋意識狀態、腦神經、運動、感覺、反射、
+  小腦功能及步態，以定位神經病變部位並評估嚴重程度，為專科護理師臨床決策提供依據。
+prerequisites:
+  - 確認病人意識狀態與合作程度，調整評估深度
+  - 準備工具：叩診鎚、128Hz 音叉、棉花棒、安全別針、筆燈、視力表（Snellen chart）、眼底鏡
+  - 環境安靜、光線適當，移除可能干擾的噪音源
+  - 詢問病人主訴、發病時間與進程（急性 vs 慢性）、用藥史（抗凝血劑、抗癲癇藥）
+  - 確認病人無嚴重頸椎損傷疑慮後再進行頸部相關檢查
+source_note: "本內容由專科護理師根據臨床經驗自行撰寫，醫學事實參考 StatPearls (CC BY-NC-ND 4.0) 及公開臨床指引"
+
+assessment_sequence:
+  # ============================================================
+  # Step 1: Mental Status（意識狀態與認知功能）
+  # ============================================================
+  - step: 1
+    category: mental_status
+    display_name: 意識狀態與認知功能
+    duration_seconds: 180
+    actions:
+      - id: nr_ms_01
+        description: 評估意識程度（GCS）
+        technique: >
+          依序評估三項指標：睜眼反應（E1-4）、語言反應（V1-5）、運動反應（M1-6）。
+          先以口語呼喚病人，無反應則給予疼痛刺激（壓眶上緣或指甲床），
+          觀察並記錄最佳反應，計算總分（滿分 15 分）。
+        normal: "GCS 15 分：自發性睜眼（E4）、對答切題（V5）、遵從指令（M6）"
+        abnormal:
+          - finding: "GCS 13-14 分，輕度意識障礙"
+            ddx: [輕微腦震盪, 代謝性腦病變（低血糖、電解質不平衡）, 藥物副作用]
+            urgency: medium
+          - finding: "GCS 9-12 分，中度意識障礙"
+            ddx: [顱內出血, 腦腫瘤合併腦水腫, 嚴重感染（腦膜炎、敗血症）]
+            urgency: high
+          - finding: "GCS ≤ 8 分，重度意識障礙（昏迷）"
+            ddx: [大面積腦梗塞, 腦幹出血, 嚴重顱內壓升高, 藥物中毒]
+            urgency: critical
+        common_mistakes:
+          - 未給予足夠刺激即判定無反應
+          - 未記錄各項分數僅記總分（應記為 E_V_M_ 格式）
+          - 將肢體屈曲反應誤判為遵從指令
+        clinical_pearl: >
+          GCS ≤ 8 分提示病人無法維持呼吸道通暢，應立即考慮插管保護呼吸道。
+          運動反應最具預後價值。
+        osce_points: 2
+
+      - id: nr_ms_02
+        description: 評估定向力（orientation）
+        technique: >
+          依序詢問三項定向力：人（「請問您叫什麼名字？」）、
+          時（「現在是幾年幾月？今天星期幾？」）、
+          地（「您現在在哪裡？這是什麼地方？」）。記錄正確項目。
+        normal: "人時地定向力完整（oriented x 3）"
+        abnormal:
+          - finding: "部分定向力喪失（通常時間最先受影響）"
+            ddx: [譫妄（delirium）, 失智症（dementia）, 代謝性腦病變]
+            urgency: medium
+          - finding: "完全定向力喪失"
+            ddx: [嚴重譫妄, 中重度失智症, 急性腦損傷]
+            urgency: high
+        common_mistakes:
+          - 問題太簡單（如「你知道你在醫院嗎？」用引導性問題）
+          - 未區分急性變化與慢性認知退化
+        osce_points: 1
+
+      - id: nr_ms_03
+        description: 評估注意力與簡易認知功能
+        technique: >
+          注意力測試：請病人從 100 連續減 7（serial 7s）或倒背數字（digit span backward）。
+          簡易認知篩檢：可使用 MMSE 要點或 Mini-Cog（畫鐘測試 + 三詞回憶）。
+          觀察病人回答的流暢度與反應時間。
+        normal: "注意力集中，Serial 7s 正確 ≥ 4 次，三詞回憶 3/3"
+        abnormal:
+          - finding: "注意力無法集中，Serial 7s 嚴重錯誤"
+            ddx: [譫妄, 注意力缺失症, 焦慮症, 藥物影響]
+            urgency: medium
+          - finding: "Mini-Cog ≤ 2 分或 MMSE < 24 分"
+            ddx: [阿茲海默症, 血管性失智症, 路易體失智症, 正常壓力水腦]
+            urgency: medium
+        common_mistakes:
+          - 未考慮教育程度對測驗結果的影響
+          - 在急性病人身上過度依賴認知篩檢（應先排除譫妄）
+        clinical_pearl: >
+          譫妄的核心特徵是注意力障礙且病程波動；失智症則是漸進性認知退化。
+          住院老年病人意識變化應先考慮譫妄。
+        osce_points: 1
+
+  # ============================================================
+  # Step 2: Cranial Nerves（腦神經 I-XII）
+  # ============================================================
+  - step: 2
+    category: cranial_nerves
+    display_name: 腦神經檢查（CN I-XII）
+    duration_seconds: 360
+    actions:
+      - id: nr_cn_01
+        description: CN I 嗅神經 — 嗅覺測試
+        technique: >
+          請病人閉眼，分別遮住一側鼻孔，以常見氣味（咖啡、薄荷）靠近另一側，
+          詢問是否聞到及辨識為何。常規檢查可省略，但頭部外傷或嗅覺喪失主訴時必須測試。
+        normal: "雙側均可辨識氣味"
+        abnormal:
+          - finding: "單側或雙側嗅覺喪失（anosmia）"
+            ddx: [前顱窩腫瘤（嗅溝腦膜瘤）, 頭部外傷（篩板骨折）, 鼻竇疾病, 帕金森氏症早期, COVID-19 後遺症]
+            urgency: low
+        common_mistakes:
+          - 使用刺激性物質（如氨水）測試——這會刺激 CN V 而非 CN I
+        clinical_pearl: "嗅覺喪失可能是帕金森氏症的早期非運動症狀，出現在運動症狀之前數年。"
+        osce_points: 1
+
+      - id: nr_cn_02
+        description: CN II 視神經 — 視力與視野檢查
+        technique: >
+          視力：請病人分別遮一眼，使用 Snellen chart 或手指計數測試視力。
+          視野：進行對向視野檢查（confrontation test），檢查者站在病人前方約 60 公分，
+          雙手分別在四個象限晃動手指，請病人注視檢查者鼻子並回報看到手指晃動的位置。
+        normal: "雙眼視力正常或矯正後正常，四象限視野完整"
+        abnormal:
+          - finding: "同側偏盲（homonymous hemianopia）"
+            ddx: [對側枕葉梗塞, 視放射病變, 顳葉腫瘤]
+            urgency: high
+          - finding: "雙顳側偏盲（bitemporal hemianopia）"
+            ddx: [腦下垂體腫瘤壓迫視交叉]
+            urgency: high
+          - finding: "單眼視力急性喪失"
+            ddx: [視神經炎, 中央視網膜動脈阻塞, 眼中風, 視神經缺血]
+            urgency: critical
+        common_mistakes:
+          - confrontation test 時未確認病人持續注視檢查者鼻子
+          - 未分別測試每隻眼睛
+        clinical_pearl: "同側偏盲的病灶在對側；視交叉病變造成雙顳側偏盲，這是經典的腦下垂體腫瘤表現。"
+        osce_points: 1
+
+      - id: nr_cn_03
+        description: CN II, III 瞳孔反射（PERRLA）
+        technique: >
+          在微暗環境中，先觀察雙側瞳孔大小與對稱性。
+          用筆燈由側面照射一眼：觀察直接光反射（同側瞳孔縮小）及間接光反射（對側瞳孔縮小）。
+          交替照射雙眼測試相對性瞳孔傳入缺損（RAPD / Marcus Gunn pupil）。
+          測試調節反應：請病人先看遠處再看近處手指，觀察瞳孔縮小與會聚。
+        normal: "PERRLA：瞳孔等大等圓，雙側直接與間接光反射靈敏，調節反應正常"
+        abnormal:
+          - finding: "單側瞳孔散大且光反射消失"
+            ddx: [動眼神經（CN III）壓迫（腦疝、後交通動脈瘤）, 外傷性虹膜損傷]
+            urgency: critical
+          - finding: "相對性瞳孔傳入缺損（RAPD 陽性）"
+            ddx: [視神經炎, 視神經損傷, 嚴重視網膜疾病]
+            urgency: high
+          - finding: "雙側瞳孔針尖樣縮小（pinpoint pupils）"
+            ddx: [鴉片類藥物中毒, 橋腦出血]
+            urgency: critical
+        common_mistakes:
+          - 在明亮環境下測試導致瞳孔已預先縮小
+          - 未測試間接光反射而遺漏 RAPD
+        clinical_pearl: >
+          單側瞳孔散大合併意識變化是腦疝的經典警訊（CN III 被顳葉鉤壓迫），
+          需立即通知醫師並考慮影像學檢查。
+        osce_points: 2
+
+      - id: nr_cn_04
+        description: CN III, IV, VI — 眼球運動（EOM / H-test）
+        technique: >
+          請病人頭部固定不動，眼睛追蹤檢查者手指沿 H 形路徑移動。
+          觀察六個方向的眼球運動是否完整、對稱，注意有無複視（diplopia）、
+          眼球震顫（nystagmus）、上瞼下垂（ptosis）。
+          在每個注視方向停留數秒觀察是否出現眼震。
+        normal: "六方向眼球運動完整對稱，無複視、眼震或上瞼下垂"
+        abnormal:
+          - finding: "CN III 麻痺：眼球外下轉位、上瞼下垂、瞳孔散大"
+            ddx: [後交通動脈瘤, 腦疝, 糖尿病性神經病變（通常瞳孔不受影響）]
+            urgency: critical
+          - finding: "CN IV 麻痺：患眼內旋受限，頭歪向健側代償"
+            ddx: [頭部外傷（最常見的外傷性腦神經損傷）, 先天性]
+            urgency: medium
+          - finding: "CN VI 麻痺：患眼外展受限"
+            ddx: [顱內壓升高（假定位徵候）, 腦幹梗塞, 腦膜炎]
+            urgency: high
+          - finding: "核間性眼肌麻痺（INO）：內收受限合併對側眼球震顫"
+            ddx: [多發性硬化症（年輕人）, 腦幹梗塞（老年人）]
+            urgency: high
+        common_mistakes:
+          - H-test 移動太快，病人無法跟上
+          - 未詢問病人是否出現複視（有些輕微斜視不明顯）
+        clinical_pearl: >
+          CN VI 是顱內走行最長的腦神經，顱內壓升高時容易被牽扯，
+          因此 CN VI 麻痺不一定代表橋腦病灶，可能是假定位徵候。
+        osce_points: 2
+
+      - id: nr_cn_05
+        description: CN V 三叉神經 — 臉部感覺與咀嚼肌
+        technique: >
+          感覺測試：用棉花棒輕觸臉部三個分支區域（V1 額部、V2 頰部、V3 下頷），
+          雙側對比。可加測痛覺（安全別針鈍端與尖端交替）。
+          運動測試：請病人緊咬牙齒，觸摸咬肌與顳肌是否對稱有力；
+          請病人張嘴，觀察下頷有無偏移。
+          角膜反射：用棉花絲輕觸角膜邊緣（傳入 CN V，傳出 CN VII），觀察雙側眨眼。
+        normal: "臉部三區感覺對稱正常，咀嚼肌力量對稱，角膜反射雙側存在"
+        abnormal:
+          - finding: "單側臉部感覺減退（沿三叉神經分布）"
+            ddx: [三叉神經病變, 腦幹梗塞, 小腦橋腦角腫瘤（聽神經瘤）]
+            urgency: medium
+          - finding: "角膜反射消失"
+            ddx: [CN V 或 CN VII 損傷, 腦幹病變, 深度昏迷]
+            urgency: high
+        common_mistakes:
+          - 測試角膜反射時碰觸結膜而非角膜
+          - 未分三個分支區域分別測試
+        osce_points: 1
+
+      - id: nr_cn_06
+        description: CN VII 顏面神經 — 臉部表情肌
+        technique: >
+          請病人做以下動作並觀察對稱性：
+          皺額頭（看額紋是否對稱）、緊閉雙眼（測試眼輪匝肌力量）、
+          露齒微笑（觀察鼻唇溝對稱性）、鼓氣（觀察嘴角有無漏氣）。
+          關鍵區分：上臉（額頭）與下臉（嘴角）是否同時受影響。
+        normal: "臉部表情對稱，額紋對稱，鼻唇溝等深"
+        abnormal:
+          - finding: "同側上下臉均無力（周邊型，LMN lesion）"
+            ddx: [貝爾氏麻痺（Bell's palsy）, 中耳炎併發, Ramsay Hunt 症候群]
+            urgency: medium
+          - finding: "對側下臉無力但額頭不受影響（中樞型，UMN lesion）"
+            ddx: [對側大腦半球中風, 腦腫瘤]
+            urgency: critical
+        common_mistakes:
+          - 未區分 UMN 與 LMN 型顏面神經麻痺（額頭肌肉雙側大腦支配是關鍵）
+          - 將正常的輕微臉部不對稱誤判為病理性
+        clinical_pearl: >
+          UMN 型（中樞型）額頭不受影響的原因：額肌接受雙側大腦皮質支配。
+          若同側額頭也無力，提示 LMN 型（周邊型）病變。急性中樞型顏面神經麻痺要考慮中風。
+        osce_points: 2
+
+      - id: nr_cn_07
+        description: CN VIII 聽神經 — 聽力測試
+        technique: >
+          初步篩檢：在每側耳旁搓手指，問病人是否聽得到，雙側比較。
+          Weber test：將振動的 128Hz 音叉置於頭頂正中，問病人聲音偏向哪一側。
+          Rinne test：將振動的音叉先放在乳突上（骨傳導），待病人聽不到後移至耳旁（氣傳導），
+          正常氣傳導 > 骨傳導（Rinne 陽性）。
+        normal: "雙側聽力對稱，Weber test 不偏側，Rinne test 雙側陽性（氣傳導 > 骨傳導）"
+        abnormal:
+          - finding: "Weber 偏患側 + Rinne 陰性（骨傳導 > 氣傳導）→ 傳導性聽力喪失"
+            ddx: [中耳炎, 耳垢栓塞, 耳硬化症, 鼓膜穿孔]
+            urgency: low
+          - finding: "Weber 偏健側 + Rinne 陽性 → 感覺神經性聽力喪失"
+            ddx: [聽神經瘤, 梅尼爾氏症, 老年性聽力退化, 噪音損傷]
+            urgency: medium
+          - finding: "突發性單側聽力喪失"
+            ddx: [突發性感覺神經性聽力喪失（需緊急類固醇治療）, 聽神經瘤]
+            urgency: high
+        common_mistakes:
+          - 音叉振動太弱或放置位置不正確
+          - Rinne test 未等骨傳導完全消失就移至耳旁
+        clinical_pearl: "突發性感覺神經性聽力喪失是耳科急症，應在 72 小時內開始類固醇治療，轉介耳鼻喉科。"
+        osce_points: 1
+
+      - id: nr_cn_08
+        description: CN IX, X 舌咽神經與迷走神經 — 吞嚥與咽反射
+        technique: >
+          請病人張嘴說「啊」，觀察軟顎上提是否對稱、懸雍垂是否偏移。
+          評估聲音品質：有無沙啞（hoarseness）、鼻音。
+          評估吞嚥功能：請病人吞口水，觀察有無嗆咳。
+          咽反射（gag reflex）：用壓舌板輕觸咽後壁兩側（注意：約 20% 正常人無咽反射）。
+        normal: "軟顎上提對稱，懸雍垂居中，聲音清晰，吞嚥順暢，咽反射存在"
+        abnormal:
+          - finding: "軟顎上提不對稱，懸雍垂偏向健側"
+            ddx: [對側 CN X 損傷, 腦幹梗塞（延髓外側症候群）]
+            urgency: high
+          - finding: "聲音沙啞合併吞嚥困難"
+            ddx: [迷走神經損傷, 喉返神經麻痺, 延髓病變]
+            urgency: high
+          - finding: "咽反射消失合併意識障礙"
+            ddx: [腦幹嚴重損傷, 深度昏迷]
+            urgency: critical
+        common_mistakes:
+          - 單純咽反射消失就判斷異常（正常人也可能沒有）
+          - 未評估聲音品質
+        osce_points: 1
+
+      - id: nr_cn_09
+        description: CN XI 副神經 — 斜方肌與胸鎖乳突肌
+        technique: >
+          斜方肌測試：請病人聳肩對抗檢查者向下的阻力，比較雙側力量。
+          胸鎖乳突肌測試：請病人將頭轉向一側對抗檢查者在下巴給予的阻力
+          （注意：右側胸鎖乳突肌使頭轉向左側）。
+        normal: "雙側斜方肌與胸鎖乳突肌力量對稱且有力"
+        abnormal:
+          - finding: "單側斜方肌無力（聳肩無力、肩胛骨翼狀突出）"
+            ddx: [CN XI 損傷（頸部手術、淋巴結切片後）, 頸椎神經根病變]
+            urgency: medium
+        common_mistakes:
+          - 胸鎖乳突肌測試時搞混方向（右側 SCM 轉頭向左）
+        osce_points: 1
+
+      - id: nr_cn_10
+        description: CN XII 舌下神經 — 舌頭運動
+        technique: >
+          請病人張嘴，觀察舌頭在口中的外觀（有無萎縮、束狀顫動 fasciculation）。
+          請病人將舌頭伸出，觀察是否偏移。
+          請病人用舌頭頂住兩側臉頰內側，檢查者從外側給予阻力測試力量。
+        normal: "舌頭居中伸出，無萎縮或束狀顫動，雙側推力對稱"
+        abnormal:
+          - finding: "舌頭偏向患側（LMN 損傷：舌頭偏向患側）"
+            ddx: [CN XII 損傷, 延髓病變, 頸部腫瘤侵犯]
+            urgency: medium
+          - finding: "舌頭萎縮合併束狀顫動"
+            ddx: [運動神經元疾病（ALS）, 延髓麻痺]
+            urgency: high
+        common_mistakes:
+          - 混淆 UMN 與 LMN 損傷的舌偏移方向
+        clinical_pearl: "LMN 損傷舌頭偏向患側（肌肉無力無法推動）；UMN 損傷舌頭偏向對側。舌肌萎縮 + fasciculation 高度懷疑 ALS。"
+        osce_points: 1
+
+  # ============================================================
+  # Step 3: Motor System（運動系統）
+  # ============================================================
+  - step: 3
+    category: motor
+    display_name: 運動系統評估
+    duration_seconds: 240
+    actions:
+      - id: nr_mt_01
+        description: 觀察肌肉外觀
+        technique: >
+          視診雙側肢體肌肉，比較對稱性。觀察有無肌肉萎縮（atrophy）、
+          肌肉肥大（hypertrophy）、束狀顫動（fasciculation）。
+          特別注意手部小肌肉（骨間肌）與大魚際肌。
+        normal: "雙側肌肉量對稱，無萎縮、肥大或束狀顫動"
+        abnormal:
+          - finding: "局部肌肉萎縮合併束狀顫動"
+            ddx: [下運動神經元病變, 運動神經元疾病（ALS）, 周邊神經損傷]
+            urgency: medium
+          - finding: "廣泛性肌肉萎縮"
+            ddx: [脊髓性肌萎縮症, 肌營養不良症, 長期臥床廢用性萎縮]
+            urgency: medium
+        common_mistakes:
+          - 未與對側比較就判斷萎縮
+          - 忽略手部小肌肉的細微萎縮
+        osce_points: 1
+
+      - id: nr_mt_02
+        description: 評估肌張力（muscle tone）
+        technique: >
+          請病人完全放鬆，被動活動各關節（肘、腕、膝、踝），
+          感受阻力的大小與性質。快速與慢速被動活動以區分痙攣（spasticity）與僵硬（rigidity）。
+          痙攣（spasticity）：速度依賴性，快速伸展阻力增加（「摺刀現象 clasp-knife」）。
+          僵硬（rigidity）：非速度依賴性，全程阻力一致（「鉛管 lead-pipe」或「齒輪 cogwheel」）。
+        normal: "四肢肌張力正常，被動活動阻力適中且對稱"
+        abnormal:
+          - finding: "痙攣性肌張力增高（spasticity，速度依賴性）"
+            ddx: [上運動神經元病變（中風、脊髓損傷、多發性硬化症）]
+            urgency: medium
+          - finding: "齒輪狀僵硬（cogwheel rigidity）"
+            ddx: [帕金森氏症, 藥物引起的帕金森症候群（抗精神病藥）]
+            urgency: medium
+          - finding: "肌張力低下（hypotonia / flaccidity）"
+            ddx: [下運動神經元病變, 小腦病變, 急性脊髓休克]
+            urgency: medium
+        common_mistakes:
+          - 病人未完全放鬆時測試（主動出力會干擾評估）
+          - 未區分 spasticity 與 rigidity 的差異
+        clinical_pearl: "Cogwheel rigidity 是帕金森氏症的典型表現，可請病人對側手做握拳動作（Froment's maneuver）使其更明顯。"
+        osce_points: 1
+
+      - id: nr_mt_03
+        description: 肌力評估 — 上肢（MRC 分級）
+        technique: >
+          使用 MRC 0-5 分級依序測試上肢主要肌群：
+          肩外展（C5，三角肌）、肘屈曲（C5-6，二頭肌）、肘伸展（C7，三頭肌）、
+          腕伸展（C6-7）、握力（C8-T1）、手指外展（T1，骨間肌）。
+          MRC 分級：0 = 無收縮，1 = 可見收縮無動作，2 = 去重力可動，
+          3 = 可抗重力，4 = 可抗部分阻力，5 = 正常力量。
+        normal: "雙側上肢各肌群肌力 5/5，對稱"
+        abnormal:
+          - finding: "單側上肢近端無力（肩、肘）"
+            ddx: [C5-6 神經根病變, 臂神經叢損傷, 中風]
+            urgency: medium
+          - finding: "單側上肢遠端無力（手指、腕）"
+            ddx: [C8-T1 神經根病變, 尺神經或正中神經損傷, 頸椎脊髓病變]
+            urgency: medium
+          - finding: "單側上下肢同時無力（偏癱）"
+            ddx: [對側大腦半球中風, 腦腫瘤, 硬膜下血腫]
+            urgency: critical
+        common_mistakes:
+          - 未給予足夠阻力（4 級與 5 級的區分需臨床經驗）
+          - 未固定近端關節就測試遠端肌力
+        osce_points: 3
+
+      - id: nr_mt_04
+        description: 肌力評估 — 下肢（MRC 分級）
+        technique: >
+          依序測試下肢主要肌群：
+          髖屈曲（L1-2，髂腰肌）、髖伸展（L5-S1，臀大肌）、
+          膝伸展（L3-4，股四頭肌）、膝屈曲（L5-S1，膕旁肌）、
+          踝背屈（L4-5，脛前肌）、踝蹠屈（S1-2，腓腸肌）。
+          注意近端與遠端、左右對稱的比較。
+        normal: "雙側下肢各肌群肌力 5/5，對稱"
+        abnormal:
+          - finding: "雙側下肢無力（截癱 paraplegia 型態）"
+            ddx: [脊髓病變（壓迫、梗塞）, Guillain-Barré 症候群, 馬尾症候群]
+            urgency: critical
+          - finding: "單側垂足（foot drop，踝背屈無力）"
+            ddx: [腓總神經損傷, L4-5 神經根病變, 周邊神經病變]
+            urgency: medium
+        common_mistakes:
+          - 未讓病人取適當姿勢（髖屈曲應仰臥、膝伸展應坐姿或仰臥）
+          - 忽略踝背屈測試（垂足是重要發現）
+        osce_points: 2
+
+      - id: nr_mt_05
+        description: Pronator drift test（旋前偏移試驗）
+        technique: >
+          請病人閉眼，雙臂平舉於前方（掌心朝上），維持 10-20 秒。
+          觀察是否有一側手臂下沉（drift）或前臂旋前（pronation）。
+          此為偵測輕微上運動神經元病變的敏感測試。
+        normal: "雙臂維持平舉不下沉，無旋前"
+        abnormal:
+          - finding: "單側手臂下沉合併旋前"
+            ddx: [對側大腦半球病變（中風）, 輕微偏癱]
+            urgency: high
+          - finding: "雙側手臂不穩定搖晃但不下沉"
+            ddx: [小腦病變, 本體感覺喪失]
+            urgency: medium
+        common_mistakes:
+          - 測試時間太短（至少維持 10 秒以上）
+          - 未請病人閉眼（視覺代償會掩蓋輕微異常）
+        clinical_pearl: "Pronator drift 是中風篩檢的重要組成部分，配合 FAST 量表（Face-Arm-Speech-Time）使用。"
+        osce_points: 2
+
+  # ============================================================
+  # Step 4: Sensory System（感覺系統）
+  # ============================================================
+  - step: 4
+    category: sensory
+    display_name: 感覺系統評估
+    duration_seconds: 240
+    actions:
+      - id: nr_ss_01
+        description: 輕觸覺與痛覺測試
+        technique: >
+          輕觸覺：用棉花棒輕觸四肢與軀幹各皮節（dermatome），雙側對比，
+          請病人閉眼回報「有感覺」。
+          痛覺：用安全別針的尖端與鈍端交替觸碰，請病人辨別「尖」或「鈍」。
+          從遠端向近端測試，注意感覺消失的邊界（level）。
+        normal: "全身輕觸覺與痛覺對稱完整，遠端與近端無差異"
+        abnormal:
+          - finding: "手套-襪子型感覺喪失（遠端對稱性）"
+            ddx: [糖尿病周邊神經病變, 酒精性神經病變, B12 缺乏]
+            urgency: medium
+          - finding: "明確的感覺平面（sensory level）"
+            ddx: [脊髓病變（壓迫、梗塞、脫髓鞘）]
+            urgency: critical
+          - finding: "單側半身感覺喪失"
+            ddx: [對側丘腦梗塞, 對側大腦皮質病變]
+            urgency: high
+        common_mistakes:
+          - 未系統性按皮節測試，跳過重要區域
+          - 測試太快，病人來不及回應
+          - 未由遠端往近端測試以確定感覺邊界
+        clinical_pearl: "有明確感覺平面（sensory level）是脊髓病變的重要定位線索，需緊急安排脊髓 MRI。"
+        osce_points: 2
+
+      - id: nr_ss_02
+        description: 振動覺測試
+        technique: >
+          敲擊 128Hz 音叉使其振動，將底部放在遠端骨突處
+          （大腳趾趾間關節、內踝、手指趾間關節、尺骨莖突）。
+          請病人閉眼回報何時感覺振動停止，與對側或檢查者自己的感受比較。
+          若遠端消失，向近端移動測試（內踝→脛骨→髂前上棘）。
+        normal: "四肢遠端振動覺正常且對稱"
+        abnormal:
+          - finding: "遠端振動覺減退或消失"
+            ddx: [周邊神經病變（糖尿病、B12 缺乏）, 後索（dorsal column）病變]
+            urgency: medium
+        common_mistakes:
+          - 使用 512Hz 音叉（應使用 128Hz）
+          - 音叉未充分振動就放置
+          - 病人回報的是壓覺而非振動覺（應先示範差異）
+        osce_points: 1
+
+      - id: nr_ss_03
+        description: 本體感覺（position sense）測試
+        technique: >
+          握住病人大腳趾（或手指）的兩側，避免觸碰上下面。
+          在病人睜眼時先示範「這是上、這是下」。
+          然後請病人閉眼，隨機小幅度上下移動，請病人回報方向。
+          每側至少測試 5 次，正常應正確 ≥ 4/5。
+        normal: "四肢遠端本體感覺正常，位置辨別正確"
+        abnormal:
+          - finding: "遠端本體感覺喪失"
+            ddx: [後索病變（B12 缺乏、梅毒脊髓炎）, 嚴重周邊神經病變, 感覺性共濟失調]
+            urgency: medium
+        common_mistakes:
+          - 握住趾頭的上下面而非兩側（病人靠壓覺判斷而非本體感覺）
+          - 移動幅度太大（輕微的 2-3mm 移動即可）
+        clinical_pearl: "本體感覺走後索（dorsal column），與振動覺一起喪失提示後索病變。B12 缺乏的亞急性聯合退化是經典原因。"
+        osce_points: 1
+
+  # ============================================================
+  # Step 5: Reflexes（反射）
+  # ============================================================
+  - step: 5
+    category: reflexes
+    display_name: 反射評估
+    duration_seconds: 180
+    actions:
+      - id: nr_rf_01
+        description: 深部肌腱反射（DTR）
+        technique: >
+          使用叩診鎚測試以下反射，雙側比較：
+          二頭肌反射（C5-6）：肘微屈，拇指放在肱二頭肌腱上，敲擊拇指。
+          三頭肌反射（C7）：支撐上臂，敲擊肘後三頭肌腱。
+          橈骨膜反射（C5-6）：敲擊橈骨莖突。
+          膝反射（L3-4）：小腿自然下垂，敲擊髕骨韌帶。
+          踝反射（S1）：輕度背屈踝關節，敲擊阿基里斯腱。
+          DTR 分級：0 = 無反射，1+ = 減弱，2+ = 正常，3+ = 增強，4+ = 陣攣（clonus）。
+          可使用 Jendrassik maneuver（雙手互鉤拉扯）增強反射。
+        normal: "雙側深部肌腱反射 2+，對稱"
+        abnormal:
+          - finding: "反射亢進（3-4+）合併陣攣"
+            ddx: [上運動神經元病變（中風、脊髓壓迫、多發性硬化症）]
+            urgency: high
+          - finding: "反射減弱或消失（0-1+）"
+            ddx: [下運動神經元病變, 周邊神經病變, Guillain-Barré 症候群, 甲狀腺功能低下]
+            urgency: medium
+          - finding: "不對稱的反射差異"
+            ddx: [單側神經根病變, 單側上運動神經元病變]
+            urgency: medium
+        common_mistakes:
+          - 敲擊力道不一致導致雙側不對稱的假象
+          - 未使用 Jendrassik maneuver 就判定反射消失
+          - 敲擊位置不準確（應敲在肌腱上）
+        osce_points: 3
+
+      - id: nr_rf_02
+        description: 病理性反射 — Babinski sign
+        technique: >
+          用鈍物（如叩診鎚柄端）從腳跟外側沿著足底向前劃至腳趾球部再轉向內側，
+          呈 L 形路徑。觀察大腳趾的反應。
+          正常成人：腳趾蹠屈（向下彎曲）。
+          異常（Babinski 陽性）：大腳趾背屈（向上翹），其餘腳趾扇形張開。
+        normal: "雙側足底反射正常（腳趾蹠屈），Babinski sign 陰性"
+        abnormal:
+          - finding: "Babinski sign 陽性（大腳趾背屈）"
+            ddx: [上運動神經元病變（皮質脊髓徑損傷）, 中風, 脊髓壓迫, 多發性硬化症]
+            urgency: high
+        common_mistakes:
+          - 刺激太強導致整隻腳縮回（退縮反射，非真正 Babinski）
+          - 劃的路徑不正確
+          - 在 2 歲以下嬰兒判定陽性（此年齡正常可見）
+        clinical_pearl: "Babinski sign 陽性是皮質脊髓徑（錐體束）損傷的可靠指標。單側陽性提示對側大腦或同側脊髓病變。"
+        osce_points: 2
+
+      - id: nr_rf_03
+        description: 病理性反射 — Hoffman's sign 與 Clonus
+        technique: >
+          Hoffman's sign：握住病人中指中節，快速彈放末節指甲。
+          觀察拇指與食指是否出現屈曲反應。陽性提示上運動神經元病變。
+          Clonus：快速、持續地背屈病人踝關節，觀察是否出現持續節律性收縮。
+          ≥ 3 次節律性收縮為異常（sustained clonus）。
+        normal: "Hoffman's sign 雙側陰性，無踝陣攣"
+        abnormal:
+          - finding: "Hoffman's sign 陽性"
+            ddx: [頸椎脊髓病變, 上運動神經元病變]
+            urgency: high
+          - finding: "持續性踝陣攣（sustained clonus）"
+            ddx: [嚴重上運動神經元病變, 脊髓壓迫]
+            urgency: high
+        common_mistakes:
+          - 彈放力道不夠，未能誘發反應
+          - 將正常人偶爾出現的 1-2 次踝關節跳動誤判為 clonus（需 ≥ 3 次且持續）
+        osce_points: 1
+
+  # ============================================================
+  # Step 6: Cerebellar Function（小腦功能）
+  # ============================================================
+  - step: 6
+    category: cerebellar
+    display_name: 小腦功能評估
+    duration_seconds: 120
+    actions:
+      - id: nr_cb_01
+        description: 指鼻試驗（finger-to-nose test）
+        technique: >
+          請病人用食指交替觸碰自己的鼻尖與檢查者的手指（檢查者可改變手指位置）。
+          觀察動作的準確性、流暢度，注意有無意向性震顫（intention tremor，
+          接近目標時震顫加劇）或辨距不良（dysmetria，過度或不足）。
+          雙手分別測試。
+        normal: "雙手指鼻試驗準確流暢，無震顫或辨距不良"
+        abnormal:
+          - finding: "意向性震顫（接近目標時加劇）"
+            ddx: [小腦病變（梗塞、腫瘤、退化性疾病）, 多發性硬化症]
+            urgency: medium
+          - finding: "辨距不良（dysmetria）"
+            ddx: [同側小腦半球病變, 小腦梗塞]
+            urgency: medium
+        common_mistakes:
+          - 混淆意向性震顫（小腦）與靜止性震顫（帕金森氏症）
+          - 測試距離太近無法顯現異常
+        osce_points: 1
+
+      - id: nr_cb_02
+        description: 快速交替動作（rapid alternating movements）
+        technique: >
+          請病人快速以掌心與掌背交替拍打大腿（或快速旋前/旋後前臂）。
+          觀察動作的速度、節律與協調性。
+          無法執行流暢的快速交替動作稱為 dysdiadochokinesia。
+        normal: "雙手快速交替動作流暢、節律規則"
+        abnormal:
+          - finding: "快速交替動作不協調（dysdiadochokinesia）"
+            ddx: [小腦病變, 基底核病變]
+            urgency: medium
+        common_mistakes:
+          - 未雙側比較（慣用手本來就較靈活）
+        osce_points: 1
+
+      - id: nr_cb_03
+        description: 跟脛試驗（heel-to-shin test）
+        technique: >
+          請病人仰臥，一側腳跟放在對側膝蓋上，沿脛骨前緣向下滑至踝關節，
+          然後回到膝蓋重複。觀察動作的準確性與流暢度。雙側分別測試。
+        normal: "雙側跟脛試驗準確流暢，腳跟沿脛骨直線滑下"
+        abnormal:
+          - finding: "腳跟偏離脛骨、動作不穩"
+            ddx: [同側小腦病變, 下肢本體感覺喪失]
+            urgency: medium
+        common_mistakes:
+          - 未注意是否因下肢無力而非小腦功能障礙導致測試困難
+        osce_points: 1
+
+      - id: nr_cb_04
+        description: Romberg test
+        technique: >
+          請病人雙腳併攏站立，先睜眼維持平衡（測試小腦功能），
+          再閉眼維持 30 秒（測試本體感覺功能）。
+          站在病人旁邊，雙手準備好保護（但不觸碰病人）。
+          Romberg 陽性：閉眼後明顯搖晃或傾倒。
+        normal: "睜眼與閉眼均可維持平衡，Romberg test 陰性"
+        abnormal:
+          - finding: "Romberg 陽性（閉眼後失去平衡）"
+            ddx: [後索病變（本體感覺喪失）, 前庭功能障礙]
+            urgency: medium
+          - finding: "睜眼即無法站穩"
+            ddx: [小腦病變（不依賴視覺代償）, 嚴重前庭功能障礙]
+            urgency: medium
+        common_mistakes:
+          - 未做好保護措施就讓病人閉眼站立
+          - 混淆 Romberg 陽性（感覺性共濟失調）與小腦性共濟失調的區別
+        clinical_pearl: >
+          Romberg test 的邏輯：維持平衡需要三個系統（視覺、本體感覺、前庭），至少兩個正常即可。
+          閉眼移除視覺後，若本體感覺也異常就會失去平衡。
+          小腦性共濟失調則睜眼已不穩，與 Romberg 無關。
+        osce_points: 2
+
+  # ============================================================
+  # Step 7: Gait（步態）
+  # ============================================================
+  - step: 7
+    category: gait
+    display_name: 步態評估
+    duration_seconds: 120
+    actions:
+      - id: nr_gt_01
+        description: 正常步態觀察與 tandem gait
+        technique: >
+          請病人自然行走一段距離（約 3-5 公尺），來回觀察。
+          注意步幅大小、速度、擺臂對稱性、足部著地方式、身體姿勢。
+          Tandem gait：請病人腳跟接腳尖走直線（如走鋼索），測試平衡與小腦功能。
+          可額外測試：腳尖走路（S1，腓腸肌）、腳跟走路（L4-5，脛前肌）。
+        normal: "步態穩定流暢，步幅對稱，擺臂正常，tandem gait 可維持直線"
+        abnormal:
+          - finding: "偏癱步態（hemiplegic gait）：患側上肢屈曲內收，下肢伸直畫圈前進"
+            ddx: [中風後遺症, 上運動神經元病變]
+            urgency: medium
+          - finding: "帕金森步態：小碎步、前傾、起步困難、轉彎緩慢、擺臂減少"
+            ddx: [帕金森氏症, 藥物引起的帕金森症候群, 正常壓力水腦]
+            urgency: medium
+          - finding: "小腦性共濟失調步態：寬基底、搖晃不穩、無法走直線"
+            ddx: [小腦病變（梗塞、退化、酒精性）, 嚴重前庭功能障礙]
+            urgency: medium
+          - finding: "垂足步態（steppage gait）：抬腿過高避免腳尖拖地"
+            ddx: [腓總神經損傷, L5 神經根病變]
+            urgency: medium
+          - finding: "搖擺步態（waddling gait）：骨盆左右搖擺"
+            ddx: [近端肌肉病變（肌營養不良症）, 雙側髖關節疾病]
+            urgency: medium
+        common_mistakes:
+          - 空間不足無法充分觀察步態
+          - 未觀察轉彎動作（帕金森氏症轉彎特別困難）
+          - 未測試腳尖與腳跟走路
+        clinical_pearl: "正常壓力水腦（NPH）的三聯症：步態不穩（最早出現）、認知功能退化、尿失禁。步態改善對分流手術預後有預測價值。"
+        osce_points: 3
+
+  # ============================================================
+  # Step 8: Special Tests（特殊測試）
+  # ============================================================
+  - step: 8
+    category: special_tests
+    display_name: 特殊神經學測試
+    duration_seconds: 120
+    actions:
+      - id: nr_sp_01
+        description: 腦膜刺激徵候 — Kernig's sign 與 Brudzinski's sign
+        technique: >
+          Brudzinski's sign：病人仰臥，被動屈曲頸部（下巴貼胸），
+          觀察雙側髖膝是否反射性屈曲。
+          Kernig's sign：病人仰臥，先被動屈曲髖關節 90 度，
+          然後嘗試伸直膝關節。陽性：膝伸直時疼痛或阻力（> 135 度無法伸直）。
+          注意：疑似頸椎損傷時不可做此檢查。
+        normal: "Brudzinski's sign 陰性，Kernig's sign 陰性，頸部柔軟無阻力"
+        abnormal:
+          - finding: "Brudzinski's sign 或 Kernig's sign 陽性（頸部僵硬）"
+            ddx: [細菌性腦膜炎, 病毒性腦膜炎, 蛛網膜下腔出血]
+            urgency: critical
+        common_mistakes:
+          - 頸椎損傷疑慮時仍進行頸部屈曲
+          - 將老年人頸椎退化性僵硬誤判為腦膜刺激徵候
+        clinical_pearl: "腦膜刺激徵候的敏感度其實不高（約 50-60%），陰性不能排除腦膜炎。發燒 + 頭痛 + 頸部僵硬仍應考慮腰椎穿刺。"
+        osce_points: 1
+
+      - id: nr_sp_02
+        description: 坐骨神經測試 — Straight Leg Raise（SLR / Lasègue's sign）
+        technique: >
+          病人仰臥放鬆，檢查者一手托住腳跟，緩慢抬高伸直的下肢。
+          記錄出現放射性疼痛（沿坐骨神經分布至腳）的角度。
+          陽性：30-70 度之間出現放射性疼痛至膝蓋以下。
+          加強測試：在疼痛角度處將足部背屈（Bragard's test），疼痛加劇為陽性。
+          交叉直腿抬高：抬高健側引起患側疼痛，更具特異性。
+        normal: "雙側直腿抬高至 70 度以上無放射性疼痛"
+        abnormal:
+          - finding: "SLR 30-70 度間出現坐骨神經分布放射痛"
+            ddx: [腰椎椎間盤突出（L4-5 或 L5-S1）, 腰椎神經根壓迫]
+            urgency: medium
+          - finding: "交叉直腿抬高陽性"
+            ddx: [較大的椎間盤突出（中央偏移型）]
+            urgency: medium
+        common_mistakes:
+          - 未區分放射痛（radicular pain）與後腿緊繃感（hamstring tightness）
+          - 抬高速度太快導致肌肉防禦
+        osce_points: 1
+
+      - id: nr_sp_03
+        description: 快速中風篩檢 — NIHSS 重點項目
+        technique: >
+          疑似急性腦中風時，快速評估以下 NIHSS 重點項目：
+          1. 意識程度（清醒、嗜睡、昏迷）
+          2. 凝視：有無注視偏移（gaze deviation）
+          3. 視野：有無視野缺損
+          4. 顏面麻痺：請病人微笑觀察對稱性
+          5. 上肢運動：pronator drift test
+          6. 下肢運動：抬腿維持 5 秒
+          7. 肢體共濟：指鼻試驗
+          8. 感覺：輕觸覺雙側比較
+          9. 語言：命名物品、複述句子、描述圖片
+          10. 構音障礙：評估說話清晰度
+          11. 忽略：雙側同時刺激測試
+        normal: "NIHSS 0 分，無神經學缺損"
+        abnormal:
+          - finding: "NIHSS 1-4 分：輕微中風"
+            ddx: [小血管梗塞（lacunar infarction）, 短暫性腦缺血發作]
+            urgency: high
+          - finding: "NIHSS 5-15 分：中度中風"
+            ddx: [中大血管梗塞, 可能適合血栓溶解治療]
+            urgency: critical
+          - finding: "NIHSS > 15 分：嚴重中風"
+            ddx: [大血管阻塞, 應考慮機械取栓（thrombectomy）]
+            urgency: critical
+        common_mistakes:
+          - 花太多時間做完整 NIHSS 而延誤治療（快速評估為主）
+          - 未記錄症狀發作時間（last known well time 對於決定治療至關重要）
+        clinical_pearl: >
+          急性缺血性腦中風的黃金時間：靜脈血栓溶解（rt-PA）需在症狀發作 4.5 小時內；
+          機械取栓（thrombectomy）對大血管阻塞可延長至 24 小時（影像篩選）。
+          記住：Time is brain！
+        osce_points: 3
+
+# ============================================================
+# OSCE Scoring
+# ============================================================
+osce_scoring:
+  total_points: 49
+  passing_score: 34
+  time_limit_minutes: 25
+  critical_items:
+    - nr_ms_01   # GCS 評估 — 意識評估是所有神經學檢查的基礎
+    - nr_cn_03   # 瞳孔反射 — 腦疝早期徵候
+    - nr_cn_06   # CN VII 顏面神經 — UMN vs LMN 區分攸關中風判斷
+    - nr_mt_03   # 上肢肌力 — 偏癱是中風核心發現
+    - nr_rf_02   # Babinski sign — 上運動神經元病變指標
+    - nr_sp_03   # NIHSS 快速中風篩檢 — 影響治療決策
+
+# ============================================================
+# Red Flags
+# ============================================================
+red_flags:
+  - finding: "急性意識改變合併局部神經學缺損（偏癱、失語、視野缺損）"
+    action: "立即啟動中風代碼（Code Stroke），記錄 last known well time，緊急安排腦部 CT/CTA，通知神經科醫師"
+    urgency: critical
+
+  - finding: "發燒 + 頸部僵硬 + 意識改變（腦膜炎三聯症）"
+    action: "立即抽血培養並開始經驗性抗生素治療，安排腰椎穿刺（排除顱內壓升高後），不可因等待檢查而延誤抗生素"
+    urgency: critical
+
+  - finding: "單側瞳孔散大固定合併意識惡化（腦疝徵候）"
+    action: "立即通知醫師，抬高床頭 30 度，準備高滲透壓治療（Mannitol 或高張食鹽水），緊急安排腦部 CT，考慮緊急手術減壓"
+    urgency: critical
+
+  - finding: "急性雙下肢無力 + 感覺平面 + 大小便失禁（脊髓壓迫）"
+    action: "緊急安排脊髓 MRI，立即給予高劑量類固醇（Dexamethasone），緊急照會神經外科評估手術減壓"
+    urgency: critical
+
+  - finding: "急性上行性對稱肢體無力 + 反射消失（Guillain-Barré syndrome）"
+    action: "密切監測呼吸功能（FVC），FVC < 20 mL/kg 或下降趨勢需轉入 ICU 並準備插管，安排 IVIG 或血漿置換治療"
+    urgency: critical
+
+  - finding: "新發癲癇持續狀態（seizure > 5 分鐘或連續發作無恢復意識）"
+    action: "確保呼吸道通暢，給予靜脈 Benzodiazepine（Lorazepam 4mg IV），監測生命徵象，準備二線抗癲癇藥物（Levetiracetam 或 Phenytoin）"
+    urgency: critical
+
+  - finding: "突發性劇烈頭痛（雷擊樣頭痛 thunderclap headache）"
+    action: "高度懷疑蛛網膜下腔出血（SAH），緊急安排腦部 CT（敏感度隨時間下降），CT 正常仍需腰椎穿刺排除。不可給予抗凝血劑"
+    urgency: critical
+
+  - finding: "馬尾症候群：鞍區感覺喪失 + 大小便失禁 + 雙下肢無力"
+    action: "緊急安排腰薦椎 MRI，48 小時內手術減壓可改善預後，延遲處理可能導致永久性神經損傷"
+    urgency: critical

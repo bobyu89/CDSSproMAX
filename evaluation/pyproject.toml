@@ -1,0 +1,27 @@
+[project]
+name = "ticdss-evaluation"
+version = "0.1.0"
+description = "Ablation evaluation harness for the TICDSS DUAT pipeline (Protocol §五.(二) Level 1b)."
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.6",
+    "scipy>=1.11",
+    "scikit-learn>=1.4",
+    "pingouin>=0.5.4",
+    "pandas>=2.1",
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

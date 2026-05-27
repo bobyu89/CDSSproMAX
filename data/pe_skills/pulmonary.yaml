@@ -1,0 +1,554 @@
+system: pulmonary
+display_name: 肺部系統身體評估
+description: >
+  針對呼吸系統進行系統性身體評估，依循 IPPA 順序（視診、觸診、叩診、聽診）評估胸廓結構、
+  呼吸功能及肺部病理徵象，協助專科護理師早期辨識呼吸衰竭、氣胸、肺炎、肋膜積液等
+  常見胸腔疾病，並適時啟動緊急處置。
+prerequisites:
+  - 向病人自我介紹並說明評估目的，取得口頭同意
+  - 確認病人隱私，適當暴露胸廓（前胸及後背），提供遮蔽布
+  - 備妥聽診器（膜面及鐘面）、筆燈、捲尺、脈搏血氧飽和度監測儀（pulse oximeter）
+  - 確認環境安靜，減少背景噪音以利聽診
+  - 洗手並戴手套（如有需要）
+  - 請病人採坐姿（sitting upright），若無法坐起則抬高床頭至少 45 度
+source_note: "本內容由專科護理師根據臨床經驗自行撰寫，醫學事實參考 StatPearls (CC BY-NC-ND 4.0) 及公開臨床指引"
+
+assessment_sequence:
+  # ==================== STEP 1: INSPECTION（視診）====================
+  - step: 1
+    category: inspection
+    display_name: 視診（Inspection）
+    duration_seconds: 180
+    actions:
+      - id: pm_i_01
+        description: 評估呼吸型態（respiratory pattern）
+        technique: >
+          觀察病人安靜狀態下的呼吸頻率、深度及規律性，計算完整 60 秒的呼吸次數。
+          注意吸吐比（正常 I:E = 1:2）及呼吸節律是否規則。
+        normal: 呼吸頻率 12-20 次/分，深度適中，節律規則，吸吐比約 1:2
+        abnormal:
+          - finding: 呼吸過速（tachypnea）> 20 次/分
+            ddx: [肺炎, 肺栓塞, 代謝性酸中毒, 焦慮, 敗血症, 心衰竭]
+            urgency: medium
+          - finding: 呼吸過慢（bradypnea）< 12 次/分
+            ddx: [鎮靜藥物過量, 顱內壓升高, 嚴重低體溫, 腦幹病變]
+            urgency: high
+          - finding: Kussmaul 呼吸（深且快）
+            ddx: [糖尿病酮酸中毒（DKA）, 代謝性酸中毒, 尿毒症]
+            urgency: high
+          - finding: Cheyne-Stokes 呼吸（漸強漸弱伴暫停）
+            ddx: [心衰竭, 腦幹病變, 即將死亡]
+            urgency: high
+          - finding: Biot's 呼吸（不規則伴隨長時間暫停）
+            ddx: [腦幹損傷, 腦膜炎, 顱內壓升高]
+            urgency: critical
+        common_mistakes:
+          - 只計算 15 秒再乘以 4，容易遺漏不規則呼吸
+          - 讓病人知道正在計算呼吸，導致呼吸型態改變
+        clinical_pearl: >
+          計算呼吸次數時可假裝在量脈搏，避免病人因意識到被觀察而改變呼吸型態。
+        osce_points: 2
+
+      - id: pm_i_02
+        description: 觀察胸廓外型（chest configuration）
+        technique: >
+          從前方、側方及後方三個角度觀察胸廓形狀。正常前後徑與左右徑比約 1:2。
+          注意有無胸廓不對稱、脊柱側彎（scoliosis）或後凸（kyphosis）。
+        normal: 胸廓左右對稱，前後徑與左右徑比約 1:2，脊柱無側彎
+        abnormal:
+          - finding: 桶狀胸（barrel chest），前後徑與左右徑比接近 1:1
+            ddx: [慢性阻塞性肺疾病（COPD）, 嚴重氣喘, 正常老化]
+            urgency: low
+          - finding: 漏斗胸（pectus excavatum）
+            ddx: [先天性胸廓畸形, Marfan 症候群]
+            urgency: low
+          - finding: 雞胸（pectus carinatum）
+            ddx: [先天性胸廓畸形, 佝僂症]
+            urgency: low
+          - finding: 胸廓明顯不對稱
+            ddx: [大量肋膜積液, 張力性氣胸, 肺塌陷, 胸壁腫瘤]
+            urgency: medium
+        common_mistakes:
+          - 未從側面觀察，漏掉前後徑增加
+          - 忽略脊柱彎曲對呼吸功能的影響
+        osce_points: 1
+
+      - id: pm_i_03
+        description: 觀察呼吸輔助肌使用及胸壁動態
+        technique: >
+          觀察呼吸時有無使用輔助肌：胸鎖乳突肌（SCM）、斜角肌、肋間肌凹陷
+          （intercostal retraction）、鎖骨上凹陷（supraclavicular retraction）。
+          同時觀察胸壁運動是否對稱，有無矛盾呼吸（paradoxical breathing）。
+        normal: 呼吸時胸壁對稱擴張，無輔助肌使用，無肋間凹陷
+        abnormal:
+          - finding: 輔助肌使用（accessory muscle use）
+            ddx: [急性氣喘發作, COPD 急性惡化, 呼吸衰竭, 上呼吸道阻塞]
+            urgency: high
+          - finding: 肋間凹陷（intercostal retraction）
+            ddx: [嚴重呼吸窘迫, 上呼吸道阻塞, 嚴重氣喘]
+            urgency: high
+          - finding: 矛盾呼吸（吸氣時腹部內縮）
+            ddx: [橫膈膜麻痺, 連枷胸（flail chest）, 呼吸肌疲乏]
+            urgency: critical
+          - finding: 單側胸壁運動減少
+            ddx: [肺炎合併實質化, 肋膜積液, 氣胸, 肺塌陷]
+            urgency: medium
+        common_mistakes:
+          - 未要求病人充分暴露頸部，無法觀察 SCM 收縮
+          - 將正常腹式呼吸誤判為矛盾呼吸
+        clinical_pearl: >
+          輔助肌使用是呼吸窘迫的重要早期徵象，尤其在 COPD 病人中，
+          若出現新的輔助肌使用應視為急性惡化的警訊。
+        osce_points: 2
+
+      - id: pm_i_04
+        description: 評估發紺（cyanosis）與杵狀指（clubbing）
+        technique: >
+          檢查中樞性發紺：觀察口唇、舌頭及口腔黏膜有無藍紫色變化。
+          檢查周邊性發紺：觀察指甲床及指尖。
+          杵狀指評估：檢查指甲與甲床角度（正常 < 160 度），
+          執行 Schamroth window test（雙手同側手指指甲對合，觀察有無菱形窗）。
+        normal: 口唇紅潤，甲床粉紅，指甲角度 < 160 度，Schamroth window test 可見菱形窗
+        abnormal:
+          - finding: 中樞性發紺（口唇、舌頭呈藍紫色）
+            ddx: [嚴重低血氧（SaO2 < 85%）, 先天性心臟病右至左分流, 肺栓塞]
+            urgency: critical
+          - finding: 周邊性發紺（僅指端發紺）
+            ddx: [周邊血管收縮, Raynaud 現象, 低心輸出量, 環境寒冷]
+            urgency: medium
+          - finding: 杵狀指（指甲角度 ≥ 180 度，Schamroth window 消失）
+            ddx: [肺癌, 支氣管擴張症, 肺纖維化, 感染性心內膜炎, 發紺型先天性心臟病]
+            urgency: medium
+        common_mistakes:
+          - 在日光燈下判斷發紺不準確，應使用自然光或筆燈
+          - 忘記區分中樞性與周邊性發紺的臨床意義差異
+          - 將指甲油或深膚色誤判為發紺
+        clinical_pearl: >
+          中樞性發紺代表動脈血氧飽和度嚴重下降（通常 SaO2 < 85%，去氧血紅素 > 5 g/dL），
+          是需要立即處置的緊急徵象。杵狀指發展需數週至數月，暗示慢性低血氧或潛在惡性疾病。
+        osce_points: 2
+
+  # ==================== STEP 2: PALPATION（觸診）====================
+  - step: 2
+    category: palpation
+    display_name: 觸診（Palpation）
+    duration_seconds: 180
+    actions:
+      - id: pm_p_01
+        description: 評估氣管位置（tracheal position）
+        technique: >
+          以食指和中指輕放於病人胸骨切跡（sternal notch）上方，沿氣管兩側向下滑動，
+          感受氣管是否位於正中線。比較氣管與兩側胸鎖乳突肌之間的距離是否對等。
+        normal: 氣管位於正中線，兩側間距對等
+        abnormal:
+          - finding: 氣管偏向患側
+            ddx: [肺塌陷（atelectasis）, 肺切除術後, 肺纖維化]
+            urgency: medium
+          - finding: 氣管偏向健側（被推離）
+            ddx: [張力性氣胸, 大量肋膜積液, 縱膈腔腫瘤]
+            urgency: critical
+        common_mistakes:
+          - 施力過重引起病人咳嗽或不適
+          - 未請病人頭部保持正中位置，導致假性偏移
+        clinical_pearl: >
+          氣管偏移合併呼吸窘迫及單側胸壁過度擴張，高度懷疑張力性氣胸，
+          需立即進行針刺減壓（needle decompression），不需等待影像確認。
+        osce_points: 2
+
+      - id: pm_p_02
+        description: 評估胸廓擴張度（bilateral chest expansion）
+        technique: >
+          後胸評估：雙手拇指沿第 10 肋骨連線水平放置於脊柱兩側，其餘手指展開貼於胸壁。
+          請病人深吸氣，觀察兩側拇指分開的距離是否對稱。
+          前胸評估：雙手拇指放置於劍突兩側，同樣方式評估。正常兩側拇指應對稱分開 3-5 公分。
+        normal: 雙側胸廓對稱擴張，拇指分開距離相等（約 3-5 公分）
+        abnormal:
+          - finding: 雙側擴張度對稱性減少
+            ddx: [COPD, 肺纖維化, 神經肌肉疾病, 肥胖]
+            urgency: low
+          - finding: 單側擴張度減少
+            ddx: [肺炎合併實質化, 肋膜積液, 氣胸, 肋骨骨折, 肋膜疼痛]
+            urgency: medium
+        common_mistakes:
+          - 雙手未完全貼合胸壁，手指離開皮膚無法感受擴張
+          - 拇指初始位置未在正中線，導致測量不準確
+          - 未同時評估前胸與後胸
+        osce_points: 2
+
+      - id: pm_p_03
+        description: 評估觸覺震顫（tactile/vocal fremitus）
+        technique: >
+          以雙手掌尺側（手刀面）或掌面對稱放置於後胸壁。
+          請病人重複說「一一一」或「ninety-nine」，從肺尖至肺底依序左右對稱比較震顫強度。
+          至少比較 5-6 對位置：肺尖、上肺野、中肺野（肩胛骨間）、下肺野、肺底。
+        normal: 雙側觸覺震顫對稱，強度適中
+        abnormal:
+          - finding: 觸覺震顫增強
+            ddx: [肺實質化（如大葉性肺炎）, 肺腫瘤靠近胸壁]
+            urgency: medium
+          - finding: 觸覺震顫減弱或消失
+            ddx: [肋膜積液, 氣胸, COPD 合併肺氣腫, 支氣管阻塞]
+            urgency: medium
+        common_mistakes:
+          - 請病人說話音量太小，無法產生足夠震顫
+          - 雙手放置位置未對稱，無法有效比較
+          - 忘記從肺尖到肺底系統性地比較
+        clinical_pearl: >
+          觸覺震顫增強代表肺組織實質化（聲音傳導增加），
+          減弱代表氣體或液體阻隔了聲音傳導。需與叩診及聽診結果整合判讀。
+        osce_points: 2
+
+      - id: pm_p_04
+        description: 檢查皮下氣腫（subcutaneous emphysema）及壓痛
+        technique: >
+          以指腹輕壓胸壁皮膚，系統性從頸部、鎖骨上區、前胸、側胸到後胸。
+          皮下氣腫觸感如捏碎紙或泡泡紙（crepitus）。
+          同時評估胸壁有無壓痛點，特別是肋骨走向及肋軟骨交界處。
+        normal: 胸壁皮膚平滑，無捻髮感（crepitus），無壓痛
+        abnormal:
+          - finding: 皮下氣腫（觸及捻髮感）
+            ddx: [氣胸（尤其張力性氣胸）, 縱膈腔氣腫, 氣管損傷, 胸腔引流管旁滲漏]
+            urgency: high
+          - finding: 局部肋骨壓痛
+            ddx: [肋骨骨折, 肋軟骨炎（costochondritis）, 胸壁挫傷]
+            urgency: low
+          - finding: 廣泛性胸壁壓痛合併皮下氣腫
+            ddx: [多發性肋骨骨折合併氣胸, 創傷性氣管斷裂]
+            urgency: critical
+        common_mistakes:
+          - 施壓力道過重，無法區分皮下氣腫的捻髮感
+          - 漏檢頸部及鎖骨上區域的皮下氣腫
+        clinical_pearl: >
+          皮下氣腫快速擴展（尤其向頸部及面部蔓延）是張力性氣胸或氣管損傷的危急徵象，
+          需立即通知醫師並準備緊急處置。
+        osce_points: 1
+
+  # ==================== STEP 3: PERCUSSION（叩診）====================
+  - step: 3
+    category: percussion
+    display_name: 叩診（Percussion）
+    duration_seconds: 150
+    actions:
+      - id: pm_pe_01
+        description: 評估肺野叩診音（percussion notes over lung fields）
+        technique: >
+          以間接叩診法：將非慣用手中指第二指節緊貼胸壁（其餘手指抬起不接觸皮膚），
+          以慣用手中指指尖快速敲擊 2-3 下。從後胸肺尖開始，左右對稱交替向下叩診，
+          前胸從鎖骨上區往下，側胸從腋窩往下。每側至少叩 4-5 個位置。
+          注意區辨：清音（resonance）、過清音（hyperresonance）、濁音（dullness）、
+          實音（flatness）。
+        normal: 肺野呈清音（resonance），雙側對稱
+        abnormal:
+          - finding: 過清音（hyperresonance）
+            ddx: [氣胸, COPD 合併肺氣腫, 嚴重氣喘發作]
+            urgency: medium
+          - finding: 濁音（dullness）
+            ddx: [肋膜積液, 肺實質化（肺炎）, 肺腫瘤, 肺塌陷]
+            urgency: medium
+          - finding: 實音（flatness）
+            ddx: [大量肋膜積液, 巨大腫瘤]
+            urgency: medium
+          - finding: 單側過清音合併呼吸音消失
+            ddx: [張力性氣胸]
+            urgency: critical
+        common_mistakes:
+          - 叩診手指關節未緊貼胸壁，產生假性鼓音
+          - 敲擊力道不一致，無法有效比較兩側差異
+          - 忘記抬起其餘手指，影響震動傳導
+          - 未避開肩胛骨區域叩診（骨頭上叩診無意義）
+        clinical_pearl: >
+          叩診最適合偵測肋膜積液：液面以上為清音，液面以下為濁音，
+          可用來粗估積液高度。病人姿勢改變後液面會移動（shifting dullness）。
+        osce_points: 2
+
+      - id: pm_pe_02
+        description: 評估橫膈膜活動度（diaphragmatic excursion）
+        technique: >
+          從後胸下肺野開始，請病人深吸氣後閉氣，由下往上叩診找到清音與濁音交界處
+          （橫膈膜下緣），以筆標記。再請病人完全吐氣後閉氣，同樣方式找到濁音交界處
+          （橫膈膜上緣），標記之。測量兩標記間距離。左右兩側分別測量。
+        normal: 橫膈膜活動度 3-5 公分，左右側差距 < 2 公分
+        abnormal:
+          - finding: 橫膈膜活動度減少（< 3 公分）
+            ddx: [COPD 合併肺過度充氣, 肋膜積液, 腹水, 橫膈膜麻痺]
+            urgency: low
+          - finding: 單側橫膈膜活動度明顯減少或固定
+            ddx: [膈神經麻痺, 單側肋膜積液, 膈下膿瘍, 肝腫大（右側）]
+            urgency: medium
+        common_mistakes:
+          - 病人無法配合閉氣指令，導致測量不準確
+          - 叩診位置不在同一垂直線上，造成測量誤差
+        osce_points: 2
+
+  # ==================== STEP 4: AUSCULTATION（聽診）====================
+  - step: 4
+    category: auscultation
+    display_name: 聽診（Auscultation）
+    duration_seconds: 300
+    actions:
+      - id: pm_a_01
+        description: 聽診正常呼吸音（normal breath sounds）
+        technique: >
+          使用聽診器膜面（diaphragm），請病人以口深呼吸。
+          後胸聽診位置：左右各 4 點對稱聽診——肺尖（C7 棘突上方）、上肺野（T3 水平）、
+          中肺野（T5 水平，肩胛骨下角間）、下肺野（T8 水平，肩胛骨下角下方）。
+          前胸聽診位置：左右各 3 點——鎖骨上（肺尖）、第 2 肋間、第 4-6 肋間。
+          側胸：腋中線第 4-6 肋間。每個位置至少聽完一個完整呼吸週期。
+          區辨三種正常呼吸音：支氣管呼吸音（trachea 上）、支氣管肺泡呼吸音
+          （第 1-2 肋間前方及肩胛骨間區域）、肺泡呼吸音（其餘周邊肺野）。
+        normal: >
+          肺泡呼吸音（vesicular）：吸氣較長、吐氣短而柔和，遍布周邊肺野。
+          支氣管肺泡呼吸音（bronchovesicular）：吸吐等長，位於第 1-2 前肋間及後胸肩胛骨間區。
+          支氣管呼吸音（bronchial/tubular）：吐氣較長且較響，僅在氣管及胸骨上方聽到。
+        abnormal:
+          - finding: 呼吸音減弱或消失
+            ddx: [肋膜積液, 氣胸, COPD 合併肺氣腫, 肺塌陷, 肥胖]
+            urgency: medium
+          - finding: 周邊肺野出現支氣管呼吸音（bronchial breath sounds）
+            ddx: [肺實質化（大葉性肺炎）, 肺纖維化]
+            urgency: medium
+        common_mistakes:
+          - 隔著衣物聽診，衣料摩擦聲干擾判讀
+          - 未請病人用口呼吸，鼻腔氣流聲干擾
+          - 聽診順序不系統，遺漏部分肺野
+          - 未完整聽完一個呼吸週期就移到下一位置
+        clinical_pearl: >
+          聽診前先將聽診器膜面以手掌溫暖，避免冷金屬接觸皮膚引起病人肌肉緊縮或畏縮。
+          系統性地左右對稱比較是辨識單側病變的關鍵。
+        osce_points: 3
+
+      - id: pm_a_02
+        description: 辨識囉音（crackles/rales）
+        technique: >
+          在後胸下肺野特別仔細聽診，請病人深吸氣。
+          區辨 fine crackles（細囉音）與 coarse crackles（粗囉音）：
+          Fine crackles：高頻、短促、如魔鬼氈撕開聲，通常出現在吸氣末期。
+          Coarse crackles：低頻、較長、如吹泡泡聲，可出現在吸氣及吐氣期。
+          記錄出現位置、時相（吸氣或吐氣）、是否在咳嗽後消失。
+        normal: 無囉音
+        abnormal:
+          - finding: 雙側下肺野 fine crackles（吸氣末期）
+            ddx: [肺纖維化（IPF）, 心衰竭合併肺水腫早期, 間質性肺疾病]
+            urgency: medium
+          - finding: 雙側廣泛 coarse crackles
+            ddx: [肺水腫, 支氣管擴張症, 吸入性肺炎, 肺膿瘍]
+            urgency: high
+          - finding: 單側局部 crackles
+            ddx: [肺炎, 肺結核, 肺腫瘤合併阻塞性肺炎]
+            urgency: medium
+          - finding: 咳嗽後消失的 crackles
+            ddx: [分泌物滯留（較不嚴重）]
+            urgency: low
+        common_mistakes:
+          - 未區分 fine 與 coarse crackles，記錄不夠精確
+          - 將聽診器移動時產生的摩擦聲誤判為 crackles
+          - 忽略記錄 crackles 出現的呼吸時相及位置
+        clinical_pearl: >
+          Fine crackles 不會因咳嗽而消失，是肺纖維化的典型特徵（Velcro crackles）。
+          心衰竭的 crackles 通常從肺底開始，隨著嚴重度增加而往上蔓延。
+        osce_points: 3
+
+      - id: pm_a_03
+        description: 辨識喘鳴音（wheezes）、鼾音（rhonchi）與喘鳴（stridor）
+        technique: >
+          全肺野系統性聽診，注意吐氣期及吸氣期有無連續性音（continuous sounds）。
+          Wheezes：高頻、音樂性，以吐氣期為主。
+          Rhonchi：低頻、鼾聲樣，通常咳嗽後可改善。
+          Stridor：高頻、以吸氣期為主，通常在頸部或上胸最明顯。
+          記錄出現的呼吸時相、音調及分布範圍。
+        normal: 無異常連續性呼吸音
+        abnormal:
+          - finding: 廣泛性吐氣期 wheezes
+            ddx: [氣喘發作, COPD 急性惡化, 急性支氣管炎]
+            urgency: medium
+          - finding: 吸氣及吐氣期均有 wheezes
+            ddx: [嚴重氣喘, 嚴重支氣管痙攣]
+            urgency: high
+          - finding: 局部性 wheeze（固定於某一位置）
+            ddx: [支氣管腫瘤, 異物吸入, 支氣管狹窄]
+            urgency: medium
+          - finding: Rhonchi（低頻鼾音，咳嗽後可能消失）
+            ddx: [支氣管分泌物增加, 慢性支氣管炎, 肺炎]
+            urgency: low
+          - finding: 吸氣期 stridor
+            ddx: [上呼吸道阻塞, 喉頭水腫, 異物阻塞, 會厭炎, 過敏性休克]
+            urgency: critical
+        common_mistakes:
+          - 將 stridor 與 wheezes 混淆
+          - 未記錄 wheeze 出現的呼吸時相
+          - 氣喘嚴重發作時氣流極低反而聽不到 wheezes（silent chest），誤判為好轉
+        clinical_pearl: >
+          嚴重氣喘發作時，若原本有 wheezes 突然變成「寂靜胸」（silent chest），
+          代表氣流嚴重受阻，是呼吸衰竭的前兆，比有 wheezes 更危險。
+          Stridor 是上呼吸道阻塞的徵象，需緊急處置以確保呼吸道通暢。
+        osce_points: 3
+
+      - id: pm_a_04
+        description: 辨識肋膜摩擦音（pleural friction rub）
+        technique: >
+          在側胸及下肺野聽診，請病人深呼吸。肋膜摩擦音為粗糙的嘎嘎聲（creaking），
+          於吸氣及吐氣期均可聽到，如兩片皮革互相摩擦。
+          鑑別方式：請病人閉氣，肋膜摩擦音會消失（與心包膜摩擦音的區別）。
+        normal: 無肋膜摩擦音
+        abnormal:
+          - finding: 肋膜摩擦音（吸吐氣均可聽到，閉氣後消失）
+            ddx: [肋膜炎（pleurisy）, 肺栓塞合併肋膜炎, 肺炎旁肋膜反應, 結核性肋膜炎]
+            urgency: medium
+        common_mistakes:
+          - 將肋膜摩擦音與 coarse crackles 混淆
+          - 未以閉氣測試來區分肋膜摩擦音與心包膜摩擦音
+        clinical_pearl: >
+          肋膜摩擦音常伴隨胸痛（pleuritic chest pain），深呼吸時加重。
+          當肋膜積液量增多後，摩擦音反而會消失（因兩層肋膜被液體分開）。
+        osce_points: 2
+
+      - id: pm_a_05
+        description: 評估語音傳導（voice transmission/vocal resonance）
+        technique: >
+          使用聽診器膜面，請病人重複說「一一一」或「E-E-E」，在後胸左右對稱聽診比較。
+          測試三項語音傳導：
+          1. Bronchophony：說「ninety-nine」，正常時聲音模糊不清。
+          2. Egophony：說「E-E-E」，正常時聽到「E」；異常時聽到「A」（E-to-A change）。
+          3. Whispered pectoriloquy：以耳語說「one-two-three」，正常時幾乎聽不到。
+        normal: >
+          Bronchophony 陰性（聲音模糊），Egophony 陰性（聽到 E），
+          Whispered pectoriloquy 陰性（耳語幾乎聽不到）
+        abnormal:
+          - finding: Bronchophony 陽性（聲音清晰傳導）
+            ddx: [肺實質化（肺炎）, 肺纖維化]
+            urgency: medium
+          - finding: Egophony 陽性（E-to-A change）
+            ddx: [肺實質化, 肋膜積液上緣]
+            urgency: medium
+          - finding: Whispered pectoriloquy 陽性（耳語清楚聽到）
+            ddx: [肺實質化]
+            urgency: medium
+        common_mistakes:
+          - 未在同一位置比較兩側差異
+          - 病人說話音量不穩定，影響判讀
+          - 忘記測試全部三項語音傳導
+        clinical_pearl: >
+          語音傳導三項都陽性，高度提示該處肺組織實質化（consolidation），
+          結合叩診濁音及觸覺震顫增強，形成肺炎的經典三聯徵（triad）。
+          Egophony 在肋膜積液上緣也可出現，因液面壓縮上方肺組織。
+        osce_points: 2
+
+  # ==================== STEP 5: SPECIAL TESTS ====================
+  - step: 5
+    category: special_tests
+    display_name: 特殊檢查（Special Tests）
+    duration_seconds: 120
+    actions:
+      - id: pm_s_01
+        description: 強迫咳嗽試驗（forced cough test）
+        technique: >
+          請病人深吸氣後用力咳嗽，觀察咳嗽的強度、音質及是否有痰液咳出。
+          評估咳嗽效能：強而有力代表呼吸肌力足夠，虛弱無效咳嗽代表呼吸肌力不足。
+          注意咳嗽後有無 wheezing 或 desaturation。
+        normal: 咳嗽強而有力，聲音清亮，無異常聲響，無明顯痰液
+        abnormal:
+          - finding: 咳嗽虛弱無力（weak cough）
+            ddx: [呼吸肌無力, 神經肌肉疾病, 嚴重 COPD, 疼痛導致抑制]
+            urgency: medium
+          - finding: 咳嗽後出現 wheezing
+            ddx: [氣喘, 支氣管高度反應性, COPD]
+            urgency: low
+          - finding: 咳嗽伴大量膿痰
+            ddx: [肺炎, 支氣管擴張症, 肺膿瘍]
+            urgency: medium
+          - finding: 咳血（hemoptysis）
+            ddx: [肺結核, 肺癌, 支氣管擴張症, 肺栓塞, 肺膿瘍]
+            urgency: high
+        common_mistakes:
+          - 未注意咳嗽前後的血氧變化
+          - 未觀察痰液的顏色、量及性狀
+        osce_points: 1
+
+      - id: pm_s_02
+        description: 呼吸功能簡易評估（counting test/數數測試）
+        technique: >
+          請病人深吸一口氣後，以正常說話速度從 1 開始數數，記錄能數到的最大數字。
+          正常人可一口氣數到 20-30 以上。數到的數字越少，代表肺活量越低。
+          粗估：每數一個數字約需 2 秒的吐氣時間。
+        normal: 一口氣可數到 20 以上
+        abnormal:
+          - finding: 一口氣僅能數到 10-15
+            ddx: [中度限制性或阻塞性肺疾病, 呼吸肌力下降]
+            urgency: low
+          - finding: 一口氣僅能數到 < 10
+            ddx: [嚴重肺功能障礙, 嚴重 COPD, 嚴重肺纖維化, 神經肌肉疾病]
+            urgency: medium
+        common_mistakes:
+          - 未示範正確的數數速度，病人數太快
+          - 未記錄基線值以供後續比較
+        clinical_pearl: >
+          數數測試是床邊快速評估肺功能的簡便方法，特別適合無法配合正式肺功能檢查的病人。
+          可作為追蹤呼吸功能變化的簡易工具。
+        osce_points: 1
+
+      - id: pm_s_03
+        description: 脈搏血氧飽和度監測（pulse oximetry, SpO2）
+        technique: >
+          將脈搏血氧儀夾於病人手指（通常為食指或中指），確認指甲無指甲油，
+          手指溫暖且有足夠灌流。等待數秒至數值穩定後記錄 SpO2 及脈搏。
+          注意波形品質是否良好。若數值偏低，嘗試更換手指或改用耳垂。
+        normal: SpO2 ≥ 95%（海平面），脈搏波形品質良好
+        abnormal:
+          - finding: SpO2 90-94%
+            ddx: [輕度低血氧, 慢性肺疾病基線值, 高海拔環境]
+            urgency: medium
+          - finding: SpO2 < 90%
+            ddx: [嚴重低血氧, 呼吸衰竭, 肺栓塞, 重症肺炎, ARDS]
+            urgency: high
+          - finding: SpO2 < 80%
+            ddx: [危急低血氧, 即將呼吸心跳停止]
+            urgency: critical
+        common_mistakes:
+          - 未確認指甲油或人工指甲干擾（可能造成假性偏低）
+          - 忽略周邊灌流不良（休克、低體溫）導致的不準確讀數
+          - 未注意一氧化碳中毒時 SpO2 可能假性正常
+        clinical_pearl: >
+          SpO2 與 PaO2 的關係呈 S 型曲線（氧血紅素解離曲線）：
+          SpO2 90% 約對應 PaO2 60 mmHg，此為急速下降的轉折點，
+          低於此值血氧會快速惡化。COPD 病人的目標 SpO2 可能為 88-92%。
+        osce_points: 2
+
+osce_scoring:
+  total_points: 35
+  passing_score: 25
+  time_limit_minutes: 15
+  critical_items:
+    - pm_i_01    # 呼吸型態評估——基本生命徵象
+    - pm_p_01    # 氣管位置——偵測張力性氣胸
+    - pm_a_01    # 正常呼吸音聽診——核心技能
+    - pm_a_03    # wheezes/stridor 辨識——急性呼吸道危機
+    - pm_s_03    # SpO2 監測——客觀呼吸功能指標
+
+red_flags:
+  - finding: 嚴重呼吸窘迫：呼吸頻率 > 30 次/分，輔助肌使用，說話困難（僅能說單字）
+    action: 立即給予高流量氧氣，準備插管設備，通知醫師及呼吸治療師，準備急救推車
+    urgency: critical
+
+  - finding: 張力性氣胸徵象：單側呼吸音消失、氣管偏向健側、頸靜脈怒張、低血壓
+    action: 立即進行針刺減壓（第 2 肋間鎖骨中線或第 4-5 肋間腋前線），通知外科準備胸腔引流
+    urgency: critical
+
+  - finding: 大量咳血（massive hemoptysis）：單次 > 100 mL 或 24 小時 > 500 mL
+    action: 維持呼吸道通暢（患側朝下臥位），建立大口徑靜脈通路，緊急通知胸腔外科及介入放射科
+    urgency: critical
+
+  - finding: 急性上呼吸道阻塞：吸氣期 stridor、流涎、無法平躺、三角架姿勢（tripod position）
+    action: 保持病人舒適姿勢（勿強迫平躺），準備困難呼吸道處置設備，通知麻醉科，必要時準備緊急環甲膜切開
+    urgency: critical
+
+  - finding: SpO2 持續 < 85% 且對氧氣治療無反應
+    action: 準備非侵入性正壓通氣（NIPPV）或緊急插管，動脈血液氣體分析，通知加護病房
+    urgency: critical
+
+  - finding: 寂靜胸（silent chest）：原有喘鳴音突然消失，合併意識變化及呼吸費力加重
+    action: 視為即將呼吸衰竭，立即給予全身性類固醇及支氣管擴張劑，準備插管
+    urgency: critical
+
+  - finding: 皮下氣腫快速蔓延至頸部及面部
+    action: 高度懷疑縱膈腔氣腫或氣管損傷，緊急安排胸部電腦斷層，通知胸腔外科
+    urgency: critical

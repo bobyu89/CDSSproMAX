@@ -1,0 +1,592 @@
+system: cardiovascular
+display_name: 心血管系統身體評估
+description: >
+  系統性評估心臟結構與功能、周邊血管循環狀態，涵蓋心臟視診、觸診、叩診、聽診
+  及周邊血管特殊檢查，適用於專科護理師臨床執業與 OSCE 考試準備。
+prerequisites:
+  - 病人採半坐臥位（45度），充分暴露胸部
+  - 準備聽診器（含鐘型與膜型聽診頭）、筆燈、量角器或尺規
+  - 確認環境安靜、光線充足
+  - 備妥血壓計及都卜勒超音波（若需執行 ABI）
+  - 向病人說明檢查目的與流程，取得同意
+source_note: "本內容由專科護理師根據臨床經驗自行撰寫，醫學事實參考 StatPearls (CC BY-NC-ND 4.0) 及公開臨床指引"
+
+assessment_sequence:
+  # ============================================================
+  # Step 1: Inspection（視診）
+  # ============================================================
+  - step: 1
+    category: inspection
+    display_name: 視診
+    duration_seconds: 120
+    actions:
+      - id: cv_i_01
+        description: 評估頸靜脈搏動與頸靜脈怒張 (JVP/JVD)
+        technique: >
+          病人採半坐臥位 45 度，頭部微轉向左側。以切線光源觀察右側內頸靜脈搏動，
+          辨識最高搏動點，測量其與胸骨角的垂直距離，加上 5 cm 即為估計中心靜脈壓。
+        normal: JVP 搏動點距胸骨角 ≤ 3 cm（估計 CVP ≤ 8 cmH2O），可見輕柔的雙峰波動（a 波與 v 波）
+        abnormal:
+          - finding: JVP > 4 cm（JVD），頸靜脈明顯怒張
+            ddx: [右心衰竭, 心包填塞, 上腔靜脈症候群, 肺栓塞, 限制型心肌病變]
+            urgency: high
+          - finding: 巨大 a 波（cannon a wave）
+            ddx: [完全性房室傳導阻滯, 心室頻脈, 三尖瓣狹窄]
+            urgency: high
+          - finding: 巨大 v 波
+            ddx: [三尖瓣逆流]
+            urgency: medium
+        common_mistakes:
+          - 未將病人角度調至 45 度，導致 JVP 測量不準確
+          - 誤將頸動脈搏動當作頸靜脈搏動（頸動脈為單峰、不可壓縮）
+          - 測量時使用左側內頸靜脈（右側較直接反映右心房壓力）
+        clinical_pearl: >
+          頸靜脈搏動可被壓縮且隨呼吸變化（吸氣時下降），頸動脈搏動則無法壓縮且不受呼吸影響，
+          此為鑑別兩者的關鍵。
+        osce_points: 3
+
+      - id: cv_i_02
+        description: 視診胸壁外觀與異常搏動
+        technique: >
+          病人仰臥，觀察前胸壁是否有可見的心尖搏動 (apical impulse)、
+          異常搏動或胸壁隆起。以切線角度觀察最佳。
+        normal: 可於第五肋間鎖骨中線內側見到輕微心尖搏動，胸壁對稱無異常隆起
+        abnormal:
+          - finding: 心尖搏動外移至鎖骨中線外側
+            ddx: [左心室擴大, 擴張型心肌病變]
+            urgency: medium
+          - finding: 胸骨左緣可見明顯抬舉性搏動
+            ddx: [右心室肥大, 肺動脈高壓]
+            urgency: medium
+          - finding: 胸壁局部隆起
+            ddx: [心室動脈瘤, 大量心包積液]
+            urgency: high
+        common_mistakes:
+          - 光線不足導致無法觀察到細微搏動
+          - 未使用切線角度觀察
+        osce_points: 1
+
+      - id: cv_i_03
+        description: 檢視四肢末梢：水腫、發紺、杵狀指
+        technique: >
+          觀察雙側手指與腳趾的顏色及形狀，檢查指甲床有無發紺（cyanosis），
+          評估指端是否呈杵狀指（clubbing，指甲基底角 > 180 度）。
+          觀察雙下肢有無水腫，注意對稱性。
+        normal: 四肢末梢溫暖、無發紺，指甲床粉紅色，毛細血管再充盈時間 < 2 秒，無杵狀指
+        abnormal:
+          - finding: 周邊發紺（手指、腳趾呈紫藍色）
+            ddx: [周邊血管疾病, 低心輸出量, 雷諾氏現象]
+            urgency: medium
+          - finding: 中心性發紺（舌頭、嘴唇發紺）
+            ddx: [嚴重低血氧, 右向左分流型先天性心臟病, 肺栓塞]
+            urgency: critical
+          - finding: 杵狀指
+            ddx: [先天性發紺型心臟病, 感染性心內膜炎, 肺部疾病]
+            urgency: medium
+          - finding: 雙側對稱性凹陷性水腫 (pitting edema)
+            ddx: [右心衰竭, 靜脈功能不全, 肝硬化, 腎病症候群]
+            urgency: medium
+        common_mistakes:
+          - 僅觀察單側肢體而忽略對稱性比較
+          - 未檢查毛細血管再充盈時間
+        clinical_pearl: >
+          杵狀指合併發紺強烈提示發紺型先天性心臟病；若出現 Osler nodes（指尖疼痛性紅色結節）
+          或 Janeway lesions（手掌無痛性紅斑），需高度懷疑感染性心內膜炎。
+        osce_points: 2
+
+      - id: cv_i_04
+        description: 觀察整體皮膚顏色
+        technique: >
+          觀察臉部、結膜、口腔黏膜及皮膚整體顏色，評估是否有蒼白、黃疸或花斑。
+        normal: 膚色正常，結膜粉紅色，鞏膜無黃染
+        abnormal:
+          - finding: 面色蒼白、結膜蒼白
+            ddx: [貧血, 低心輸出量, 休克]
+            urgency: medium
+          - finding: 皮膚出現花斑 (mottling)
+            ddx: [心因性休克, 敗血性休克, 嚴重周邊灌流不足]
+            urgency: critical
+          - finding: 黃疸（鞏膜黃染）
+            ddx: [鬱血性肝病變（右心衰竭）, 溶血性貧血, 人工瓣膜溶血]
+            urgency: medium
+        common_mistakes:
+          - 在人工照明下判斷黃疸，可能造成誤判
+        osce_points: 1
+
+  # ============================================================
+  # Step 2: Palpation（觸診）
+  # ============================================================
+  - step: 2
+    category: palpation
+    display_name: 觸診
+    duration_seconds: 180
+    actions:
+      - id: cv_p_01
+        description: 觸診心尖搏動 (PMI) 位置與性質
+        technique: >
+          以右手掌面輕放於心尖部位（左側第五肋間鎖骨中線），感受搏動最強點。
+          評估搏動的位置、範圍（正常 < 2.5 cm）、力量及持續時間。
+          若仰臥位不易觸及，可請病人左側臥位再評估。
+        normal: PMI 位於左側第五肋間鎖骨中線上或其內側，範圍約 1-2.5 cm，短暫輕拍感
+        abnormal:
+          - finding: PMI 外移至鎖骨中線外側或向下移位
+            ddx: [左心室擴大, 擴張型心肌病變, 主動脈瓣逆流]
+            urgency: medium
+          - finding: PMI 範圍增大（> 2.5 cm）且呈持續性抬舉感（sustained heave）
+            ddx: [左心室肥大, 主動脈瓣狹窄, 高血壓性心臟病]
+            urgency: medium
+          - finding: PMI 呈彌漫性搏動
+            ddx: [擴張型心肌病變]
+            urgency: medium
+        common_mistakes:
+          - 使用指尖而非掌面觸診，敏感度降低
+          - 忘記在仰臥位觸不到時改請病人左側臥
+        clinical_pearl: >
+          左側臥位可使心尖更靠近胸壁，特別有助於觸診 S3 震顫及二尖瓣雜音相關的 thrill。
+        osce_points: 3
+
+      - id: cv_p_02
+        description: 觸診震顫 (thrill)
+        technique: >
+          以手掌的掌指關節處（最敏感區域）依序觸診心尖部、胸骨左緣下段、
+          胸骨左緣上段、胸骨右緣第二肋間，感受是否有震顫（如貓發出呼嚕聲的振動感）。
+        normal: 各區域無震顫
+        abnormal:
+          - finding: 心尖部震顫
+            ddx: [重度二尖瓣逆流, 重度二尖瓣狹窄]
+            urgency: high
+          - finding: 胸骨右緣第二肋間震顫
+            ddx: [重度主動脈瓣狹窄]
+            urgency: high
+          - finding: 胸骨左緣第二肋間震顫
+            ddx: [重度肺動脈瓣狹窄, 心房中膈缺損]
+            urgency: high
+        common_mistakes:
+          - 未使用掌指關節處觸診（此處對低頻振動最敏感）
+          - 按壓過重反而降低靈敏度
+        clinical_pearl: >
+          震顫相當於觸診到的雜音，代表至少 grade 4/6 以上的雜音強度，通常意味著血流動力學上有意義的瓣膜病變。
+        osce_points: 2
+
+      - id: cv_p_03
+        description: 觸診右心室抬舉搏動 (parasternal heave)
+        technique: >
+          將右手掌面橫放於胸骨左緣第三至第四肋間，感受是否有持續性的向外抬舉搏動。
+        normal: 無明顯抬舉搏動
+        abnormal:
+          - finding: 明顯的胸骨旁持續性抬舉搏動
+            ddx: [右心室肥大, 肺動脈高壓, 二尖瓣狹窄（續發肺高壓）]
+            urgency: medium
+        common_mistakes:
+          - 手掌放置位置過高或過低
+          - 將正常的左心室搏動傳導誤判為 parasternal heave
+        osce_points: 2
+
+      - id: cv_p_04
+        description: 周邊脈搏觸診
+        technique: >
+          依序觸診雙側橈動脈（radial）、肱動脈（brachial）、頸動脈（carotid，一次一側）、
+          股動脈（femoral）、膕動脈（popliteal）、足背動脈（dorsalis pedis）、
+          脛後動脈（posterior tibial）。評估脈搏速率、節律、強度（0-4+）、對稱性。
+        normal: 雙側脈搏對稱、規則、強度 2+（正常），觸診無延遲
+        abnormal:
+          - finding: 脈搏強弱不一（pulsus alternans）
+            ddx: [嚴重左心衰竭]
+            urgency: high
+          - finding: 上肢脈搏強而下肢脈搏弱或延遲（radio-femoral delay）
+            ddx: [主動脈窄縮 (coarctation of aorta)]
+            urgency: high
+          - finding: 水衝脈（bounding pulse / water-hammer pulse）
+            ddx: [主動脈瓣逆流, 動脈導管未閉, 甲狀腺亢進]
+            urgency: medium
+          - finding: 遲脈（pulsus tardus）且弱脈（pulsus parvus）
+            ddx: [重度主動脈瓣狹窄]
+            urgency: high
+          - finding: 足背或脛後動脈搏動消失
+            ddx: [周邊動脈疾病, 急性動脈栓塞]
+            urgency: high
+        common_mistakes:
+          - 同時觸診雙側頸動脈（有暈厥風險）
+          - 未比較上下肢脈搏強度
+          - 以拇指觸診脈搏（拇指本身有脈搏干擾）
+        clinical_pearl: >
+          頸動脈必須一次觸診一側，避免同時壓迫雙側引起暈厥。Radio-femoral delay 是年輕人
+          繼發性高血壓排查中的重要發現。
+        osce_points: 3
+
+      - id: cv_p_05
+        description: 四肢水腫觸診與分級
+        technique: >
+          以拇指按壓脛骨前方或內踝上方至少 5 秒後放開，觀察凹陷恢復時間。
+          依凹陷深度分級：1+（< 2 mm）、2+（2-4 mm）、3+（4-6 mm）、4+（> 6 mm）。
+          評估水腫範圍（足踝、小腿、大腿、薦骨部位）。
+        normal: 按壓無凹陷，無水腫
+        abnormal:
+          - finding: 雙側對稱性凹陷性水腫 3+ 以上
+            ddx: [右心衰竭, 腎病症候群, 肝硬化, 靜脈功能不全]
+            urgency: medium
+          - finding: 單側下肢水腫
+            ddx: [深層靜脈血栓 (DVT), 蜂窩性組織炎, 淋巴水腫]
+            urgency: high
+          - finding: 薦骨部位水腫（臥床病人）
+            ddx: [右心衰竭, 全身性水腫]
+            urgency: medium
+        common_mistakes:
+          - 按壓時間不足 5 秒，凹陷不明顯
+          - 僅檢查足踝而忽略薦骨部位（臥床病人水腫常在薦骨處）
+        osce_points: 2
+
+  # ============================================================
+  # Step 3: Percussion（叩診）
+  # ============================================================
+  - step: 3
+    category: percussion
+    display_name: 叩診
+    duration_seconds: 60
+    actions:
+      - id: cv_pe_01
+        description: 心臟邊界叩診
+        technique: >
+          從左側腋中線開始，沿第五肋間由外向內叩診，由清音（共鳴音）轉為濁音處
+          即為左心界。再從右側胸壁由外向內叩診，確認右心界。
+          向上叩診確認心臟上界。
+        normal: 左心界位於鎖骨中線上或其內側，右心界約在胸骨右緣
+        abnormal:
+          - finding: 左心界外移超過鎖骨中線
+            ddx: [左心室擴大, 心包積液]
+            urgency: medium
+          - finding: 心臟濁音範圍顯著擴大
+            ddx: [大量心包積液, 嚴重心臟擴大]
+            urgency: high
+        common_mistakes:
+          - 叩診力道不一致導致邊界判定不準
+          - 忘記在多個肋間逐一叩診以描繪完整心臟輪廓
+        clinical_pearl: >
+          心臟叩診在現代臨床已大幅被影像學取代，但 OSCE 仍可能考核。
+          大量心包積液時叩診範圍會顯著擴大，心音則會減弱。
+        osce_points: 1
+
+  # ============================================================
+  # Step 4: Auscultation（聽診）
+  # ============================================================
+  - step: 4
+    category: auscultation
+    display_name: 聽診
+    duration_seconds: 300
+    actions:
+      - id: cv_a_01
+        description: 主動脈瓣區 (Aortic area) 聽診
+        technique: >
+          將聽診器膜型聽頭放於胸骨右緣第二肋間（右上），請病人坐起、身體前傾、
+          深呼氣後憋住，以增強主動脈瓣逆流雜音。先聽 S1、S2，再注意有無額外心音或雜音。
+        normal: S2 > S1，S2 清脆（主動脈瓣成分 A2 在此處最明顯），無雜音
+        abnormal:
+          - finding: 收縮期漸強漸弱型 (crescendo-decrescendo) 噴射雜音，可能傳導至頸部
+            ddx: [主動脈瓣狹窄, 主動脈硬化 (aortic sclerosis)]
+            urgency: medium
+          - finding: 舒張早期漸弱型 (decrescendo) 吹風樣雜音
+            ddx: [主動脈瓣逆流]
+            urgency: medium
+          - finding: S2 減弱或消失
+            ddx: [重度主動脈瓣狹窄（瓣膜鈣化不動）]
+            urgency: high
+        common_mistakes:
+          - 未請病人前傾深吐氣聽主動脈瓣逆流
+          - 將老年人主動脈硬化雜音誤判為主動脈瓣狹窄（需鑑別傳導方向）
+        clinical_pearl: >
+          主動脈瓣狹窄的雜音會傳導至頸動脈，而主動脈硬化的雜音則不會。
+          噴射雜音的峰值越晚（late peaking），通常代表狹窄越嚴重。
+        osce_points: 3
+
+      - id: cv_a_02
+        description: 肺動脈瓣區 (Pulmonic area) 聽診
+        technique: >
+          將聽診器膜型聽頭放於胸骨左緣第二肋間（左上），聽診 S1、S2，
+          特別注意 S2 的生理性分裂：請病人深吸氣時聽取 A2-P2 間距是否增大。
+        normal: 吸氣時 S2 出現生理性分裂（可聽到 A2 與 P2 兩個成分），呼氣時合併為單一聲音
+        abnormal:
+          - finding: S2 固定分裂（fixed splitting，不隨呼吸改變）
+            ddx: [心房中膈缺損 (ASD)]
+            urgency: medium
+          - finding: S2 反常分裂（paradoxical splitting，呼氣時分裂、吸氣時合併）
+            ddx: [左束支傳導阻滯 (LBBB), 重度主動脈瓣狹窄, 右心室起搏]
+            urgency: medium
+          - finding: P2 增強（比 A2 更大聲）
+            ddx: [肺動脈高壓]
+            urgency: medium
+          - finding: 收縮期噴射雜音
+            ddx: [肺動脈瓣狹窄, 心房中膈缺損之相對性肺動脈瓣狹窄]
+            urgency: medium
+        common_mistakes:
+          - 未請病人配合深呼吸來評估 S2 分裂
+          - 無法區分生理性分裂與固定分裂
+        osce_points: 3
+
+      - id: cv_a_03
+        description: Erb's point 聽診
+        technique: >
+          將聽診器膜型聽頭放於胸骨左緣第三肋間。此處為主動脈瓣逆流雜音的最佳聽取點，
+          也適合聽取多種雜音的傳導。
+        normal: 無額外心音或雜音
+        abnormal:
+          - finding: 舒張早期漸弱型高音調雜音
+            ddx: [主動脈瓣逆流]
+            urgency: medium
+          - finding: 持續性機械樣雜音（continuous machinery murmur）
+            ddx: [動脈導管未閉 (PDA)]
+            urgency: medium
+        common_mistakes:
+          - 忽略 Erb's point 而只聽四個傳統瓣膜區
+        clinical_pearl: >
+          Erb's point 是主動脈瓣逆流舒張雜音最容易被聽到的位置，
+          應視為心臟聽診的第五個必聽位置。
+        osce_points: 2
+
+      - id: cv_a_04
+        description: 三尖瓣區 (Tricuspid area) 聽診
+        technique: >
+          將聽診器膜型聽頭放於胸骨左緣第四至第五肋間（左下胸骨緣）。
+          請病人深吸氣後憋住，觀察雜音是否增強（Carvallo's sign 陽性）。
+        normal: S1 ≥ S2，無雜音
+        abnormal:
+          - finding: 全收縮期雜音，吸氣時增強（Carvallo's sign 陽性）
+            ddx: [三尖瓣逆流]
+            urgency: medium
+          - finding: 舒張中期隆隆雜音（rumbling murmur）
+            ddx: [三尖瓣狹窄（罕見）]
+            urgency: medium
+        common_mistakes:
+          - 未利用深吸氣增強右心雜音（Carvallo's sign）
+          - 將三尖瓣逆流雜音與二尖瓣逆流混淆
+        clinical_pearl: >
+          右心瓣膜雜音隨吸氣增強（因回心血量增加），左心瓣膜雜音則相反。
+          這是鑑別左右心雜音的重要依據。
+        osce_points: 2
+
+      - id: cv_a_05
+        description: 二尖瓣區/心尖部 (Mitral/Apex) 聽診
+        technique: >
+          將聽診器鐘型聽頭輕放於心尖部（左側第五肋間鎖骨中線），請病人左側臥位。
+          鐘型聽頭聽低頻音（S3、S4、二尖瓣狹窄隆隆雜音），膜型聽頭聽高頻音（S1、二尖瓣逆流雜音）。
+        normal: S1 > S2，S1 清脆，無額外心音或雜音
+        abnormal:
+          - finding: S3 奔馬音（低頻，S2 後出現）
+            ddx: [心衰竭（成人病理性）, 容積過負荷, 二尖瓣逆流]
+            urgency: high
+          - finding: S4 奔馬音（低頻，S1 前出現）
+            ddx: [左心室肥大, 高血壓性心臟病, 急性心肌梗塞, 主動脈瓣狹窄]
+            urgency: medium
+          - finding: 全收縮期高音調吹風樣雜音，傳導至腋下
+            ddx: [二尖瓣逆流]
+            urgency: medium
+          - finding: 舒張中期低音調隆隆雜音 (rumbling murmur)，左側臥位時更明顯
+            ddx: [二尖瓣狹窄]
+            urgency: medium
+          - finding: 收縮中晚期喀嚓音 (midsystolic click) 伴晚期收縮雜音
+            ddx: [二尖瓣脫垂 (MVP)]
+            urgency: low
+        common_mistakes:
+          - 未使用鐘型聽頭聽 S3/S4（鐘型專聽低頻音）
+          - 鐘型聽頭壓太重變成膜型效果，低頻音被過濾
+          - 未請病人左側臥增強二尖瓣聽診
+        clinical_pearl: >
+          成人的 S3 幾乎總是病理性的，代表心室快速充盈期心室壁順應性下降，
+          是心衰竭的早期聽診發現。S4 則代表心房收縮時遇到僵硬的心室。
+          「S3 = 心衰竭，S4 = 心肥大」是臨床上實用的記憶方式。
+        osce_points: 4
+
+      - id: cv_a_06
+        description: 頸動脈聽診 (carotid bruit)
+        technique: >
+          將聽診器鐘型聽頭輕放於頸動脈搏動處（胸鎖乳突肌前緣），請病人深吸氣後憋住
+          以減少呼吸音干擾。先聽一側，再聽對側。
+        normal: 無雜音（bruit）
+        abnormal:
+          - finding: 頸動脈收縮期雜音 (bruit)
+            ddx: [頸動脈狹窄, 主動脈瓣狹窄雜音傳導]
+            urgency: medium
+          - finding: 高音調頸動脈雜音且脈搏減弱
+            ddx: [嚴重頸動脈狹窄（> 70%）]
+            urgency: high
+        common_mistakes:
+          - 聽診時壓太重造成假性雜音
+          - 未鑑別是頸動脈本身狹窄還是主動脈瓣狹窄雜音傳導
+        clinical_pearl: >
+          頸動脈狹窄極嚴重時（> 90%），雜音反而可能消失，因血流量過低。
+          因此無 bruit 不能完全排除嚴重狹窄。
+        osce_points: 2
+
+      - id: cv_a_07
+        description: 體位變化與特殊動作對雜音的影響
+        technique: >
+          評估以下動作對雜音的影響：
+          1. Valsalva（閉氣用力）：減少回心血量；
+          2. 蹲下（squatting）：增加回心血量與後負荷；
+          3. 左側臥位：增強二尖瓣雜音；
+          4. 坐起前傾並深吐氣：增強主動脈瓣逆流雜音。
+        normal: 生理性雜音隨動作改變強度，不影響正常心音
+        abnormal:
+          - finding: Valsalva 時雜音增強
+            ddx: [肥厚性阻塞型心肌病變 (HOCM), 二尖瓣脫垂]
+            urgency: medium
+          - finding: 蹲下時雜音減弱
+            ddx: [HOCM（因後負荷增加減輕左室出口阻塞）]
+            urgency: medium
+          - finding: Valsalva 時雜音減弱
+            ddx: [大多數其他瓣膜雜音（因回心血量減少）]
+            urgency: low
+        common_mistakes:
+          - 未正確指導病人執行 Valsalva 動作
+          - 僅在一個體位聽診就做出診斷
+        clinical_pearl: >
+          HOCM 與 MVP 是唯二在 Valsalva 時雜音增強的情況。
+          記住口訣：「HOCM 和 MVP 是 Valsalva 的好朋友」。
+          HOCM 雜音在蹲下時減弱而站起時增強，與大多數雜音相反。
+        osce_points: 3
+
+  # ============================================================
+  # Step 5: Special Tests（特殊檢查）
+  # ============================================================
+  - step: 5
+    category: special_tests
+    display_name: 特殊檢查
+    duration_seconds: 180
+    actions:
+      - id: cv_s_01
+        description: 踝臂指數測量 (Ankle-Brachial Index, ABI)
+        technique: >
+          病人平躺休息 10 分鐘。使用都卜勒超音波分別測量雙側肱動脈收縮壓及
+          雙側足背/脛後動脈收縮壓（取較高值）。ABI = 踝部收縮壓 / 肱部收縮壓（取較高側）。
+        normal: ABI 1.0-1.4
+        abnormal:
+          - finding: ABI < 0.9
+            ddx: [周邊動脈疾病 (PAD)]
+            urgency: medium
+          - finding: ABI < 0.4
+            ddx: [嚴重周邊動脈疾病, 肢體缺血, 重度間歇性跛行]
+            urgency: high
+          - finding: ABI > 1.4
+            ddx: [血管鈣化（常見於糖尿病、慢性腎病），數值不可靠]
+            urgency: low
+        common_mistakes:
+          - 測量前病人未充分休息
+          - 使用一般聽診器代替都卜勒超音波
+          - 未取踝部動脈中較高的收縮壓值
+        clinical_pearl: >
+          ABI < 0.9 對 PAD 的敏感度約 95%、特異度約 99%。
+          糖尿病及洗腎病人因血管鈣化可能導致 ABI 偽性升高，需改用趾臂指數 (TBI)。
+        osce_points: 2
+
+      - id: cv_s_02
+        description: Allen's test（艾倫測試）
+        technique: >
+          請病人握拳 30 秒，檢查者同時壓迫橈動脈與尺動脈。
+          病人張開手掌（此時手掌蒼白），檢查者先釋放尺動脈，觀察手掌恢復紅潤的時間。
+          正常應在 5-7 秒內恢復。再重複測試，改為釋放橈動脈。
+        normal: 釋放尺動脈後手掌在 5-7 秒內恢復紅潤色澤
+        abnormal:
+          - finding: 釋放尺動脈後 > 10 秒手掌仍蒼白
+            ddx: [尺動脈阻塞或功能不全, 橈動脈為手掌唯一血供]
+            urgency: medium
+        common_mistakes:
+          - 未完全壓迫兩條動脈就開始測試
+          - 病人張手後未立即觀察顏色變化
+          - 僅測試一側未測對側
+        clinical_pearl: >
+          Allen's test 陽性（尺動脈功能不全）時，不應進行橈動脈穿刺或置放 A-line，
+          因為一旦橈動脈受損，手掌將失去血液供應。
+        osce_points: 2
+
+      - id: cv_s_03
+        description: 微血管填充測試 (Capillary Refill Test, CRT)
+        technique: >
+          選擇病人指甲床（通常為食指或中指），將手抬高至心臟水平。
+          以拇指穩定按壓指甲床約 5 秒使其變白，然後迅速釋放壓力，
+          觀察並計算指甲床恢復原本粉紅色澤所需的時間。
+          雙手皆需測試並比較兩側。亦可測試腳趾甲床評估下肢灌流。
+        normal: 釋放後 < 2 秒內恢復粉紅色澤
+        abnormal:
+          - finding: CRT 2-3 秒（輕度延遲）
+            ddx: [輕度脫水, 周邊血管收縮, 低體溫環境影響]
+            urgency: low
+          - finding: CRT 3-5 秒（中度延遲）
+            ddx: [中度脫水, 周邊動脈疾病 (PAD), 低血壓, 貧血]
+            urgency: medium
+          - finding: CRT > 5 秒（嚴重延遲）
+            ddx: [休克（低血容積性/心因性/分布性）, 嚴重周邊動脈阻塞, 嚴重脫水]
+            urgency: high
+          - finding: 單側 CRT 明顯延遲（與對側不對稱）
+            ddx: [急性動脈栓塞, 單側動脈狹窄, 雷諾氏現象 (Raynaud's phenomenon)]
+            urgency: high
+        common_mistakes:
+          - 按壓時間不足 5 秒，導致指甲未完全變白
+          - 在寒冷環境中測試（低溫會延長 CRT，造成偽陽性）
+          - 未抬高手至心臟水平，受重力影響
+          - 只測一側未比較雙側對稱性
+          - 在塗有指甲油的指甲上測試（無法觀察顏色變化）
+        clinical_pearl: >
+          CRT 是評估周邊組織灌流最快速簡便的床邊測試。
+          2022 年 Surviving Sepsis Campaign 建議將 CRT 作為敗血症復甦治療的目標之一（target CRT < 3 秒）。
+          環境溫度、年齡（老年人基線較長）和膚色（深膚色者較難判斷）都會影響結果，
+          需結合其他灌流指標（如尿量、乳酸值、血壓）綜合判斷。
+        osce_points: 2
+
+      - id: cv_s_04
+        description: 肝頸靜脈回流試驗 (Hepatojugular reflux, HJR)
+        technique: >
+          病人半坐臥 45 度，持續觀察右側 JVP。以手掌穩定施壓於右上腹（肝臟區域）
+          至少 15-30 秒，觀察 JVP 是否持續升高 > 3 cm。施壓期間提醒病人正常呼吸，勿用力。
+        normal: 按壓腹部時 JVP 短暫輕微上升後回落，持續施壓時不會持續升高
+        abnormal:
+          - finding: 按壓腹部時 JVP 持續升高 > 3 cm 超過 15 秒（HJR 陽性）
+            ddx: [右心衰竭, 限制型心肌病變, 心包縮窄, 三尖瓣逆流]
+            urgency: medium
+        common_mistakes:
+          - 施壓時間不足 15 秒
+          - 病人按壓時不自主用力（Valsalva），導致偽陽性
+          - 未事先確認病人腹部無壓痛（避免按壓引起疼痛）
+        clinical_pearl: >
+          HJR 陽性反映右心無法處理突然增加的靜脈回流，是評估右心功能的簡便床邊檢查。
+          其對右心衰竭的陽性預測值高於單獨觀察 JVP。
+        osce_points: 2
+
+osce_scoring:
+  total_points: 47
+  passing_score: 33
+  time_limit_minutes: 15
+  critical_items:
+    - cv_i_01   # JVP 評估
+    - cv_p_01   # PMI 觸診
+    - cv_p_04   # 周邊脈搏觸診
+    - cv_a_01   # 主動脈瓣區聽診
+    - cv_a_05   # 二尖瓣區聽診（含 S3/S4）
+    - cv_a_07   # 體位變化對雜音影響
+
+red_flags:
+  - finding: 新出現的胸痛合併呼吸困難、冒冷汗、噁心（疑似急性冠心症）
+    action: 立即 12 導程心電圖、通知醫師、啟動急性冠心症處置流程，準備 MONA（Morphine, Oxygen, Nitroglycerin, Aspirin）
+    urgency: critical
+
+  - finding: 突發嚴重呼吸困難、端坐呼吸、粉紅色泡沫痰（急性肺水腫）
+    action: 立即高坐位、高流量氧氣、通知醫師、準備 IV furosemide 和 nitroglycerin、備好非侵入性正壓呼吸器 (NIPPV)
+    urgency: critical
+
+  - finding: Beck's triad（低血壓 + JVD + 心音遙遠），疑似心包填塞
+    action: 立即通知醫師、準備緊急心包穿刺術、快速靜脈輸液維持血壓、避免使用利尿劑
+    urgency: critical
+
+  - finding: 脈搏消失合併肢體蒼白冰冷疼痛（6P：Pain, Pallor, Pulselessness, Paresthesia, Paralysis, Poikilothermia）
+    action: 立即通知外科醫師、評估肢體灌流、準備緊急血管攝影或取栓術、勿抬高患肢
+    urgency: critical
+
+  - finding: 新出現的撕裂性胸背痛，雙上肢血壓差 > 20 mmHg（疑似主動脈剝離）
+    action: 立即通知醫師、控制心率和血壓（目標 HR < 60, SBP 100-120）、準備 IV esmolol、安排緊急 CT angiography
+    urgency: critical
+
+  - finding: 心跳過慢（< 40 bpm）合併意識改變或血壓不穩
+    action: 立即 12 導程心電圖、準備 Atropine 0.5 mg IV、備妥經皮暫時性心臟節律器、通知醫師
+    urgency: critical
+
+  - finding: 寬 QRS 心室頻脈合併血行動力學不穩定
+    action: 立即啟動 ACLS 流程、準備同步電擊、通知醫師、備妥 amiodarone
+    urgency: critical

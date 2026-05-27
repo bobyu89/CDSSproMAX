@@ -1,0 +1,1011 @@
+system: orthopedic
+display_name: 骨科肌肉骨骼系統身體評估
+description: >
+  針對肌肉骨骼系統進行系統性身體評估，涵蓋一般篩檢、肩關節、膝關節、髖關節及脊椎等主要區域。
+  每個區域依序執行視診、觸診、關節活動度測試及特殊測試，以評估結構完整性、功能狀態及潛在病變。
+  適用於門診、急診及住院病人之初步骨科理學檢查。
+prerequisites:
+  - 確認病人身分及評估目的
+  - 取得病人同意並說明檢查流程
+  - 準備適當環境（隱私、溫度、光線充足）
+  - 備妥器材：量角器（goniometer）、皮尺、叩診槌（reflex hammer）
+  - 請病人更換適當衣物以充分暴露受檢區域
+  - 確認病人疼痛程度，必要時先給予止痛處置
+  - 洗手並戴手套（如需要）
+source_note: "本內容由專科護理師根據臨床經驗自行撰寫，醫學事實參考 StatPearls (CC BY-NC-ND 4.0) 及公開臨床指引"
+
+assessment_sequence:
+  # ============================
+  # Step 1: 一般肌肉骨骼篩檢
+  # ============================
+  - step: 1
+    category: inspection
+    display_name: 一般肌肉骨骼篩檢 — 視診
+    duration_seconds: 120
+    actions:
+      - id: or_i_01
+        description: 站姿姿態評估（standing posture assessment）
+        technique: >
+          請病人站立，從前方、側方、後方三個角度觀察。注意頭部是否居中、雙肩是否等高、
+          骨盆是否水平、雙膝是否對稱、足弓是否正常。側面觀察耳垂—肩峰—大轉子—膝外側—
+          外踝前方是否成一直線。
+        normal: 姿態對稱，脊柱生理曲線正常（頸椎前彎、胸椎後彎、腰椎前彎），雙肩等高，骨盆水平
+        abnormal:
+          - finding: 明顯脊柱側彎（scoliosis），肩膀不等高或骨盆傾斜
+            ddx: [結構性脊柱側彎, 功能性脊柱側彎, 下肢長度不等]
+            urgency: medium
+          - finding: 過度胸椎後彎（kyphosis）
+            ddx: [姿勢性駝背, 骨質疏鬆性壓迫骨折, Scheuermann's disease]
+            urgency: medium
+        common_mistakes:
+          - 未從三個角度（前、側、後）完整觀察
+          - 病人穿著過多衣物導致無法充分評估
+        clinical_pearl: 姿態評估是骨科檢查的起點，許多疼痛問題源於姿態不良或代償機制
+        osce_points: 1
+
+      - id: or_i_02
+        description: 步態觀察（gait observation）
+        technique: >
+          請病人在走廊來回行走至少 6 公尺，觀察步態週期：站立期（stance phase）和擺動期
+          （swing phase）。注意步幅、步頻、對稱性、手臂擺動、軀幹穩定度。必要時請病人
+          做腳跟行走（heel walk）和腳尖行走（toe walk）以評估足背屈及蹠屈力量。
+        normal: 步態平穩對稱，步幅正常，手臂自然擺動，軀幹穩定
+        abnormal:
+          - finding: 跛行（antalgic gait）— 患側站立期縮短
+            ddx: [下肢骨折, 關節炎, 軟組織損傷, 感染]
+            urgency: medium
+          - finding: Trendelenburg 步態 — 站立側骨盆下垂
+            ddx: [臀中肌無力, 髖關節病變, L5 神經根病變]
+            urgency: medium
+          - finding: 足下垂步態（steppage gait）— 擺動期過度抬高膝蓋
+            ddx: [腓神經麻痺, L4-L5 神經根壓迫, 下運動神經元病變]
+            urgency: high
+        common_mistakes:
+          - 觀察距離太短，無法充分評估步態
+          - 忘記觀察鞋底磨損模式
+        clinical_pearl: 鞋底磨損不均勻可提供步態異常的線索；內側磨損提示外翻足，外側磨損提示內翻足
+        osce_points: 2
+
+      - id: or_i_03
+        description: 四肢對稱性與整體外觀
+        technique: >
+          比較雙側上肢和下肢的外觀，觀察肌肉量、肢體長度、有無腫脹或變形。
+          使用皮尺測量雙側大腿周徑（髕骨上方 10 公分處）和小腿周徑（最大處），
+          差異大於 1 公分為有意義。測量真實下肢長度（anterior superior iliac spine, ASIS
+          到內踝）和表觀下肢長度（臍到內踝）。
+        normal: 雙側肢體對稱，肌肉量相當，無明顯腫脹或變形，下肢長度差異小於 1 公分
+        abnormal:
+          - finding: 單側肌肉明顯萎縮（周徑差 > 2 公分）
+            ddx: [廢用性萎縮, 神經損傷, 慢性關節病變]
+            urgency: medium
+          - finding: 真實下肢長度不等（> 2 公分）
+            ddx: [先天性發育異常, 骨折後癒合不良, 髖關節病變]
+            urgency: low
+        common_mistakes:
+          - 測量周徑時未使用固定骨性標記作為基準點
+          - 未區分真實與表觀下肢長度差異
+        osce_points: 1
+
+      - id: or_i_04
+        description: 整體活動度快速篩檢（GALS screening）
+        technique: >
+          請病人依序完成以下動作：雙手高舉過頭（肩關節）、雙手合十與反向合十（腕關節）、
+          握拳及完全伸指（手指關節）、彎腰碰觸腳趾（脊椎及髖關節）、完全蹲下再站起
+          （膝及髖關節）。觀察動作是否流暢、有無疼痛表情或代償動作。
+        normal: 所有動作流暢完成，無疼痛、無明顯活動受限
+        abnormal:
+          - finding: 特定關節活動受限或疼痛
+            ddx: [關節炎, 肌腱炎, 關節內病變, 骨折]
+            urgency: medium
+        common_mistakes:
+          - 篩檢動作太快，未仔細觀察代償動作
+          - 未詢問病人動作過程中的疼痛感
+        clinical_pearl: GALS 篩檢可在 2 分鐘內快速評估全身關節功能，任何異常再進行該區域的詳細檢查
+        osce_points: 1
+
+  # ============================
+  # Step 2: 肩關節 — 視診
+  # ============================
+  - step: 2
+    category: inspection
+    display_name: 肩關節 — 視診
+    duration_seconds: 30
+    actions:
+      - id: or_i_05
+        description: 肩部外觀視診
+        technique: >
+          請病人脫去上衣，從前方、側方、後方觀察雙側肩部。比較肩部輪廓、三角肌飽滿度、
+          有無腫脹、瘀青或萎縮。從後方觀察肩胛骨位置，請病人雙手推牆以檢查有無翼狀肩胛
+          （winging scapula）。
+        normal: 雙側肩部對稱，三角肌飽滿，無腫脹或萎縮，肩胛骨平貼胸壁
+        abnormal:
+          - finding: 三角肌萎縮伴方肩（squared-off shoulder）外觀
+            ddx: [肩關節脫臼, 腋神經損傷, 旋轉肌袖大面積撕裂]
+            urgency: high
+          - finding: 翼狀肩胛（winging scapula）
+            ddx: [長胸神經損傷, 前鋸肌無力, 斜方肌病變]
+            urgency: medium
+        common_mistakes:
+          - 未請病人推牆來誘發翼狀肩胛
+          - 忽略比較雙側差異
+        osce_points: 1
+
+  # ============================
+  # Step 3: 肩關節 — 觸診
+  # ============================
+  - step: 3
+    category: palpation
+    display_name: 肩關節 — 觸診
+    duration_seconds: 60
+    actions:
+      - id: or_p_01
+        description: 肩關節骨性標記及軟組織觸診
+        technique: >
+          依序觸診以下結構：胸鎖關節 → 鎖骨全長 → 肩鎖關節（AC joint）→ 肩峰
+          （acromion）→ 肱骨大結節（greater tuberosity）→ 二頭肌腱溝（bicipital groove，
+          位於大結節外側約 1 公分）→ 喙突（coracoid process，鎖骨中點下方約 2 公分）。
+          每個點按壓時觀察病人表情並詢問疼痛。
+        normal: 各骨性標記觸診無壓痛，無腫脹或異常隆起
+        abnormal:
+          - finding: 肩鎖關節壓痛
+            ddx: [肩鎖關節炎, 肩鎖關節分離, 遠端鎖骨骨折]
+            urgency: medium
+          - finding: 二頭肌腱溝壓痛
+            ddx: [二頭肌腱炎, 二頭肌腱半脫位]
+            urgency: low
+          - finding: 大結節壓痛
+            ddx: [旋轉肌袖肌腱炎, 旋轉肌袖撕裂, 大結節骨折]
+            urgency: medium
+        common_mistakes:
+          - 無法正確辨識二頭肌腱溝位置
+          - 觸診力道過重導致病人不適影響後續檢查
+        clinical_pearl: 觸診二頭肌腱溝時，讓病人肩關節外旋 10 度可使腱溝更容易觸及
+        osce_points: 1
+
+  # ============================
+  # Step 4: 肩關節 — 關節活動度
+  # ============================
+  - step: 4
+    category: rom
+    display_name: 肩關節 — 關節活動度
+    duration_seconds: 60
+    actions:
+      - id: or_r_01
+        description: 肩關節主動活動度（active ROM）測試
+        technique: >
+          請病人主動執行以下動作並記錄角度：前屈（flexion，正常 0-180 度）、
+          外展（abduction，正常 0-180 度）、外旋（external rotation，上臂貼身肘彎 90 度，
+          正常 0-90 度）、內旋（internal rotation，手背沿背部上移，正常可達 T7 棘突水平）。
+          觀察動作過程中有無疼痛弧（painful arc，通常在外展 60-120 度之間）。
+        normal: 各方向活動度達正常範圍，動作流暢無疼痛
+        abnormal:
+          - finding: 疼痛弧（painful arc）於外展 60-120 度出現
+            ddx: [肩夾擠症候群, 旋轉肌袖肌腱炎, 肩峰下滑液囊炎]
+            urgency: low
+          - finding: 主動外展嚴重受限（< 90 度）伴劇烈疼痛
+            ddx: [旋轉肌袖大面積撕裂, 冰凍肩, 肩關節骨折]
+            urgency: medium
+        common_mistakes:
+          - 未測試所有方向的活動度
+          - 忽略觀察疼痛弧
+        osce_points: 1
+
+      - id: or_r_02
+        description: 肩關節被動活動度（passive ROM）測試
+        technique: >
+          在病人放鬆狀態下，檢查者一手固定肩胛骨，另一手被動移動病人肩關節進行
+          前屈、外展、外旋、內旋。比較主動與被動 ROM 差異：若兩者皆受限提示關節囊
+          問題（如冰凍肩）；若被動正常但主動受限提示肌肉或肌腱問題。
+        normal: 被動活動度正常且與主動活動度相當
+        abnormal:
+          - finding: 主動及被動 ROM 均嚴重受限（尤其外旋）
+            ddx: [沾黏性關節囊炎（冰凍肩）, 肩關節炎]
+            urgency: medium
+          - finding: 被動 ROM 正常但主動 ROM 受限
+            ddx: [旋轉肌袖撕裂, 肌肉無力, 疼痛抑制]
+            urgency: medium
+        common_mistakes:
+          - 未固定肩胛骨導致代償動作混淆結果
+          - 被動活動時動作太快引起病人防衛性肌肉收縮
+        clinical_pearl: 冰凍肩的典型表現為外旋受限最明顯，其次為外展和內旋
+        osce_points: 2
+
+  # ============================
+  # Step 5: 肩關節 — 特殊測試
+  # ============================
+  - step: 5
+    category: special_tests_shoulder
+    display_name: 肩關節 — 特殊測試
+    duration_seconds: 180
+    actions:
+      - id: or_ss_01
+        description: Neer's test（肩夾擠症候群）
+        technique: >
+          病人取坐姿或站姿。檢查者一手固定病人肩胛骨（按壓肩峰防止肩胛骨上旋），
+          另一手握住病人前臂，將手臂在肩胛骨平面（scapular plane）內被動前屈至最大角度。
+          陽性判斷：前屈過程中重現病人肩部疼痛，提示肩峰下結構（旋轉肌袖或滑液囊）
+          被夾擠。
+        normal: 前屈至最大角度無疼痛
+        abnormal:
+          - finding: 前屈時重現肩前方或外側疼痛（Neer's test 陽性）
+            ddx: [肩夾擠症候群, 旋轉肌袖肌腱炎, 肩峰下滑液囊炎]
+            urgency: low
+        common_mistakes:
+          - 未固定肩胛骨導致偽陰性
+          - 動作過猛造成不必要的疼痛
+        clinical_pearl: Neer's test 敏感度約 72-89%，但特異度較低；建議搭配 Hawkins-Kennedy test 一起判斷
+        osce_points: 1
+
+      - id: or_ss_02
+        description: Hawkins-Kennedy test（肩夾擠症候群）
+        technique: >
+          病人取坐姿或站姿。檢查者將病人肩關節和肘關節各屈曲 90 度，然後被動內旋
+          肩關節（將前臂向下壓）。陽性判斷：內旋過程中重現肩部疼痛，提示棘上肌腱
+          在喙突肩峰韌帶下方受到夾擠。
+        normal: 被動內旋無疼痛
+        abnormal:
+          - finding: 被動內旋時肩前方疼痛（Hawkins-Kennedy test 陽性）
+            ddx: [肩夾擠症候群, 棘上肌腱炎, 肩峰下滑液囊炎]
+            urgency: low
+        common_mistakes:
+          - 肩關節前屈角度不到 90 度影響測試準確性
+          - 未穩定住病人肘關節
+        clinical_pearl: Hawkins-Kennedy test 敏感度約 79-92%，搭配 Neer's test 兩者皆陽性時夾擠症候群可能性大增
+        osce_points: 1
+
+      - id: or_ss_03
+        description: Empty can test / Jobe's test（棘上肌測試）
+        technique: >
+          病人取坐姿或站姿。請病人雙臂在肩胛骨平面外展 90 度、內旋使拇指朝下
+          （如同倒空罐子的姿勢）。檢查者在病人前臂施加向下的阻力，請病人抵抗。
+          陽性判斷：無法抵抗阻力（肌力下降）或出現疼痛，提示棘上肌（supraspinatus）
+          病變。
+        normal: 雙側可對稱抵抗阻力，無疼痛
+        abnormal:
+          - finding: 患側肌力明顯下降或無法維持姿勢
+            ddx: [棘上肌撕裂, 肩胛上神經壓迫]
+            urgency: medium
+          - finding: 疼痛但肌力尚可
+            ddx: [棘上肌腱炎, 肩夾擠症候群]
+            urgency: low
+        common_mistakes:
+          - 外展角度不在肩胛骨平面（應為前屈約 30 度的外展位置）
+          - 未比較雙側肌力
+        osce_points: 1
+
+      - id: or_ss_04
+        description: Drop arm test（旋轉肌袖撕裂）
+        technique: >
+          檢查者被動將病人手臂外展至 90 度，然後請病人緩慢放下手臂。
+          陽性判斷：病人無法緩慢控制放下手臂，手臂突然掉落，提示旋轉肌袖
+          （尤其棘上肌）大面積撕裂。
+        normal: 手臂可緩慢且受控地從 90 度外展位置放下
+        abnormal:
+          - finding: 手臂突然掉落無法控制（drop arm test 陽性）
+            ddx: [旋轉肌袖大面積撕裂, 腋神經損傷]
+            urgency: high
+        common_mistakes:
+          - 未從完全 90 度外展位置開始測試
+          - 測試時未做好保護，手臂掉落可能撞到病人
+        clinical_pearl: Drop arm test 特異度高（約 97%）但敏感度低；陽性結果高度提示大面積撕裂
+        osce_points: 1
+
+      - id: or_ss_05
+        description: Speed's test（二頭肌腱炎）
+        technique: >
+          病人取坐姿或站姿，肘關節完全伸直、前臂旋後（掌心朝上）、肩關節前屈約 60 度。
+          檢查者在前臂遠端施加向下阻力，請病人抵抗。陽性判斷：二頭肌腱溝處出現疼痛，
+          提示二頭肌長頭肌腱炎。
+        normal: 抵抗阻力時二頭肌腱溝處無疼痛
+        abnormal:
+          - finding: 二頭肌腱溝處疼痛（Speed's test 陽性）
+            ddx: [二頭肌長頭肌腱炎, 二頭肌腱半脫位, SLAP lesion]
+            urgency: low
+        common_mistakes:
+          - 病人肘關節未完全伸直影響結果
+          - 前臂未旋後（掌心應朝上）
+        osce_points: 1
+
+      - id: or_ss_06
+        description: Cross-body adduction test（肩鎖關節病變）
+        technique: >
+          病人取坐姿或站姿。檢查者將病人手臂前屈 90 度後被動水平內收（cross body），
+          將手向對側肩膀方向推。陽性判斷：肩鎖關節（AC joint）上方出現疼痛，
+          提示肩鎖關節病變。
+        normal: 水平內收時肩鎖關節處無疼痛
+        abnormal:
+          - finding: 肩鎖關節處疼痛（cross-body adduction test 陽性）
+            ddx: [肩鎖關節炎, 肩鎖關節分離, 遠端鎖骨骨溶解]
+            urgency: low
+        common_mistakes:
+          - 未精確詢問疼痛位置（肩鎖關節 vs 肩前方）
+          - 推力過大引起肩部其他結構疼痛造成偽陽性
+        osce_points: 1
+
+      - id: or_ss_07
+        description: Apprehension test 及 Relocation test（肩關節不穩定）
+        technique: >
+          病人取仰臥姿，肩關節外展 90 度、肘關節屈曲 90 度。檢查者一手支撐肘部，
+          另一手握住手腕將肩關節被動外旋。Apprehension test 陽性：病人出現恐懼感或
+          不安感（非單純疼痛）。接著進行 Relocation test：維持外旋姿勢，在肱骨頭前方
+          施加向後的推力。Relocation test 陽性：恐懼感消失，提示前方不穩定。
+        normal: 外旋過程中無恐懼感或不安感
+        abnormal:
+          - finding: 外旋時出現恐懼感（apprehension test 陽性），向後推壓後緩解（relocation test 陽性）
+            ddx: [前方肩關節不穩定, 復發性肩關節脫臼, Bankart lesion]
+            urgency: medium
+        common_mistakes:
+          - 將單純疼痛誤判為 apprehension（關鍵在於「恐懼感」而非「疼痛」）
+          - 動作太快未給病人反應時間
+        clinical_pearl: Apprehension test 的關鍵判斷是病人的「恐懼感」和「不安感」，而非疼痛本身
+        osce_points: 1
+
+  # ============================
+  # Step 6: 膝關節 — 視診
+  # ============================
+  - step: 6
+    category: inspection
+    display_name: 膝關節 — 視診
+    duration_seconds: 30
+    actions:
+      - id: or_i_06
+        description: 膝部外觀視診
+        technique: >
+          請病人站立及仰臥，觀察雙側膝關節外觀。注意有無腫脹（關節積液或滑膜增厚）、
+          皮膚變化（紅、熱）、變形（內翻 varus / 外翻 valgus）、髕骨位置（高位或低位髕骨）。
+          觀察股四頭肌（尤其 vastus medialis obliquus, VMO）有無萎縮。
+        normal: 雙膝外觀對稱，無腫脹、變形或肌肉萎縮，正常生理外翻角度（5-7 度）
+        abnormal:
+          - finding: 明顯膝關節腫脹伴皮膚發紅發熱
+            ddx: [感染性關節炎, 痛風急性發作, 外傷性血腫關節]
+            urgency: high
+          - finding: 內翻（O 型腿）或外翻（X 型腿）變形
+            ddx: [退化性膝關節炎, 韌帶損傷後遺症, 先天性下肢軸線異常]
+            urgency: low
+          - finding: VMO 明顯萎縮
+            ddx: [膝關節術後, 慢性膝關節病變, 股神經病變]
+            urgency: low
+        common_mistakes:
+          - 未比較雙側差異
+          - 未在站立位評估下肢力線（alignment）
+        osce_points: 1
+
+  # ============================
+  # Step 7: 膝關節 — 觸診
+  # ============================
+  - step: 7
+    category: palpation
+    display_name: 膝關節 — 觸診
+    duration_seconds: 60
+    actions:
+      - id: or_p_02
+        description: 膝關節骨性標記及軟組織觸診
+        technique: >
+          病人取仰臥膝微彎（約 20-30 度以放鬆）。依序觸診：髕骨（palpate edges and
+          undersurface by displacing laterally）→ 內側關節線（medial joint line）→ 外側關節線
+          （lateral joint line）→ 脛骨粗隆（tibial tuberosity）→ 膕窩（popliteal fossa）→
+          內側和外側副韌帶走行區域。注意壓痛位置和有無腫塊。
+        normal: 各骨性標記及軟組織觸診無壓痛，膕窩無腫塊
+        abnormal:
+          - finding: 內側關節線壓痛
+            ddx: [內側半月板撕裂, 內側副韌帶損傷, 內側膝關節炎]
+            urgency: medium
+          - finding: 膕窩囊性腫塊
+            ddx: [Baker's cyst（膕窩囊腫）, 膕動脈瘤]
+            urgency: medium
+        common_mistakes:
+          - 膝關節伸直時觸診關節線（應微彎以放鬆結構）
+          - 未區分壓痛位置是關節線還是韌帶附著點
+        osce_points: 1
+
+      - id: or_p_03
+        description: 浮髕試驗（patellar ballottement）及膨隆試驗（bulge test）
+        technique: >
+          浮髕試驗：適用於中到大量積液。一手從髕骨上方向下擠壓髕上囊，另一手指尖
+          快速按壓髕骨。陽性：感覺到髕骨先下沉再彈回（浮髕感），提示關節腔積液。
+          膨隆試驗：適用於少量積液。先從膝內側向上擠壓將液體推向髕上囊，再從膝外側
+          向下擠壓。陽性：觀察到膝內側出現液體膨隆波。
+        normal: 浮髕試驗及膨隆試驗皆陰性，無關節積液
+        abnormal:
+          - finding: 浮髕試驗陽性（中到大量積液）
+            ddx: [外傷性血腫關節, 感染性關節炎, 退化性關節炎急性發作, 結晶性關節炎]
+            urgency: medium
+          - finding: 膨隆試驗陽性（少量積液）
+            ddx: [早期滑膜炎, 輕微創傷後積液, 早期關節炎]
+            urgency: low
+        common_mistakes:
+          - 浮髕試驗時未先將髕上囊液體向下擠壓
+          - 大量積液時膨隆試驗無法檢測到（張力過大），此時應改用浮髕試驗
+        clinical_pearl: 急性外傷後大量血性積液（hemarthrosis）應高度懷疑前十字韌帶斷裂或骨折
+        osce_points: 2
+
+  # ============================
+  # Step 8: 膝關節 — 關節活動度
+  # ============================
+  - step: 8
+    category: rom
+    display_name: 膝關節 — 關節活動度
+    duration_seconds: 30
+    actions:
+      - id: or_r_03
+        description: 膝關節主動及被動活動度測試
+        technique: >
+          請病人主動執行膝關節屈曲（正常 0-135 度）和伸展（正常 0 度，過伸約 5-10 度）。
+          然後被動測試相同動作並比較。使用量角器精確測量。注意終端感覺（end feel）：
+          正常屈曲為軟組織近似（soft tissue approximation），正常伸展為骨性（bony）。
+        normal: 主動及被動屈曲 0-135 度，伸展達 0 度，雙側對稱
+        abnormal:
+          - finding: 屈曲受限（< 120 度）
+            ddx: [關節積液, 半月板撕裂卡鎖, 關節攣縮, 疼痛抑制]
+            urgency: medium
+          - finding: 伸展缺失（extension lag，無法完全伸直）
+            ddx: [股四頭肌無力, 關節內游離體, 半月板桶柄型撕裂]
+            urgency: medium
+        common_mistakes:
+          - 未比較主動與被動活動度差異
+          - 忽略評估過伸（hyperextension）
+        osce_points: 1
+
+  # ============================
+  # Step 9: 膝關節 — 特殊測試
+  # ============================
+  - step: 9
+    category: special_tests_knee
+    display_name: 膝關節 — 特殊測試
+    duration_seconds: 180
+    actions:
+      - id: or_sk_01
+        description: Anterior drawer test（前十字韌帶 ACL）
+        technique: >
+          病人仰臥，髖關節屈曲 45 度，膝關節屈曲 90 度，足部平放床上。檢查者坐在
+          病人足部上以固定。雙手環抱脛骨近端（拇指在前方關節線，其餘手指在後方確認
+          hamstring 放鬆），向前方拉動脛骨。陽性判斷：脛骨相對於股骨有明顯前移
+          （> 6 mm 或與健側比較明顯增加），提示 ACL 損傷。
+        normal: 脛骨前移量少且有明確終點（firm end point），雙側對稱
+        abnormal:
+          - finding: 脛骨明顯前移且終點鬆軟（anterior drawer test 陽性）
+            ddx: [前十字韌帶撕裂, 前十字韌帶部分撕裂]
+            urgency: high
+        common_mistakes:
+          - 未確認 hamstring 放鬆（會造成偽陰性）
+          - 忘記檢查健側做比較
+        osce_points: 1
+
+      - id: or_sk_02
+        description: Lachman test（ACL — 更敏感）
+        technique: >
+          病人仰臥，膝關節屈曲 20-30 度（可墊捲起的毛巾在膕窩下方）。檢查者一手
+          固定股骨遠端（從外側握住），另一手握住脛骨近端向前方拉。陽性判斷：脛骨前移
+          增加且終點鬆軟（soft end point），提示 ACL 斷裂。此測試被認為是評估 ACL 最
+          敏感的理學檢查（敏感度 85-95%）。
+        normal: 脛骨前移少（< 3 mm）且有堅實終點（firm end point）
+        abnormal:
+          - finding: 脛骨前移增加且終點鬆軟（Lachman test 陽性）
+            ddx: [前十字韌帶完全斷裂, 前十字韌帶部分撕裂]
+            urgency: high
+        common_mistakes:
+          - 手太小無法穩固握住股骨和脛骨（可改用 prone Lachman）
+          - 膝關節屈曲角度過大（應為 20-30 度而非 90 度）
+        clinical_pearl: Lachman test 是 ACL 損傷最敏感的理學檢查，優於 anterior drawer test，因為在 20-30 度屈曲位 hamstring 和關節囊不會限制前移
+        osce_points: 2
+
+      - id: or_sk_03
+        description: Posterior drawer test（後十字韌帶 PCL）
+        technique: >
+          病人仰臥，髖屈曲 45 度，膝屈曲 90 度，足部平放。先從側面觀察脛骨近端是否
+          已有後沉（posterior sag sign），提示 PCL 損傷。然後雙手環抱脛骨近端向後方推。
+          陽性判斷：脛骨有明顯後移，提示 PCL 損傷。
+        normal: 脛骨無後沉現象，後推時無明顯後移
+        abnormal:
+          - finding: 脛骨明顯後移或 posterior sag sign 陽性
+            ddx: [後十字韌帶撕裂, 後外側角損傷]
+            urgency: high
+        common_mistakes:
+          - 未先觀察 posterior sag sign（可能將已後沉的脛骨推回原位誤判為 anterior drawer 陽性）
+          - 在 ACL 測試前未先排除 PCL 損傷
+        clinical_pearl: 若不先排除 PCL 損傷，已後沉的脛骨被前拉回正常位置可能被誤判為 anterior drawer 陽性
+        osce_points: 1
+
+      - id: or_sk_04
+        description: Valgus stress test（內側副韌帶 MCL）
+        technique: >
+          病人仰臥，檢查者一手握住腳踝/足部，另一手放在膝關節外側。在膝關節伸直位
+          及屈曲 30 度位分別施加外翻應力（valgus force，向內推膝外側同時向外拉踝部）。
+          陽性判斷：內側關節間隙開啟增大或與健側比較明顯增寬，提示 MCL 損傷。
+          屈曲 30 度位陽性提示 MCL 單獨損傷；伸直位也陽性提示合併後方結構損傷。
+        normal: 雙側關節間隙開啟對稱且有堅實終點
+        abnormal:
+          - finding: 屈曲 30 度時內側關節間隙開啟增大
+            ddx: [內側副韌帶損傷（Grade I-III）]
+            urgency: medium
+          - finding: 伸直位及屈曲 30 度位均有明顯不穩定
+            ddx: [MCL 合併 ACL 或後方結構損傷, 膝關節脫臼後]
+            urgency: high
+        common_mistakes:
+          - 僅在一個角度測試（應同時測試伸直位和屈曲 30 度位）
+          - 未比較健側
+        osce_points: 1
+
+      - id: or_sk_05
+        description: Varus stress test（外側副韌帶 LCL）
+        technique: >
+          病人仰臥，操作方法同 valgus stress test 但方向相反。一手握住腳踝，另一手
+          放在膝內側，施加內翻應力（varus force）。分別在伸直位及屈曲 30 度位測試。
+          陽性判斷：外側關節間隙開啟增大。
+        normal: 雙側關節間隙開啟對稱且有堅實終點
+        abnormal:
+          - finding: 外側關節間隙開啟增大
+            ddx: [外側副韌帶損傷, 後外側角損傷]
+            urgency: medium
+        common_mistakes:
+          - 施力方向錯誤（varus 與 valgus 混淆）
+          - 病人肌肉過度緊張影響測試
+        osce_points: 1
+
+      - id: or_sk_06
+        description: McMurray's test（半月板）
+        technique: >
+          病人仰臥。檢查者一手握住足部/腳踝控制旋轉，另一手放在膝關節線上以感覺
+          彈響。先將膝關節完全屈曲，然後：測試外側半月板時，將脛骨內旋後慢慢伸直膝關節
+          同時施加外翻力；測試內側半月板時，將脛骨外旋後慢慢伸直同時施加內翻力。
+          陽性判斷：在伸直過程中於關節線處感覺到「喀」的彈響（click）或病人疼痛。
+        normal: 測試過程中關節線處無彈響或疼痛
+        abnormal:
+          - finding: 關節線處可觸及彈響伴疼痛（McMurray's test 陽性）
+            ddx: [半月板撕裂, 關節內游離體]
+            urgency: medium
+        common_mistakes:
+          - 未完全屈曲膝關節即開始測試
+          - 混淆內旋/外旋與內側/外側半月板的對應關係
+          - 將不具意義的髕骨摩擦音誤判為陽性
+        clinical_pearl: 內側半月板撕裂比外側常見約 3-5 倍；McMurray's test 特異度高（約 95%）但敏感度中等（約 51-53%）
+        osce_points: 1
+
+      - id: or_sk_07
+        description: Thessaly test（半月板）
+        technique: >
+          病人單腳站立在平地上，膝關節屈曲 20 度，檢查者握住病人雙手提供支撐。
+          請病人在此姿勢下左右旋轉軀幹（和膝關節）各三次。先在屈曲 5 度做為基準，
+          再在屈曲 20 度做為診斷測試。陽性判斷：膝關節線處疼痛或有卡鎖感。
+        normal: 旋轉過程中關節線處無疼痛或卡鎖感
+        abnormal:
+          - finding: 膝關節線處疼痛或卡鎖感（Thessaly test 陽性）
+            ddx: [半月板撕裂]
+            urgency: medium
+        common_mistakes:
+          - 未提供足夠支撐導致病人跌倒風險
+          - 在急性膝傷或大量積液的病人身上施行（應避免）
+        osce_points: 1
+
+      - id: or_sk_08
+        description: Patellar grind test / Clarke's test（髕股關節）
+        technique: >
+          病人仰臥膝伸直放鬆。檢查者將手掌根部（web space）放在髕骨上緣，向遠端
+          及後方按壓髕骨，然後請病人收縮股四頭肌（嘗試伸直膝蓋）。陽性判斷：
+          髕骨下方出現疼痛或磨擦感。
+        normal: 收縮股四頭肌時無髕骨下疼痛
+        abnormal:
+          - finding: 髕骨下方疼痛伴磨擦感（patellar grind test 陽性）
+            ddx: [髕骨軟化症（chondromalacia patellae）, 髕股關節炎, 髕骨不穩定]
+            urgency: low
+        common_mistakes:
+          - 按壓力量過大造成偽陽性（正常人用力壓也會痛）
+          - 未請病人主動收縮股四頭肌
+        clinical_pearl: 此測試偽陽性率較高，臨床判斷應結合病史（如前膝痛、上下樓梯痛、久坐後痛）
+        osce_points: 1
+
+  # ============================
+  # Step 10: 髖關節 — 視診
+  # ============================
+  - step: 10
+    category: inspection
+    display_name: 髖關節 — 視診
+    duration_seconds: 30
+    actions:
+      - id: or_i_07
+        description: 髖部外觀及步態視診
+        technique: >
+          觀察病人站姿下骨盆是否水平、有無 Trendelenburg 步態（單腳站立時對側骨盆下垂）。
+          觀察臀部肌肉量是否對稱。評估下肢力線和旋轉角度（足部指向是否過度內旋或外旋）。
+        normal: 骨盆水平，臀肌飽滿對稱，步態正常，下肢力線正常
+        abnormal:
+          - finding: Trendelenburg 步態或單腳站立時對側骨盆下垂
+            ddx: [臀中肌無力, 髖關節嚴重病變, L5 神經根病變]
+            urgency: medium
+          - finding: 患肢持續外旋姿勢
+            ddx: [股骨頸骨折, 髖關節後脫臼]
+            urgency: critical
+        common_mistakes:
+          - 未請病人做單腳站立以評估 Trendelenburg sign
+          - 忽略靜態下肢旋轉姿勢的觀察
+        osce_points: 1
+
+  # ============================
+  # Step 11: 髖關節 — 觸診
+  # ============================
+  - step: 11
+    category: palpation
+    display_name: 髖關節 — 觸診
+    duration_seconds: 30
+    actions:
+      - id: or_p_04
+        description: 髖關節周圍觸診
+        technique: >
+          觸診以下結構：大轉子（greater trochanter，髖外側，滑液囊炎常見壓痛點）、
+          腹股溝區域（inguinal region，髖關節前方深層壓痛可提示髖關節內病變）、
+          坐骨粗隆（ischial tuberosity，hamstring 附著點）。注意壓痛位置和有無腫脹。
+        normal: 各觸診點無壓痛或腫脹
+        abnormal:
+          - finding: 大轉子壓痛
+            ddx: [大轉子滑液囊炎（trochanteric bursitis）, 臀中肌腱炎]
+            urgency: low
+          - finding: 腹股溝深處壓痛
+            ddx: [髖關節炎, 股骨頸應力性骨折, 髖關節唇撕裂]
+            urgency: medium
+        common_mistakes:
+          - 大轉子位置辨識錯誤（應在股骨大轉子最突出處）
+          - 腹股溝觸診時未排除淋巴結腫大或疝氣
+        osce_points: 1
+
+  # ============================
+  # Step 12: 髖關節 — 關節活動度
+  # ============================
+  - step: 12
+    category: rom
+    display_name: 髖關節 — 關節活動度
+    duration_seconds: 60
+    actions:
+      - id: or_r_04
+        description: 髖關節主動及被動活動度測試
+        technique: >
+          病人仰臥。依序測試：屈曲（正常 0-120 度，屈膝時）、伸展（俯臥或側臥，正常 0-30 度）、
+          外展（正常 0-45 度）、內收（正常 0-30 度）、內旋（髖膝屈曲 90 度，正常 0-35 度）、
+          外旋（髖膝屈曲 90 度，正常 0-45 度）。先測主動再測被動，比較雙側。
+          內旋減少是髖關節病變最早出現的 ROM 改變。
+        normal: 各方向活動度達正常範圍，雙側對稱，無疼痛
+        abnormal:
+          - finding: 內旋明顯受限且疼痛
+            ddx: [髖關節炎, 股骨髖臼夾擠（FAI）, 關節唇撕裂]
+            urgency: medium
+          - finding: 所有方向 ROM 均顯著受限
+            ddx: [嚴重退化性髖關節炎, 股骨頭壞死（AVN）]
+            urgency: medium
+        common_mistakes:
+          - 未在髖膝屈曲 90 度的標準姿勢下測試旋轉
+          - 忽略內旋是早期髖關節病變最先受限的方向
+        clinical_pearl: 髖關節內旋是最敏感的指標 — 內旋受限（< 15 度）高度提示髖關節內病變
+        osce_points: 1
+
+  # ============================
+  # Step 13: 髖關節 — 特殊測試
+  # ============================
+  - step: 13
+    category: special_tests_hip
+    display_name: 髖關節 — 特殊測試
+    duration_seconds: 120
+    actions:
+      - id: or_sh_01
+        description: FABER test / Patrick's test（髖關節 vs 薦髂關節病變）
+        technique: >
+          病人仰臥。將受測側髖關節做 Flexion（屈曲）、ABduction（外展）、External Rotation
+          （外旋），使足踝放在對側膝蓋上方（呈 figure-4 姿勢）。檢查者一手按壓對側
+          ASIS 固定骨盆，另一手向下按壓受測側膝蓋。陽性判斷：腹股溝處疼痛提示髖關節
+          病變；背部薦髂關節區疼痛提示薦髂關節病變。
+        normal: 膝蓋可降至或接近床面水平，無腹股溝或薦髂關節疼痛
+        abnormal:
+          - finding: 腹股溝疼痛（FABER test 前方陽性）
+            ddx: [髖關節炎, 髖關節唇撕裂, 股骨頭壞死]
+            urgency: medium
+          - finding: 薦髂關節區疼痛（FABER test 後方陽性）
+            ddx: [薦髂關節炎, 僵直性脊椎炎, 薦髂關節功能障礙]
+            urgency: medium
+        common_mistakes:
+          - 未固定對側骨盆導致整個骨盆旋轉
+          - 未區分疼痛位置是前方（髖）還是後方（薦髂）
+        clinical_pearl: FABER test 是同時篩檢髖關節和薦髂關節最實用的測試，關鍵在於精確辨識疼痛位置
+        osce_points: 2
+
+      - id: or_sh_02
+        description: Thomas test（髖屈曲攣縮）
+        technique: >
+          病人仰臥於床緣。先確認腰椎平貼床面（消除腰椎前彎代償）：請病人將對側髖膝
+          完全屈曲抱至胸前。觀察受測側大腿是否仍能平貼床面。陽性判斷：受測側大腿
+          無法平貼床面（懸空），即存在髖屈曲攣縮，角度為大腿與床面之間的夾角。
+        normal: 對側髖屈曲時，受測側大腿可完全平貼床面
+        abnormal:
+          - finding: 受測側大腿離開床面（Thomas test 陽性）
+            ddx: [髂腰肌攣縮, 髖關節炎, 長期臥床或久坐]
+            urgency: low
+        common_mistakes:
+          - 未先消除腰椎前彎（腰椎未平貼床面會造成偽陰性）
+          - 對側膝蓋未充分屈曲至胸前
+        clinical_pearl: Thomas test 陽性常見於長期久坐的上班族、髖關節置換術前評估，以及長期臥床病人
+        osce_points: 1
+
+      - id: or_sh_03
+        description: Trendelenburg test（臀中肌功能）
+        technique: >
+          請病人單腳站立，先站在健側觀察，再站在患側觀察。檢查者站在病人後方觀察
+          骨盆。請病人抬起一側下肢（屈髖屈膝），觀察對側骨盆高度。正常情況下
+          站立側臀中肌收縮會使對側骨盆上抬或維持水平。陽性判斷：站立側臀中肌無力時
+          對側骨盆下垂。
+        normal: 單腳站立時對側骨盆維持水平或略微上抬
+        abnormal:
+          - finding: 單腳站立時對側骨盆下垂（Trendelenburg test 陽性）
+            ddx: [臀中肌無力, 上臀神經損傷, 嚴重髖關節炎, 髖關節術後]
+            urgency: medium
+        common_mistakes:
+          - 未讓病人站立足夠時間（至少 30 秒）
+          - 混淆哪一側是陽性（下垂側對側的臀中肌有問題）
+        clinical_pearl: 記憶口訣 — 「站在哪邊出問題，掉的是對面」：Trendelenburg 陽性表示站立側的臀中肌無力
+        osce_points: 1
+
+      - id: or_sh_04
+        description: Log roll test（髖關節內病變）
+        technique: >
+          病人仰臥，下肢伸直放鬆。檢查者握住病人足部，輕柔地將整條下肢做內旋和外旋
+          滾動（如同滾動一根圓木）。此動作僅牽動髖關節囊，不涉及周圍肌肉。
+          陽性判斷：滾動過程中出現腹股溝疼痛，提示髖關節內病變。
+        normal: 滾動時無腹股溝疼痛
+        abnormal:
+          - finding: 滾動時腹股溝疼痛（log roll test 陽性）
+            ddx: [髖關節炎, 股骨頸骨折, 股骨頭壞死, 感染性髖關節炎]
+            urgency: medium
+        common_mistakes:
+          - 動作幅度過大涉及周圍肌肉
+          - 動作太快未讓病人充分放鬆
+        clinical_pearl: Log roll test 是最能單純測試髖關節囊的方法，因為旋轉動作不需要肌肉參與
+        osce_points: 1
+
+      - id: or_sh_05
+        description: FADIR test（股骨髖臼夾擠 FAI）
+        technique: >
+          病人仰臥。檢查者將受測側髖關節被動屈曲（Flexion）90 度、內收（ADduction）、
+          內旋（Internal Rotation）。陽性判斷：腹股溝前方深處疼痛或夾擊感，
+          提示股骨髖臼夾擠（femoroacetabular impingement, FAI）或髖關節唇撕裂。
+        normal: 組合動作時腹股溝無疼痛或夾擊感
+        abnormal:
+          - finding: 腹股溝深處疼痛或夾擊感（FADIR test 陽性）
+            ddx: [股骨髖臼夾擠（FAI）, 髖關節唇撕裂, 早期髖關節炎]
+            urgency: medium
+        common_mistakes:
+          - 未將髖屈曲到 90 度即開始做內收內旋
+          - 動作組合順序錯誤
+        clinical_pearl: FADIR test 敏感度高（約 94-99%）但特異度低；陽性結果需進一步影像學確認
+        osce_points: 1
+
+  # ============================
+  # Step 14: 脊椎 — 視診
+  # ============================
+  - step: 14
+    category: inspection
+    display_name: 脊椎 — 視診
+    duration_seconds: 30
+    actions:
+      - id: or_i_08
+        description: 脊柱曲線及對稱性視診
+        technique: >
+          請病人站立，從後方觀察：棘突連線是否偏移、雙肩是否等高、肩胛骨是否對稱、
+          腰部皺褶是否對等、骨盆是否水平。從側方觀察：頸椎前彎、胸椎後彎、腰椎前彎
+          是否正常。請病人前彎（Adam's forward bend test）觀察有無肋骨隆起（rib hump）
+          提示結構性脊柱側彎。
+        normal: 脊柱排列正常，生理曲線存在，前彎時背部對稱無肋骨隆起
+        abnormal:
+          - finding: 前彎時單側肋骨隆起（Adam's test 陽性）
+            ddx: [結構性脊柱側彎]
+            urgency: medium
+          - finding: 明顯胸椎後彎增加
+            ddx: [骨質疏鬆性壓迫骨折, Scheuermann's disease, 姿勢性駝背]
+            urgency: medium
+        common_mistakes:
+          - 未進行 Adam's forward bend test
+          - 只從一個角度觀察脊柱
+        osce_points: 1
+
+  # ============================
+  # Step 15: 脊椎 — 觸診
+  # ============================
+  - step: 15
+    category: palpation
+    display_name: 脊椎 — 觸診
+    duration_seconds: 60
+    actions:
+      - id: or_p_05
+        description: 棘突及旁脊柱肌肉觸診
+        technique: >
+          病人取坐姿或俯臥。從 C7（最突出的棘突，vertebra prominens）開始，依序向下
+          觸診每個棘突至薦椎，按壓每個棘突觀察有無壓痛。然後觸診棘突兩側約 2-3 公分處
+          的旁脊柱肌肉（paraspinal muscles），注意有無壓痛、肌肉痙攣或硬結。
+          觸診薦髂關節（PSIS 內下方）有無壓痛。
+        normal: 各棘突無壓痛，旁脊柱肌肉質地正常無痙攣
+        abnormal:
+          - finding: 特定棘突壓痛
+            ddx: [壓迫骨折, 椎間盤感染（discitis）, 脊椎轉移性腫瘤, 棘突骨折]
+            urgency: high
+          - finding: 旁脊柱肌肉廣泛痙攣及壓痛
+            ddx: [肌筋膜疼痛症候群, 急性肌肉拉傷, 椎間盤突出伴防衛性痙攣]
+            urgency: medium
+        common_mistakes:
+          - 無法正確辨識 C7 棘突作為起始點
+          - 觸診太快未逐一檢查每個棘突
+        clinical_pearl: 逐一棘突觸診可幫助定位病變節段；合併發燒和棘突壓痛應高度警覺脊椎感染或硬脊膜外膿瘍
+        osce_points: 1
+
+  # ============================
+  # Step 16: 脊椎 — 關節活動度
+  # ============================
+  - step: 16
+    category: rom
+    display_name: 脊椎 — 關節活動度
+    duration_seconds: 60
+    actions:
+      - id: or_r_05
+        description: 頸椎關節活動度測試
+        technique: >
+          病人取坐姿。主動 ROM 測試：屈曲（下巴碰胸，正常 0-45 度）、伸展（抬頭看天花板，
+          正常 0-45 度）、側彎（耳朵靠肩膀，正常 0-45 度，雙側）、旋轉（下巴轉向肩膀，
+          正常 0-80 度，雙側）。注意動作是否引起疼痛或上肢放射症狀。
+        normal: 各方向活動度正常，動作流暢無疼痛或放射症狀
+        abnormal:
+          - finding: 頸椎活動度明顯受限伴疼痛
+            ddx: [頸椎退化性疾病, 頸椎間盤突出, 肌肉痙攣, 頸椎骨折]
+            urgency: medium
+          - finding: 頸椎活動引起上肢放射性疼痛或麻木
+            ddx: [頸椎神經根病變, 頸椎間盤突出壓迫神經]
+            urgency: high
+        common_mistakes:
+          - 未測試所有六個方向
+          - 忽略詢問放射性症狀
+        osce_points: 1
+
+      - id: or_r_06
+        description: 腰椎關節活動度測試
+        technique: >
+          病人取站姿。主動 ROM 測試：前彎（flexion，正常手指可碰觸腳趾或地面，
+          Schober's test：在 L5 棘突及其上方 10 公分處做標記，正常前彎後距離增加
+          至少 5 公分）、後仰（extension，正常 0-30 度）、側彎（lateral flexion，
+          正常 0-25 度，雙側）。注意動作是否引起下肢放射症狀。
+        normal: Schober's test 增加 >= 5 公分，各方向活動度正常，無下肢放射症狀
+        abnormal:
+          - finding: Schober's test 增加 < 5 公分
+            ddx: [僵直性脊椎炎, 腰椎退化性疾病, 嚴重肌肉痙攣]
+            urgency: medium
+          - finding: 後仰時下肢疼痛加劇
+            ddx: [腰椎管狹窄, 椎弓解離/滑脫, 小面關節症候群]
+            urgency: medium
+        common_mistakes:
+          - 未使用 Schober's test 客觀量化腰椎活動度
+          - 忽略詢問動作過程中的下肢症狀
+        clinical_pearl: Schober's test 是量化腰椎活動度的簡單方法，尤其對追蹤僵直性脊椎炎進程非常有用
+        osce_points: 1
+
+  # ============================
+  # Step 17: 脊椎 — 特殊測試
+  # ============================
+  - step: 17
+    category: special_tests_spine
+    display_name: 脊椎 — 特殊測試
+    duration_seconds: 120
+    actions:
+      - id: or_sp_01
+        description: Straight Leg Raise (SLR) / Lasegue's test（坐骨神經/腰椎間盤突出）
+        technique: >
+          病人仰臥完全放鬆。檢查者一手托住病人腳踝，另一手放在膝蓋上確保膝伸直，
+          緩慢抬高下肢。記錄引起放射痛的角度。正常可抬高至 70-90 度無症狀。
+          陽性判斷：在 30-70 度之間出現沿坐骨神經分布（臀部→大腿後側→小腿）的
+          放射性疼痛。可加做 Bragard's test（在引起疼痛的角度稍降低後再背屈踝關節）
+          以增加特異度。
+        normal: 下肢可抬高至 70-90 度，僅有大腿後側緊繃感，無放射痛
+        abnormal:
+          - finding: 30-70 度內出現沿坐骨神經分布的放射痛（SLR 陽性）
+            ddx: [腰椎間盤突出（L4-S1）, 坐骨神經炎]
+            urgency: medium
+        common_mistakes:
+          - 病人膝蓋彎曲影響測試準確性
+          - 將大腿後側肌肉牽拉的緊繃感誤判為陽性（關鍵在於「放射痛」）
+          - 未記錄引起疼痛的角度
+        clinical_pearl: SLR 在 30 度以下或 70 度以上出現的疼痛較不具診斷意義；30-70 度區間內陽性最有價值
+        osce_points: 2
+
+      - id: or_sp_02
+        description: Crossed SLR（對側直膝抬腿）
+        technique: >
+          操作方式同 SLR，但抬高的是健側（無症狀側）下肢。陽性判斷：抬高健側時
+          引起患側的坐骨神經放射痛。此測試敏感度低但特異度很高（約 90%），
+          陽性強烈提示較大的椎間盤突出或位於中央的突出。
+        normal: 抬高健側下肢時患側無放射痛
+        abnormal:
+          - finding: 抬高健側引起患側放射痛（crossed SLR 陽性）
+            ddx: [中央型或大面積腰椎間盤突出]
+            urgency: high
+        common_mistakes:
+          - 抬錯邊（應抬高健側觀察患側反應）
+          - 未先完成同側 SLR 就做 crossed SLR
+        clinical_pearl: Crossed SLR 特異度約 90%，陽性時幾乎可確認椎間盤突出壓迫神經根
+        osce_points: 1
+
+      - id: or_sp_03
+        description: Spurling's test（頸椎神經根壓迫）
+        technique: >
+          病人取坐姿。請病人將頭向患側側彎並稍微後仰，檢查者在頭頂施加向下的
+          軸向壓力（axial compression）。此動作會縮小患側椎間孔。
+          陽性判斷：重現或加劇同側上肢放射性疼痛或麻木，提示該側頸椎神經根壓迫。
+        normal: 軸向壓力加上側彎後仰時無上肢放射症狀
+        abnormal:
+          - finding: 同側上肢放射痛或麻木再現（Spurling's test 陽性）
+            ddx: [頸椎神經根病變, 頸椎間盤突出, 頸椎椎間孔狹窄]
+            urgency: medium
+        common_mistakes:
+          - 壓力過大造成病人劇烈疼痛（應漸進施力）
+          - 在疑似頸椎不穩定或骨折的病人身上施行（禁忌）
+        clinical_pearl: Spurling's test 特異度高（約 93-100%），但敏感度中等（約 30-50%）；陽性結果非常有診斷價值
+        osce_points: 2
+
+      - id: or_sp_04
+        description: Slump test（坐姿坐骨神經牽拉）
+        technique: >
+          病人坐在床緣，雙腿垂下。依序進行：(1) 軀幹前彎（slump），(2) 頸椎屈曲
+          （下巴碰胸），(3) 伸直受測側膝蓋，(4) 背屈踝關節。每一步觀察是否出現症狀。
+          若出現放射痛，讓病人抬頭（頸椎伸展）觀察症狀是否緩解。
+          陽性判斷：上述動作重現坐骨神經放射痛，且頸椎伸展後症狀緩解。
+        normal: 各步驟動作中僅有後側牽拉感，無放射痛
+        abnormal:
+          - finding: 坐姿牽拉動作重現坐骨神經放射痛且頸伸展後緩解（slump test 陽性）
+            ddx: [腰椎間盤突出, 坐骨神經壓迫, 神經根病變]
+            urgency: medium
+        common_mistakes:
+          - 未按照正確步驟依序執行
+          - 忘記做頸椎伸展以確認是否為神經張力所致
+        clinical_pearl: Slump test 比 SLR 更敏感，特別適用於 SLR 陰性但臨床高度懷疑坐骨神經壓迫的病人
+        osce_points: 1
+
+# ============================
+# OSCE 評分標準
+# ============================
+osce_scoring:
+  total_points: 50
+  passing_score: 35
+  time_limit_minutes: 20
+  critical_items:
+    - or_i_02    # 步態觀察 — 影響整體評估方向
+    - or_sk_02   # Lachman test — ACL 損傷最敏感測試
+    - or_sp_01   # SLR — 腰椎間盤突出必做測試
+    - or_sh_01   # FABER test — 髖關節 vs 薦髂關節鑑別
+    - or_p_03    # 浮髕試驗 — 膝關節積液評估
+    - or_r_02    # 肩關節被動 ROM — 區分關節囊 vs 肌腱問題
+
+# ============================
+# 紅旗警示
+# ============================
+red_flags:
+  - finding: 外傷後肢體明顯變形、異常活動或骨摩擦音（crepitus）
+    action: 固定患肢，勿嘗試復位，立即安排 X 光並通知骨科醫師
+    urgency: critical
+
+  - finding: 肢體遠端蒼白、無脈搏、感覺異常、劇烈疼痛且被動伸展加劇（5P signs：Pain, Pallor, Pulselessness, Paresthesia, Paralysis）
+    action: 高度懷疑腔室症候群（compartment syndrome），緊急測量腔室壓力，通知骨科醫師準備緊急筋膜切開術（fasciotomy）
+    urgency: critical
+
+  - finding: 急性腰背痛合併鞍部感覺異常、大小便失禁、下肢雙側無力
+    action: 高度懷疑馬尾症候群（cauda equina syndrome），緊急安排 MRI 並通知脊椎外科
+    urgency: critical
+
+  - finding: 肩關節外傷後方肩外觀、手臂固定於外展外旋位無法活動
+    action: 懷疑肩關節脫臼，安排 X 光確認，勿在排除骨折前嘗試復位
+    urgency: critical
+
+  - finding: 開放性骨折（骨頭外露或傷口與骨折處相通）
+    action: 無菌敷料覆蓋傷口，靜脈注射抗生素及破傷風預防，緊急通知骨科手術
+    urgency: critical
+
+  - finding: 髖部外傷後患肢短縮且外旋固定，無法承重
+    action: 高度懷疑股骨頸骨折或髖關節脫臼，固定患肢，安排 X 光/CT，通知骨科
+    urgency: critical
+
+  - finding: 脊椎外傷合併神經學缺損（肌力下降、感覺喪失、反射異常）
+    action: 維持脊椎固定（cervical collar + spine board），緊急安排影像學檢查（CT/MRI），通知脊椎外科
+    urgency: critical
+
+  - finding: 不明原因骨痛合併體重減輕、夜間痛加劇、病理性骨折
+    action: 懷疑骨骼惡性腫瘤或轉移性病變，安排 X 光及進階影像（MRI/bone scan），轉介腫瘤科
+    urgency: critical

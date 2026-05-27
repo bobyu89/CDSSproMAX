@@ -1,0 +1,662 @@
+system: abdominal
+display_name: 腹部系統身體評估
+description: >
+  針對腹部及胃腸系統進行系統性身體評估，涵蓋視診、聽診、叩診、觸診及特殊檢查，
+  用於評估消化道、肝膽、脾臟、腎臟及腹腔內臟器之結構與功能異常。
+  腹部評估採用獨特的 IAPP 順序（Inspection → Auscultation → Percussion → Palpation），
+  聽診必須在觸診和叩診之前執行，以避免人為改變腸蠕動音。
+prerequisites:
+  - 請病人排空膀胱以減少不適並避免誤判膀胱膨脹
+  - 病人取仰臥姿勢（supine position），雙膝微屈以放鬆腹壁肌肉
+  - 充分暴露腹部（從劍突到恥骨聯合），注意保護病人隱私
+  - 確保雙手溫暖，聽診器膜面先暖過再使用
+  - 確認病人疼痛部位，觸診時從非疼痛區域開始
+  - 環境安靜，減少噪音干擾（尤其聽診時）
+  - 準備器材：聽診器、量尺（測量肝臟跨距）、皮膚標記筆
+source_note: "本內容由專科護理師根據臨床經驗自行撰寫，醫學事實參考 StatPearls (CC BY-NC-ND 4.0) 及公開臨床指引"
+
+assessment_sequence:
+  # ========== Step 1: Inspection（視診）==========
+  - step: 1
+    category: inspection
+    display_name: 視診（Inspection）
+    duration_seconds: 120
+    actions:
+      - id: ab_i_01
+        description: 觀察腹部整體外觀與輪廓
+        technique: >
+          站在病人右側，視線與腹部水平，觀察腹部輪廓。
+          請病人深呼吸，注意腹部是否對稱。
+          從側面觀察腹部是否平坦、膨隆、凹陷或不對稱。
+        normal: 腹部平坦或微凸，左右對稱，無明顯膨隆或凹陷
+        abnormal:
+          - finding: 全腹膨脹（generalized distension）
+            ddx: [腹水, 腸阻塞, 腸麻痺, 巨大卵巢囊腫, 肥胖]
+            urgency: medium
+          - finding: 局部膨隆（localized bulging）
+            ddx: [腫瘤, 疝氣, 臟器腫大, 膿瘍]
+            urgency: medium
+          - finding: 舟狀腹（scaphoid abdomen）
+            ddx: [嚴重營養不良, 惡病質, 橫膈裂孔疝氣]
+            urgency: medium
+        common_mistakes:
+          - 未從側面觀察腹部輪廓，遺漏輕微膨隆
+          - 未請病人充分暴露腹部，衣物遮蔽影響觀察
+        clinical_pearl: >
+          5F 鑑別腹部膨脹原因：Fat（脂肪）、Fluid（液體）、Flatus（氣體）、
+          Fetus（胎兒）、Fatal growth（腫瘤）
+        osce_points: 2
+
+      - id: ab_i_02
+        description: 觀察腹部皮膚狀況
+        technique: >
+          系統性檢視腹部皮膚，注意有無手術疤痕、妊娠紋（striae）、
+          瘀斑、蜘蛛狀血管瘤（spider angioma）、皮疹或異常色素沈著。
+          特別注意臍周及側腹部有無瘀斑。
+        normal: 皮膚完整，色澤均勻，無疤痕、瘀斑或異常血管擴張
+        abnormal:
+          - finding: 臍周瘀斑（Cullen's sign）
+            ddx: [腹腔內出血, 急性出血性胰臟炎, 異位妊娠破裂]
+            urgency: critical
+          - finding: 側腹瘀斑（Grey-Turner's sign）
+            ddx: [後腹腔出血, 急性出血性胰臟炎]
+            urgency: critical
+          - finding: 手術疤痕
+            ddx: [提示過去手術史，需詢問手術類型及時間]
+            urgency: low
+        common_mistakes:
+          - 未仔細檢查側腹部，遺漏 Grey-Turner's sign
+          - 未詢問疤痕相關手術史
+        clinical_pearl: >
+          Cullen's sign 和 Grey-Turner's sign 出現通常代表腹腔內或後腹腔嚴重出血，
+          在急性胰臟炎中是預後不良的指標，但可能在發病 24-48 小時後才出現。
+        osce_points: 2
+
+      - id: ab_i_03
+        description: 觀察臍部與腹壁靜脈
+        technique: >
+          仔細觀察臍部有無突出（臍疝氣）、分泌物或發炎徵象。
+          檢視腹壁有無靜脈曲張，特別注意臍周放射狀擴張的靜脈
+          （caput medusae，海蛇頭徵象）。
+        normal: 臍部凹陷或平坦，無突出；腹壁無可見靜脈曲張
+        abnormal:
+          - finding: 臍疝氣（umbilical hernia）
+            ddx: [臍疝氣, 腹水合併臍疝氣]
+            urgency: low
+          - finding: 海蛇頭徵象（caput medusae）
+            ddx: [門脈高壓, 肝硬化]
+            urgency: high
+          - finding: 臍部分泌物或結節（Sister Mary Joseph nodule）
+            ddx: [腹腔內惡性腫瘤轉移（胃癌、卵巢癌）]
+            urgency: high
+        common_mistakes:
+          - 未注意腹壁靜脈血流方向（門脈高壓時血流離心方向）
+          - 遺漏臍部細微結節
+        osce_points: 1
+
+      - id: ab_i_04
+        description: 觀察有無可見腸蠕動及腹股溝區域
+        technique: >
+          在光線充足下，從側面觀察腹部表面有無可見的腸蠕動波。
+          請病人咳嗽或用力（Valsalva maneuver），觀察腹股溝區域有無突出。
+        normal: 無可見腸蠕動波；腹股溝區域無突出
+        abnormal:
+          - finding: 可見腸蠕動波（visible peristalsis）
+            ddx: [腸阻塞（尤其幽門阻塞或小腸阻塞）, 消瘦病人正常變異]
+            urgency: high
+          - finding: 腹股溝區域突出
+            ddx: [腹股溝疝氣（inguinal hernia）, 股疝氣（femoral hernia）, 淋巴結腫大]
+            urgency: medium
+        common_mistakes:
+          - 觀察時間不足（需至少觀察 1-2 分鐘才能發現間歇性蠕動波）
+          - 未請病人用力或咳嗽來誘發疝氣突出
+        osce_points: 1
+
+  # ========== Step 2: Auscultation（聽診）==========
+  - step: 2
+    category: auscultation
+    display_name: 聽診（Auscultation）
+    duration_seconds: 180
+    actions:
+      - id: ab_a_01
+        description: 評估腸蠕動音（bowel sounds）
+        technique: >
+          使用聽診器膜面（diaphragm），輕放於右下腹（RLQ）開始，
+          依序聽診四個象限。每個象限至少聽 15-30 秒。
+          若未聽到腸音，需持續聽滿 5 分鐘才能判定腸音消失。
+          注意腸音的頻率、音調及性質。
+        normal: >
+          每分鐘 5-30 次不規則的咕嚕聲（gurgling sounds），
+          四個象限皆可聽到
+        abnormal:
+          - finding: 腸音亢進（hyperactive bowel sounds）— 高頻、高音調
+            ddx: [腸胃炎, 早期腸阻塞, 腹瀉, 使用瀉劑後]
+            urgency: medium
+          - finding: 腸音減弱（hypoactive bowel sounds）
+            ddx: [術後腸麻痺, 腹膜炎, 電解質不平衡（低血鉀）]
+            urgency: medium
+          - finding: 腸音消失（absent bowel sounds）— 聽滿 5 分鐘仍無
+            ddx: [麻痺性腸阻塞（paralytic ileus）, 瀰漫性腹膜炎, 腸壞死]
+            urgency: high
+          - finding: 金屬音（metallic/tinkling sounds）
+            ddx: [機械性腸阻塞]
+            urgency: high
+        common_mistakes:
+          - 聽診時間不足就判定腸音消失（需滿 5 分鐘）
+          - 在觸診或叩診後才做聽診（人為改變腸蠕動音）
+          - 聽診器壓力過大，產生假性腸音
+        clinical_pearl: >
+          腹部評估必須遵循 IAPP 順序，聽診在觸診和叩診之前。
+          右下腹（迴盲瓣區域）是腸音最活躍的位置，適合作為起始聽診點。
+        osce_points: 3
+
+      - id: ab_a_02
+        description: 聽診腹部血管雜音（bruits）
+        technique: >
+          使用聽診器鐘面（bell），分別於以下位置聽診：
+          1. 上腹部正中線（腹主動脈 aorta）
+          2. 臍部兩側上方 2 公分處（腎動脈 renal arteries）
+          3. 下腹部兩側（髂動脈 iliac arteries）
+          4. 腹股溝區域（股動脈 femoral arteries）。
+          每個位置聽 5-10 秒，注意有無血管雜音。
+        normal: 各聽診部位無血管雜音
+        abnormal:
+          - finding: 腹主動脈雜音（aortic bruit）
+            ddx: [腹主動脈瘤, 腹主動脈狹窄, 動脈粥狀硬化]
+            urgency: high
+          - finding: 腎動脈雜音（renal artery bruit）
+            ddx: [腎動脈狹窄, 腎血管性高血壓]
+            urgency: medium
+          - finding: 髂動脈或股動脈雜音
+            ddx: [周邊動脈疾病, 動脈狹窄]
+            urgency: medium
+        common_mistakes:
+          - 使用膜面聽血管雜音（應用鐘面聽低頻音）
+          - 遺漏腎動脈聽診位置
+          - 將腹主動脈傳導音誤判為雜音
+        clinical_pearl: >
+          若聽到腹主動脈雜音，觸診時應格外小心，避免過度壓迫可能存在的動脈瘤。
+          腎動脈雜音在年輕高血壓患者中是重要的篩檢線索。
+        osce_points: 2
+
+      - id: ab_a_03
+        description: 聽診靜脈嗡鳴音及摩擦音
+        technique: >
+          使用鐘面於臍周及上腹部聽診有無靜脈嗡鳴音（venous hum）。
+          使用膜面於右上腹（肝臟區域）及左上腹（脾臟區域）聽診有無摩擦音
+          （friction rub），請病人深呼吸以利辨識。
+        normal: 無靜脈嗡鳴音及摩擦音
+        abnormal:
+          - finding: 靜脈嗡鳴音（venous hum）— 臍周持續性低音嗡鳴
+            ddx: [門脈高壓, 肝硬化合併側支循環形成]
+            urgency: high
+          - finding: 肝臟摩擦音（hepatic friction rub）
+            ddx: [肝臟腫瘤（肝細胞癌）, 肝膿瘍, 肝周圍炎（Fitz-Hugh-Curtis syndrome）]
+            urgency: high
+          - finding: 脾臟摩擦音（splenic friction rub）
+            ddx: [脾臟梗塞, 脾臟腫瘤]
+            urgency: high
+        common_mistakes:
+          - 未區分靜脈嗡鳴音與動脈雜音（嗡鳴音為持續性，雜音為收縮期為主）
+          - 未請病人深呼吸以增強摩擦音的辨識
+        osce_points: 1
+
+  # ========== Step 3: Percussion（叩診）==========
+  - step: 3
+    category: percussion
+    display_name: 叩診（Percussion）
+    duration_seconds: 180
+    actions:
+      - id: ab_p_01
+        description: 四象限叩診評估
+        technique: >
+          左手中指平貼腹壁（pleximeter），右手中指垂直敲擊（plexor），
+          以手腕力量短促敲擊。依序叩診四個象限：
+          右上腹（RUQ）→ 左上腹（LUQ）→ 左下腹（LLQ）→ 右下腹（RLQ）。
+          辨別鼓音（tympany）與濁音（dullness）的分布。
+        normal: 大部分區域呈鼓音（因腸內氣體），肝臟及脾臟區域為濁音
+        abnormal:
+          - finding: 全腹濁音增加
+            ddx: [大量腹水, 腹腔內大量液體]
+            urgency: medium
+          - finding: 全腹鼓音增加
+            ddx: [腸阻塞, 腸脹氣, 氣腹（pneumoperitoneum）]
+            urgency: medium
+          - finding: 局部濁音異常
+            ddx: [臟器腫大, 腫瘤, 局部積液]
+            urgency: medium
+        common_mistakes:
+          - 叩診力道過大或過輕，無法區分鼓音與濁音
+          - 左手中指未充分貼緊腹壁
+          - 未系統性叩診所有象限
+        osce_points: 2
+
+      - id: ab_p_02
+        description: 肝臟跨距測量（liver span）
+        technique: >
+          沿右鎖骨中線（right midclavicular line）進行：
+          1. 上界：從右胸部鼓音區往下叩，鼓音轉為濁音處即為肝臟上界
+             （約在第 5-7 肋間）
+          2. 下界：從右下腹鼓音區往上叩，鼓音轉為濁音處即為肝臟下界
+          3. 測量上界到下界的距離即為肝臟跨距。
+          用皮膚標記筆標記上下界。
+        normal: 肝臟跨距約 6-12 公分（右鎖骨中線），平均約 8-10 公分
+        abnormal:
+          - finding: 肝臟跨距增大（>12 公分）
+            ddx: [肝腫大（hepatomegaly）, 肝硬化早期, 肝充血（右心衰竭）, 肝腫瘤, 脂肪肝]
+            urgency: medium
+          - finding: 肝臟跨距縮小（<6 公分）
+            ddx: [肝硬化晚期（肝萎縮）, 猛爆性肝炎]
+            urgency: high
+          - finding: 肝臟區域鼓音取代濁音（失去正常肝濁音）
+            ddx: [氣腹（消化道穿孔）]
+            urgency: critical
+        common_mistakes:
+          - 未沿正確的右鎖骨中線叩診
+          - 未區分肺臟濁音與肝臟濁音（右肺下葉實質化可假性增加肝跨距）
+          - 將右側肋膜積液誤判為肝臟上界
+        clinical_pearl: >
+          肝臟濁音上界消失（Jobert's sign）高度懷疑氣腹，
+          常見於消化性潰瘍穿孔，為外科急症。
+        osce_points: 3
+
+      - id: ab_p_03
+        description: 脾臟叩診
+        technique: >
+          1. Traube's space 叩診：在左前腋線（left anterior axillary line），
+             第 6 肋間到第 12 肋之間的區域叩診。正常為鼓音。
+          2. 脾臟叩擊徵（splenic percussion sign）：請病人右側臥，
+             叩診左肋緣下方，正常為鼓音。
+          3. 請病人深吸氣後再叩診，脾腫大時鼓音會轉為濁音。
+        normal: Traube's space 呈鼓音；深吸氣後仍為鼓音
+        abnormal:
+          - finding: Traube's space 濁音
+            ddx: [脾腫大（splenomegaly）, 左側肋膜積液, 飽餐後（胃脹）]
+            urgency: medium
+          - finding: 深吸氣後鼓音轉為濁音（splenic percussion sign 陽性）
+            ddx: [脾腫大]
+            urgency: medium
+        common_mistakes:
+          - 飯後檢查導致偽陽性（胃脹使 Traube's space 變濁音）
+          - 未請病人深吸氣來增加檢測敏感度
+        clinical_pearl: >
+          脾臟叩診敏感度有限（約 60-80%），若臨床高度懷疑脾腫大，
+          應合併觸診並考慮安排超音波確認。
+        osce_points: 2
+
+      - id: ab_p_04
+        description: 移動性濁音評估（shifting dullness）
+        technique: >
+          1. 病人仰臥，從腹部正中線向側面叩診，標記鼓音轉為濁音的交界線
+          2. 請病人側躺（面向叩診者），維持 30 秒讓液體移動
+          3. 再從之前的標記處叩診，若原來的濁音處變為鼓音即為陽性。
+          兩側皆需測試。
+        normal: 無移動性濁音（鼓音與濁音交界不隨體位改變）
+        abnormal:
+          - finding: 移動性濁音陽性（shifting dullness positive）
+            ddx: [腹水（ascites）— 至少 500-1000 mL]
+            urgency: medium
+        common_mistakes:
+          - 翻身後未等待足夠時間（至少 30 秒）讓液體移動
+          - 叩診位置不夠靠近側腹部
+          - 未標記初始交界點，無法準確比較
+        clinical_pearl: >
+          移動性濁音約需 500 mL 以上腹水才能偵測到；
+          少量腹水需用超音波確認。腹水常見原因：肝硬化（最常見）、
+          惡性腫瘤、心衰竭、結核性腹膜炎。
+        osce_points: 2
+
+      - id: ab_p_05
+        description: 膀胱叩診
+        technique: >
+          從臍部向恥骨聯合方向叩診，辨別鼓音轉為濁音的位置。
+          正常排空膀胱時不會叩到濁音。
+        normal: 恥骨上方為鼓音，無膀胱濁音
+        abnormal:
+          - finding: 恥骨上方濁音區擴大
+            ddx: [尿滯留（urinary retention）, 膀胱過度膨脹, 妊娠, 子宮腫大]
+            urgency: medium
+        common_mistakes:
+          - 未事先請病人排空膀胱
+        osce_points: 1
+
+  # ========== Step 4: Palpation（觸診）==========
+  - step: 4
+    category: palpation
+    display_name: 觸診（Palpation）
+    duration_seconds: 240
+    actions:
+      - id: ab_pa_01
+        description: 淺層觸診 — 四象限評估
+        technique: >
+          右手四指併攏，手掌輕放腹壁，以 1-2 公分深度輕柔觸診。
+          從非疼痛區域開始，依序觸診四象限：
+          若病人主訴右下腹痛，則從左上腹（LUQ）→ 右上腹（RUQ）→
+          左下腹（LLQ）→ 最後右下腹（RLQ）。
+          注意腹壁張力、壓痛、肌肉防衛（guarding）。
+        normal: 腹壁柔軟（soft），無壓痛，無肌肉防衛或反彈痛
+        abnormal:
+          - finding: 自主性肌肉防衛（voluntary guarding）
+            ddx: [焦慮緊張, 怕痛, 腹壁冰冷刺激]
+            urgency: low
+          - finding: 非自主性肌肉僵硬（involuntary rigidity / board-like rigidity）
+            ddx: [瀰漫性腹膜炎, 消化道穿孔, 腹腔內感染]
+            urgency: critical
+          - finding: 局部壓痛
+            ddx: [依壓痛位置判斷 — RUQ 膽囊炎, RLQ 闌尾炎, LLQ 憩室炎, 上腹部胰臟炎或消化性潰瘍]
+            urgency: medium
+        common_mistakes:
+          - 從疼痛區域開始觸診，造成病人防衛增加
+          - 手指冰冷未暖手就觸診
+          - 觸診力道過深，淺層觸診變成深層觸診
+          - 未區分自主性與非自主性肌肉防衛
+        clinical_pearl: >
+          區分自主性與非自主性防衛的方法：請病人張嘴呼吸並彎曲雙膝，
+          自主性防衛會隨放鬆而消失，非自主性防衛不會。
+          Board-like rigidity（板狀腹）是腹膜炎的重要徵象。
+        osce_points: 3
+
+      - id: ab_pa_02
+        description: 深層觸診 — 四象限評估
+        technique: >
+          使用雙手技巧（bimanual technique）：右手觸診，左手疊在右手上施加壓力，
+          深度約 4-6 公分。依同樣順序（從非疼痛區開始）系統性觸診四象限。
+          注意有無腫塊（mass）、臟器腫大。
+          若觸及腫塊，評估其大小、形狀、質地、活動度、壓痛。
+        normal: 無腫塊，無深層壓痛，無臟器腫大
+        abnormal:
+          - finding: 觸及腹部腫塊
+            ddx: [腫瘤（良性或惡性）, 臟器腫大, 糞石, 膿瘍, 動脈瘤]
+            urgency: high
+          - finding: 深層壓痛
+            ddx: [依位置判斷相關臟器病變]
+            urgency: medium
+        common_mistakes:
+          - 觸診過於急躁或粗暴，造成病人極度不適
+          - 未系統性評估腫塊的 5 個特徵（大小、形狀、質地、活動度、壓痛）
+          - 肥胖病人未使用雙手技巧增加觸診深度
+        osce_points: 2
+
+      - id: ab_pa_03
+        description: 肝臟觸診（liver edge palpation）
+        technique: >
+          右手放置於右下腹，手指朝向頭側，指尖位於右鎖骨中線上。
+          請病人深呼吸，吸氣時橫膈下降推動肝臟下移。
+          在病人吸氣末期，手指輕輕向上向內勾，感受肝臟邊緣滑過指尖。
+          若未觸及，手指逐漸向上移動，每次移動 1-2 公分，重複此動作。
+          另一方法：勾法（hooking technique）— 雙手手指勾在右肋緣下，
+          請病人深吸氣，感受肝臟邊緣。
+        normal: 肝臟邊緣在右肋緣下不可觸及，或可觸及柔軟銳利的邊緣（1-2 公分以內）
+        abnormal:
+          - finding: 肝臟邊緣在右肋緣下明顯觸及（>2 公分）
+            ddx: [肝腫大, 右心衰竭（肝充血）, 肝腫瘤, 脂肪肝, 肝膿瘍]
+            urgency: medium
+          - finding: 肝臟質地堅硬、表面不規則或結節狀
+            ddx: [肝硬化, 肝細胞癌, 肝轉移癌]
+            urgency: high
+          - finding: 肝臟觸痛
+            ddx: [急性肝炎, 肝充血, 肝膿瘍, 肝周圍炎]
+            urgency: medium
+        common_mistakes:
+          - 起始觸診位置太高（太靠近肋緣），遺漏巨大肝腫大
+          - 未配合病人呼吸節奏
+          - 手指未朝向正確方向（應朝頭側）
+        clinical_pearl: >
+          觸診應從右下腹開始向上移動，避免在巨大肝腫大時遺漏肝緣。
+          COPD 病人因橫膈下降，肝臟可能被推至肋緣下方，
+          需搭配叩診肝跨距來確認是否為真正肝腫大。
+        osce_points: 3
+
+      - id: ab_pa_04
+        description: 脾臟觸診（spleen palpation）
+        technique: >
+          病人仰臥或右側臥位（右側臥可使脾臟因重力靠近腹壁）。
+          左手置於病人左後胸廓下部向前托起。
+          右手從右下腹（RLQ）開始，沿左肋緣方向向左上方移動觸診。
+          請病人深吸氣，在吸氣末期感受脾臟邊緣。
+          脾臟需腫大至正常 2-3 倍才能觸及。
+        normal: 脾臟不可觸及
+        abnormal:
+          - finding: 脾臟可觸及（splenomegaly）
+            ddx: [肝硬化合併門脈高壓, 血液疾病（白血病、淋巴瘤）, 感染性單核球增多症, 瘧疾, 溶血性貧血]
+            urgency: high
+          - finding: 巨脾（massive splenomegaly，超過臍部）
+            ddx: [慢性骨髓性白血病, 骨髓纖維化, 瘧疾（熱帶地區）, 內臟利什曼病]
+            urgency: high
+        common_mistakes:
+          - 起始位置太靠近左肋緣，遺漏巨大脾腫大
+          - 未使用右側臥位增加觸診成功率
+          - 未配合病人呼吸
+        clinical_pearl: >
+          正常脾臟位於左後第 9-11 肋，重量約 150 公克。
+          觸診到脾臟代表已腫大至正常的 2-3 倍。
+          感染性單核球增多症（EBV infection）病人避免過度觸診脾臟，
+          有脾臟破裂風險。
+        osce_points: 2
+
+      - id: ab_pa_05
+        description: 腎臟觸診（bimanual palpation）
+        technique: >
+          雙手觸診法（bimanual/ballottement technique）：
+          左手置於病人背部，第 12 肋下方（腎臟角 CVA 區域），向上托起。
+          右手置於前腹壁對應位置，向下深壓。
+          請病人深吸氣，兩手合力嘗試觸及腎臟。
+          右腎因肝臟壓迫位置較低，較左腎容易觸及。
+          同時評估肋脊角叩痛（CVA tenderness）。
+        normal: 雙側腎臟通常不可觸及（消瘦者偶可觸到右腎下極）；無 CVA 叩痛
+        abnormal:
+          - finding: 腎臟可觸及且腫大
+            ddx: [多囊腎, 腎水腫, 腎腫瘤, 腎囊腫]
+            urgency: medium
+          - finding: 肋脊角叩痛（CVA tenderness）陽性
+            ddx: [腎盂腎炎, 腎結石, 腎膿瘍]
+            urgency: medium
+        common_mistakes:
+          - 將肝臟下極誤判為右腎
+          - CVA 叩痛測試力道過輕或過重
+          - 未區分腎臟與其他後腹腔腫塊
+        osce_points: 2
+
+      - id: ab_pa_06
+        description: 腹主動脈觸診
+        technique: >
+          使用雙手拇指置於上腹部正中線兩側，
+          向深層觸診感受腹主動脈搏動。
+          評估搏動寬度（正常 <3 公分）及方向。
+          注意區分向前的傳導性搏動（正常）和向兩側擴張的搏動（動脈瘤）。
+        normal: 可觸及腹主動脈搏動，搏動寬度小於 3 公分，無側向擴張
+        abnormal:
+          - finding: 搏動性腫塊，寬度 >3 公分，向兩側擴張
+            ddx: [腹主動脈瘤（abdominal aortic aneurysm, AAA）]
+            urgency: critical
+        common_mistakes:
+          - 未區分傳導性搏動（向前）和擴張性搏動（向兩側）
+          - 肥胖病人因腹壁厚而放棄觸診
+          - 已知或高度懷疑大型動脈瘤時仍過度深壓
+        clinical_pearl: >
+          觸診腹主動脈寬度 >3 公分，敏感度約 50-75%（取決於體型）。
+          65 歲以上有吸菸史的男性為 AAA 高風險族群，
+          建議安排超音波篩檢。若懷疑 AAA，觸診應溫和，避免破裂風險。
+        osce_points: 2
+
+  # ========== Step 5: Special Tests（特殊檢查）==========
+  - step: 5
+    category: special_tests
+    display_name: 特殊檢查（Special Tests）
+    duration_seconds: 180
+    actions:
+      - id: ab_s_01
+        description: Murphy's sign（乃非氏徵象）— 膽囊炎評估
+        technique: >
+          將右手拇指或 2-3 根手指放在右肋緣下、右鎖骨中線與肋緣交界處
+          （膽囊點 gallbladder point），施加中等壓力。
+          請病人深吸氣，吸氣時橫膈下降推動發炎的膽囊碰觸手指。
+          陽性反應：病人因疼痛突然中止吸氣動作（inspiratory arrest）。
+        normal: 深吸氣時無疼痛，吸氣動作完整
+        abnormal:
+          - finding: Murphy's sign 陽性（吸氣中止）
+            ddx: [急性膽囊炎]
+            urgency: high
+        common_mistakes:
+          - 按壓位置不正確（太偏內側或太偏外側）
+          - 未請病人持續深吸氣
+          - 未做左側對照（左側相同手法應為陰性）
+        clinical_pearl: >
+          超音波下的 sonographic Murphy's sign（超音波探頭壓在膽囊上引起疼痛）
+          比理學檢查的 Murphy's sign 更具專一性。
+          老年人或糖尿病患者的膽囊炎可能 Murphy's sign 陰性（神經病變）。
+        osce_points: 2
+
+      - id: ab_s_02
+        description: McBurney's point 壓痛 — 闌尾炎評估
+        technique: >
+          定位 McBurney's point：從右前上髂嵴（ASIS）到臍部連線的外 1/3 處。
+          以食指或中指在該點施加深壓，評估有無壓痛。
+        normal: McBurney's point 無壓痛
+        abnormal:
+          - finding: McBurney's point 壓痛陽性
+            ddx: [急性闌尾炎, 腸系膜淋巴結炎, 右側卵巢病變]
+            urgency: high
+        common_mistakes:
+          - 定位不準確（應為外 1/3 而非中間 1/3）
+          - 女性病人未考慮婦科鑑別診斷
+        osce_points: 1
+
+      - id: ab_s_03
+        description: Rovsing's sign — 闌尾炎評估
+        technique: >
+          在左下腹（LLQ）施加深壓，觀察病人是否在右下腹（RLQ）出現轉移性疼痛
+          （referred pain）。陽性反應：壓左下腹時右下腹疼痛。
+        normal: 壓左下腹時右下腹無疼痛
+        abnormal:
+          - finding: Rovsing's sign 陽性（壓左下腹引起右下腹痛）
+            ddx: [急性闌尾炎（腹膜刺激）]
+            urgency: high
+        common_mistakes:
+          - 壓力不足，未引發足夠的腹腔內壓力變化
+          - 未清楚詢問病人疼痛的確切位置
+        osce_points: 1
+
+      - id: ab_s_04
+        description: Psoas sign 與 Obturator sign — 闌尾炎位置評估
+        technique: >
+          Psoas sign：病人左側臥，被動過度伸展（hyperextension）右髖關節，
+          或請病人仰臥抬起右腿抵抗阻力。陽性：引起右下腹痛。
+          Obturator sign：病人仰臥，右髖及右膝屈曲 90 度，
+          被動內旋右髖關節。陽性：引起右下腹或骨盆腔痛。
+        normal: 兩項測試均無疼痛
+        abnormal:
+          - finding: Psoas sign 陽性
+            ddx: [後盲腸闌尾炎（retrocecal appendicitis）, 腰肌膿瘍（psoas abscess）]
+            urgency: high
+          - finding: Obturator sign 陽性
+            ddx: [骨盆腔闌尾炎（pelvic appendicitis）, 骨盆腔膿瘍]
+            urgency: high
+        common_mistakes:
+          - Psoas sign 未充分伸展髖關節
+          - Obturator sign 旋轉角度不足
+          - 未注意病人表情變化（疼痛可能較輕微）
+        osce_points: 2
+
+      - id: ab_s_05
+        description: 反彈痛測試（Rebound tenderness）— 腹膜炎評估
+        technique: >
+          在壓痛最明顯的區域（或懷疑部位），以手指緩慢向深層施壓，
+          然後突然釋放。陽性反應：釋放壓力時疼痛加劇（比施壓時更痛）。
+          注意：此測試會造成明顯疼痛，建議最後執行。
+          替代方法：請病人咳嗽或輕敲床面，間接評估腹膜刺激。
+        normal: 釋放壓力時無疼痛加劇
+        abnormal:
+          - finding: 反彈痛陽性（局部）
+            ddx: [局部腹膜炎（闌尾炎、膽囊炎、憩室炎穿孔）]
+            urgency: high
+          - finding: 反彈痛陽性（瀰漫性）
+            ddx: [瀰漫性腹膜炎（消化道穿孔、腹腔內感染擴散）]
+            urgency: critical
+        common_mistakes:
+          - 過早執行反彈痛測試，導致病人之後所有觸診都防衛緊繃
+          - 動作太粗暴造成不必要的痛苦
+          - 未嘗試較溫和的替代評估法（咳嗽、輕敲）
+        clinical_pearl: >
+          較溫和的腹膜炎評估替代方法：請病人咳嗽（cough test）、
+          輕敲床面（jar test）、或請病人跳一下（hop test），
+          這些方法對病人較友善且有相似的敏感度。
+        osce_points: 2
+
+      - id: ab_s_06
+        description: 液波試驗（Fluid wave test）— 大量腹水評估
+        technique: >
+          需要助手協助。助手將手掌側面（尺側）壓在病人腹部正中線上，
+          阻擋皮下脂肪傳導的震波。
+          檢查者一手輕拍病人一側側腹，另一手掌放在對側側腹感受。
+          陽性反應：對側感受到液體傳導的衝擊波。
+        normal: 對側未感受到液體波動
+        abnormal:
+          - finding: 液波試驗陽性
+            ddx: [大量腹水（通常 >1000 mL）]
+            urgency: medium
+        common_mistakes:
+          - 未請助手壓住腹部正中線，皮下脂肪震動造成偽陽性
+          - 拍擊力道過大或過小
+        osce_points: 1
+
+      - id: ab_s_07
+        description: Carnett's sign — 腹壁痛與腹腔內痛鑑別
+        technique: >
+          先在壓痛部位觸診確認壓痛。
+          然後請病人抬頭或做半仰臥起坐動作（收縮腹直肌）。
+          在腹肌收縮狀態下再次按壓同一部位。
+          陽性（腹壁痛）：腹肌收縮時壓痛持續或加重。
+          陰性（腹腔內痛）：腹肌收縮時壓痛減輕（收縮的腹肌保護了腹腔臟器）。
+        normal: 不適用（此測試用於鑑別已存在的壓痛來源）
+        abnormal:
+          - finding: Carnett's sign 陽性（腹肌收縮時壓痛加重）
+            ddx: [腹壁痛（腹壁神經卡壓、肌肉拉傷、腹壁疝氣）]
+            urgency: low
+          - finding: Carnett's sign 陰性（腹肌收縮時壓痛減輕）
+            ddx: [腹腔內臟器病變]
+            urgency: medium
+        common_mistakes:
+          - 病人未充分收縮腹肌
+          - 未在同一個壓痛點比較兩種狀態下的疼痛程度
+        clinical_pearl: >
+          Carnett's sign 是區分腹壁痛與腹腔內痛最簡單實用的方法，
+          可避免對腹壁痛病人進行不必要的腹部影像檢查。
+        osce_points: 1
+
+osce_scoring:
+  total_points: 40
+  passing_score: 28
+  time_limit_minutes: 15
+  critical_items:
+    - ab_a_01   # 腸蠕動音聽診（聽診必須在觸診前）
+    - ab_pa_01  # 淺層觸診四象限（從非疼痛區開始）
+    - ab_pa_03  # 肝臟觸診
+    - ab_s_05   # 反彈痛測試（腹膜炎評估）
+    - ab_p_02   # 肝臟跨距測量
+
+red_flags:
+  - finding: 板狀腹（board-like rigidity）合併瀰漫性壓痛
+    action: 立即通知醫師，懷疑瀰漫性腹膜炎或消化道穿孔，準備外科會診及急診影像檢查
+    urgency: critical
+  - finding: 腹主動脈搏動性腫塊合併低血壓
+    action: 立即呼叫急救團隊，懷疑腹主動脈瘤破裂，建立大口徑靜脈通路、備血、緊急血管外科會診
+    urgency: critical
+  - finding: Cullen's sign 或 Grey-Turner's sign
+    action: 懷疑腹腔內或後腹腔出血，立即抽血檢驗（CBC、凝血功能、胰臟酵素）、建立靜脈通路、監測生命徵象
+    urgency: critical
+  - finding: 大量腹水合併發燒及腹部壓痛
+    action: 懷疑自發性細菌性腹膜炎（SBP），立即通知醫師安排診斷性腹腔穿刺及血液培養
+    urgency: critical
+  - finding: 反彈痛陽性合併發燒、白血球升高
+    action: 懷疑急性腹膜炎，立即通知醫師，準備外科會診、腹部 CT 檢查、靜脈抗生素
+    urgency: critical
+  - finding: 腸音消失合併腹脹及嘔吐
+    action: 懷疑完全性腸阻塞或腸壞死，立即禁食、放置鼻胃管減壓、建立靜脈通路、安排腹部 X 光及外科會診
+    urgency: critical
+  - finding: 肝臟叩診濁音消失（Jobert's sign）
+    action: 高度懷疑氣腹（消化道穿孔），立即安排直立腹部 X 光或胸部 X 光確認橫膈下游離氣體，通知外科醫師
+    urgency: critical
+  - finding: 急性右下腹痛合併 McBurney's point 壓痛及反彈痛
+    action: 高度懷疑急性闌尾炎，立即通知醫師安排外科會診及影像檢查（CT 或超音波），禁食備手術
+    urgency: critical

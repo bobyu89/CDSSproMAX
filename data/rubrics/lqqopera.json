@@ -1,0 +1,127 @@
+{
+  "rubric_id": "lqqopera.v1",
+  "type": "lqqopera",
+  "version": "1.0.0",
+  "items": [
+    {
+      "id": "lqqopera.location",
+      "dimension": "Location",
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        {"level": 5, "descriptor": "主動詢問痛點精確位置，追問放射路徑、相對解剖位置，並請病人以手指明確指認，必要時確認雙側對稱與深淺。"},
+        {"level": 4, "descriptor": "主動詢問痛點位置與放射路徑，並請病人指認部位，但未完整確認相對解剖或雙側比較。"},
+        {"level": 3, "descriptor": "詢問痛點大致位置並追問放射，但未請病人指認或未追問相對解剖位置。"},
+        {"level": 2, "descriptor": "僅詢問痛點位置，未追問放射路徑或請病人指認。"},
+        {"level": 1, "descriptor": "僅以模糊用語提及位置（如『會痛的地方』），未明確要求病人說明具體部位。"},
+        {"level": 0, "descriptor": "完全未詢問疼痛位置維度。"}
+      ],
+      "evidence_anchors": ["位置", "哪裡", "哪邊", "放射", "傳到", "延伸", "指出", "範圍", "對側", "深處"]
+    },
+    {
+      "id": "lqqopera.quality",
+      "dimension": "Quality",
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        {"level": 5, "descriptor": "主動以開放式問句詢問疼痛性質，並提供多種描述詞（如刺痛、悶痛、絞痛、灼熱、壓迫感）讓病人比對選擇，並追問是否曾有類似性質的疼痛經驗。"},
+        {"level": 4, "descriptor": "以開放式問句詢問疼痛性質，並補充至少 2-3 種描述詞輔助病人表達。"},
+        {"level": 3, "descriptor": "詢問疼痛性質，但僅提供 1 種描述詞或以封閉式問句引導（如『會不會像針刺』）。"},
+        {"level": 2, "descriptor": "詢問疼痛感覺，但問法過於模糊（如『會怎樣痛』）且未補充描述詞。"},
+        {"level": 1, "descriptor": "僅在病人主動描述後被動接收性質資訊，未主動詢問。"},
+        {"level": 0, "descriptor": "完全未詢問疼痛性質維度。"}
+      ],
+      "evidence_anchors": ["性質", "感覺", "刺痛", "悶痛", "絞痛", "灼熱", "壓迫", "撕裂", "鈍痛", "怎麼樣痛"]
+    },
+    {
+      "id": "lqqopera.quantity",
+      "dimension": "Quantity",
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        {"level": 5, "descriptor": "使用 0-10 數字疼痛量表（NRS）或視覺類比量表（VAS）量化目前疼痛，並追問最痛、最輕、平均強度以及對日常活動的影響程度。"},
+        {"level": 4, "descriptor": "使用 NRS 或 VAS 量化目前疼痛，並追問最痛或最輕其中一項，或對日常活動影響。"},
+        {"level": 3, "descriptor": "使用疼痛量表量化目前疼痛，但未追問極值或功能影響。"},
+        {"level": 2, "descriptor": "以非標準化語句詢問疼痛程度（如『很痛還是還好』），未使用量表。"},
+        {"level": 1, "descriptor": "僅模糊提及『會不會很痛』，未要求病人量化或比較。"},
+        {"level": 0, "descriptor": "完全未詢問疼痛強度維度。"}
+      ],
+      "evidence_anchors": ["疼痛指數", "幾分", "0到10", "NRS", "VAS", "最痛", "最輕", "嚴重", "強度", "程度"]
+    },
+    {
+      "id": "lqqopera.onset",
+      "dimension": "Onset",
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        {"level": 5, "descriptor": "詢問疼痛起始時間（日期/時刻）、發作型態（突發 vs 漸進）、當時正在從事的活動，並追問發作頻率與持續時間。"},
+        {"level": 4, "descriptor": "詢問起始時間與發作型態（突發/漸進），並追問當時活動或頻率其中之一。"},
+        {"level": 3, "descriptor": "詢問起始時間與發作型態，但未追問活動情境或頻率。"},
+        {"level": 2, "descriptor": "僅詢問起始時間，未追問發作型態與情境。"},
+        {"level": 1, "descriptor": "以模糊用語詢問（如『最近開始的嗎』），未要求具體時間點。"},
+        {"level": 0, "descriptor": "完全未詢問疼痛發作時間維度。"}
+      ],
+      "evidence_anchors": ["什麼時候", "開始", "幾點", "突然", "漸漸", "多久", "頻率", "持續", "第一次"]
+    },
+    {
+      "id": "lqqopera.precipitating",
+      "dimension": "Precipitating",
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        {"level": 5, "descriptor": "系統性詢問誘發或加劇因素，涵蓋活動（走路、爬樓梯、運動）、姿勢、進食、情緒壓力、藥物、外傷或近期生活事件等多面向。"},
+        {"level": 4, "descriptor": "詢問至少 3 類誘發/加劇因素（如活動、姿勢、進食），但未涵蓋情緒/壓力或近期事件。"},
+        {"level": 3, "descriptor": "詢問 2 類誘發/加劇因素。"},
+        {"level": 2, "descriptor": "僅詢問 1 類誘發因素（例如『運動會不會更痛』）。"},
+        {"level": 1, "descriptor": "以非常籠統的方式詢問（如『做什麼會更痛』），未具體列舉情境。"},
+        {"level": 0, "descriptor": "完全未詢問疼痛加劇因素維度。"}
+      ],
+      "evidence_anchors": ["什麼時候會更痛", "加劇", "誘發", "走路", "運動", "用力", "進食", "姿勢", "情緒", "壓力"]
+    },
+    {
+      "id": "lqqopera.extension",
+      "dimension": "Extension",
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        {"level": 5, "descriptor": "詢問疼痛是否擴散或轉移至其他部位，並具體確認常見放射路徑（如心因性向左肩/下顎、胰臟向背、腎結石向腹股溝），同時追問擴散範圍變化。"},
+        {"level": 4, "descriptor": "詢問疼痛是否擴散或轉移，並具體點名至少 1 條常見放射路徑供病人比對。"},
+        {"level": 3, "descriptor": "詢問疼痛是否擴散，但僅以開放式問法，未提供常見放射路徑提示。"},
+        {"level": 2, "descriptor": "僅問『會不會痛到別的地方』，未追問具體部位或範圍變化。"},
+        {"level": 1, "descriptor": "以模糊用語提及範圍，但未明確區分『擴散/放射』與『原本位置』。"},
+        {"level": 0, "descriptor": "完全未詢問疼痛擴散維度。"}
+      ],
+      "evidence_anchors": ["擴散", "轉移", "傳到", "放射", "蔓延", "別的地方", "肩膀", "下顎", "背", "腹股溝"]
+    },
+    {
+      "id": "lqqopera.relieving",
+      "dimension": "Relieving",
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        {"level": 5, "descriptor": "系統性詢問緩解因素，涵蓋休息、姿勢調整、冷熱敷、按摩、藥物（含 OTC 與處方藥）使用情形、劑量與效果，並追問是否曾找過緩解策略無效。"},
+        {"level": 4, "descriptor": "詢問至少 3 類緩解因素並追問藥物使用情形與效果。"},
+        {"level": 3, "descriptor": "詢問 2 類緩解因素或詢問緩解措施但未追問藥物劑量與效果。"},
+        {"level": 2, "descriptor": "僅詢問 1 類緩解因素（如『有沒有吃藥』）。"},
+        {"level": 1, "descriptor": "以籠統用語詢問（如『做什麼會比較好』），未具體列舉策略。"},
+        {"level": 0, "descriptor": "完全未詢問疼痛緩解因素維度。"}
+      ],
+      "evidence_anchors": ["緩解", "改善", "比較好", "減輕", "休息", "冷敷", "熱敷", "止痛藥", "服藥", "姿勢"]
+    },
+    {
+      "id": "lqqopera.associated_symptoms",
+      "dimension": "Associated symptoms",
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        {"level": 5, "descriptor": "依主訴系統與鑑別診斷需要，系統性詢問相關聯症狀（如胸痛搭配呼吸困難、冒冷汗、噁心、暈眩、心悸；腹痛搭配發燒、噁心嘔吐、排便異常、解尿異常），並涵蓋至少 5 項對應 red flag。"},
+        {"level": 4, "descriptor": "詢問 3-4 項相關聯症狀且涵蓋至少 1 項 red flag。"},
+        {"level": 3, "descriptor": "詢問 2 項相關聯症狀，但未明確涵蓋 red flag。"},
+        {"level": 2, "descriptor": "僅詢問 1 項相關聯症狀（如『有沒有發燒』）。"},
+        {"level": 1, "descriptor": "以開放式問法籠統詢問（如『還有什麼不舒服』），未針對主訴系統具體列舉。"},
+        {"level": 0, "descriptor": "完全未詢問相關聯症狀維度。"}
+      ],
+      "evidence_anchors": ["其他症狀", "還有", "發燒", "噁心", "嘔吐", "冒冷汗", "呼吸困難", "暈眩", "心悸", "排便"]
+    }
+  ]
+}
