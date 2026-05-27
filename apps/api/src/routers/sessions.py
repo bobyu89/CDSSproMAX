@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
@@ -147,3 +147,37 @@ async def advance_phase(
         new_phase=result.next_phase.value,
         time_limit_s=result.time_limit_s,
     )
+
+
+@router.post("/{session_id}/complete", response_model=SessionOut)
+async def complete_session(
+    session_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    participant: Participant = Depends(get_current_participant),
+) -> SessionOut:
+    """Mark a session as ended: ended_at=now, phase='review'."""
+    row = (
+        await db.execute(
+            select(Session, Case.title)
+            .join(Case, Case.id == Session.case_id)
+            .where(Session.id == session_id)
+        )
+    ).one_or_none()
+    if row is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="session not found")
+    session, title = row
+    if participant.role == "student" and session.participant_id != participant.id:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="not your session")
+
+    session.ended_at = datetime.now(timezone.utc)
+    session.phase = Phase.REVIEW.value
+    await db.flush()
+    await db.refresh(session)
+
+    await get_audit_logger().log(
+        session_id=session.id,
+        event_type=AuditEventType.SESSION_COMPLETED,
+        payload={"ended_at": session.ended_at.isoformat()},
+        db=db,
+    )
+    return _serialize(session, title)

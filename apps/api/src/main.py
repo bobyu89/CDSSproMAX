@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import get_settings
-from src.routers import auth, cases, duat, grading, health, sessions, transcripts
+from src.routers import admin, auth, cases, duat, grading, health, sessions, transcripts
 
 
 @asynccontextmanager
@@ -46,6 +46,7 @@ def create_app() -> FastAPI:
     app.include_router(transcripts.router)
     app.include_router(duat.router)
     app.include_router(grading.router)
+    app.include_router(admin.router)
     return app
 
 

@@ -1,0 +1,175 @@
+{
+  "rubric_id": "pe.v1",
+  "type": "pe",
+  "version": "1.0.0",
+  "items": [
+    {
+      "id": "pe.cardio.auscultation",
+      "dimension": "心臟聽診",
+      "body_region": "precordium",
+      "expected_action": "auscultation",
+      "min_duration_seconds": 8,
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        { "level": 5, "descriptor": "完成四個聽診區（主動脈、肺動脈、Erb's point、二尖瓣），順序正確，使用聽診器膜面與鐘面分別評估，能正確描述 S1/S2 與雜音特徵" },
+        { "level": 4, "descriptor": "完成至少三個聽診區，描述 S1/S2，未細分膜面/鐘面評估" },
+        { "level": 3, "descriptor": "聽診至少兩個位置，能描述心率與規律性" },
+        { "level": 2, "descriptor": "僅聽診單一位置，未系統性涵蓋" },
+        { "level": 1, "descriptor": "嘗試聽診但位置或姿勢明顯錯誤" },
+        { "level": 0, "descriptor": "未執行心臟聽診" }
+      ],
+      "evidence_anchors": ["聽診", "心音", "S1", "S2", "雜音", "膜面", "鐘面"]
+    },
+    {
+      "id": "pe.cardio.palpation",
+      "dimension": "心前區觸診",
+      "body_region": "precordium",
+      "expected_action": "palpation",
+      "min_duration_seconds": 5,
+      "weight": 0.8,
+      "max_score": 5,
+      "criteria": [
+        { "level": 5, "descriptor": "明確定位 PMI 並評估直徑、強度、抬舉性，能描述異常意涵" },
+        { "level": 4, "descriptor": "定位 PMI 並描述位置（如鎖骨中線第五肋間）" },
+        { "level": 3, "descriptor": "進行心前區觸診但未明確定位 PMI" },
+        { "level": 1, "descriptor": "嘗試觸診但無系統性方法" },
+        { "level": 0, "descriptor": "未執行心前區觸診" }
+      ],
+      "evidence_anchors": ["PMI", "心尖搏動", "觸診", "鎖骨中線"]
+    },
+    {
+      "id": "pe.cardio.jvp",
+      "dimension": "頸靜脈壓 (JVP)",
+      "body_region": "neck",
+      "expected_action": "inspection",
+      "min_duration_seconds": 6,
+      "weight": 0.8,
+      "max_score": 5,
+      "criteria": [
+        { "level": 5, "descriptor": "床頭 30-45 度，正確識別右側 IJV 搏動，測量並描述高度（cm above sternal angle）" },
+        { "level": 4, "descriptor": "正確角度評估 JVP 並描述是否升高" },
+        { "level": 3, "descriptor": "嘗試觀察頸靜脈但角度或位置不正確" },
+        { "level": 0, "descriptor": "未進行 JVP 評估" }
+      ],
+      "evidence_anchors": ["JVP", "頸靜脈", "30 度", "胸骨角"]
+    },
+    {
+      "id": "pe.lung.auscultation",
+      "dimension": "肺部聽診",
+      "body_region": "thorax",
+      "expected_action": "auscultation",
+      "min_duration_seconds": 12,
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        { "level": 5, "descriptor": "系統性聽診五個肺葉（右上/左上/右中/右下/左下），雙側對稱比較，能描述呼吸音特徵（如囉音、哮鳴、肋膜摩擦音）" },
+        { "level": 4, "descriptor": "聽診雙側肺底與肺尖，能描述大致呼吸音" },
+        { "level": 3, "descriptor": "聽診雙側但未系統性涵蓋各肺葉" },
+        { "level": 2, "descriptor": "僅聽診單側或局部" },
+        { "level": 1, "descriptor": "嘗試聽診但姿勢或位置明顯不當" },
+        { "level": 0, "descriptor": "未執行肺部聽診" }
+      ],
+      "evidence_anchors": ["肺", "呼吸音", "囉音", "哮鳴", "對稱"]
+    },
+    {
+      "id": "pe.lung.percussion",
+      "dimension": "肺部叩診",
+      "body_region": "thorax",
+      "expected_action": "percussion",
+      "min_duration_seconds": 6,
+      "weight": 0.7,
+      "max_score": 5,
+      "criteria": [
+        { "level": 5, "descriptor": "雙側對稱叩診，由上而下、由前而後，正確識別共鳴/濁音/過度共鳴" },
+        { "level": 4, "descriptor": "雙側對稱叩診並描述結果" },
+        { "level": 3, "descriptor": "叩診但未對稱比較" },
+        { "level": 0, "descriptor": "未執行叩診" }
+      ],
+      "evidence_anchors": ["叩診", "共鳴", "濁音", "過度共鳴"]
+    },
+    {
+      "id": "pe.abdomen.inspection",
+      "dimension": "腹部視診",
+      "body_region": "abdomen",
+      "expected_action": "inspection",
+      "min_duration_seconds": 5,
+      "weight": 0.6,
+      "max_score": 5,
+      "criteria": [
+        { "level": 5, "descriptor": "完整觀察輪廓、皮膚、手術疤痕、可見搏動或蠕動，描述 scaphoid/flat/distended" },
+        { "level": 4, "descriptor": "觀察輪廓並描述大致狀態" },
+        { "level": 2, "descriptor": "僅短暫掃視" },
+        { "level": 0, "descriptor": "未進行腹部視診" }
+      ],
+      "evidence_anchors": ["輪廓", "視診", "scaphoid", "distended", "疤痕"]
+    },
+    {
+      "id": "pe.abdomen.auscultation",
+      "dimension": "腹部聽診",
+      "body_region": "abdomen",
+      "expected_action": "auscultation",
+      "min_duration_seconds": 10,
+      "weight": 0.8,
+      "max_score": 5,
+      "criteria": [
+        { "level": 5, "descriptor": "在觸診之前進行（順序正確），聽診至少 30 秒，描述腸音頻率與是否合併血管雜音" },
+        { "level": 4, "descriptor": "順序正確，聽診腸音並描述" },
+        { "level": 3, "descriptor": "順序顛倒（先觸診後聽診）但有執行" },
+        { "level": 0, "descriptor": "未執行腹部聽診" }
+      ],
+      "evidence_anchors": ["腸音", "腹部聽診", "血管雜音"]
+    },
+    {
+      "id": "pe.abdomen.palpation",
+      "dimension": "腹部觸診",
+      "body_region": "abdomen",
+      "expected_action": "palpation",
+      "min_duration_seconds": 10,
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        { "level": 5, "descriptor": "先淺後深，四象限系統性觸診，從遠離疼痛處開始，評估壓痛、反彈痛、肌肉緊張、器官腫大與特殊徵象 (Murphy/McBurney)" },
+        { "level": 4, "descriptor": "四象限觸診並評估壓痛與反彈痛" },
+        { "level": 3, "descriptor": "局部觸診但未系統性涵蓋" },
+        { "level": 2, "descriptor": "直接從疼痛處開始觸診（順序不當）" },
+        { "level": 1, "descriptor": "嘗試觸診但手法明顯錯誤" },
+        { "level": 0, "descriptor": "未執行腹部觸診" }
+      ],
+      "evidence_anchors": ["觸診", "壓痛", "反彈痛", "Murphy", "McBurney", "四象限"]
+    },
+    {
+      "id": "pe.neuro.mental_status",
+      "dimension": "精神狀態評估",
+      "body_region": "head",
+      "expected_action": "inspection",
+      "min_duration_seconds": 5,
+      "weight": 0.7,
+      "max_score": 5,
+      "criteria": [
+        { "level": 5, "descriptor": "評估意識（alert/drowsy/stupor）、定向感、注意力、記憶、語言，必要時記錄 GCS" },
+        { "level": 4, "descriptor": "意識+定向感+簡單認知評估" },
+        { "level": 3, "descriptor": "僅評估意識與定向感" },
+        { "level": 0, "descriptor": "未評估" }
+      ],
+      "evidence_anchors": ["意識", "定向", "GCS", "認知"]
+    },
+    {
+      "id": "pe.vitals",
+      "dimension": "生命徵象",
+      "body_region": "whole",
+      "expected_action": "vitals",
+      "min_duration_seconds": 5,
+      "weight": 1.0,
+      "max_score": 5,
+      "criteria": [
+        { "level": 5, "descriptor": "完整測量血壓（雙臂視情境）、心率、呼吸速率、體溫、血氧，並能解讀異常值的臨床意義" },
+        { "level": 4, "descriptor": "完整五項 vitals 但解讀不足" },
+        { "level": 3, "descriptor": "至少完成 BP/HR/RR 三項" },
+        { "level": 1, "descriptor": "僅 BP 或 HR" },
+        { "level": 0, "descriptor": "未測量" }
+      ],
+      "evidence_anchors": ["血壓", "心率", "呼吸", "體溫", "血氧", "SpO2"]
+    }
+  ]
+}

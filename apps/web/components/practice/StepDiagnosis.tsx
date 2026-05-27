@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, ClipboardList } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, ClipboardList, Save } from "lucide-react";
 import { toast } from "sonner";
 import { useCdssStore } from "@/lib/cdssStore";
 
@@ -28,6 +28,11 @@ const ROW_LABELS = [
 ] as const;
 
 export function StepDiagnosis() {
+  const sessionId = useCdssStore((s) => s.sessionId);
+  const draftKey = sessionId
+    ? `ticdss-draft-${sessionId}-diagnosis`
+    : null;
+
   const [rows, setRows] = useState<Record<string, DxRow>>({
     primary: { label: ROW_LABELS[0].label, text: "", severity: "high" },
     secondary: { label: ROW_LABELS[1].label, text: "", severity: "moderate" },
@@ -36,8 +41,43 @@ export function StepDiagnosis() {
   const setDiagnosis = useCdssStore((s) => s.setDiagnosis);
   const setStep = useCdssStore((s) => s.setStep);
 
-  const update = (k: string, patch: Partial<DxRow>) =>
-    setRows((cur) => ({ ...cur, [k]: { ...cur[k], ...patch } }));
+  const [savedBadge, setSavedBadge] = useState(false);
+  const badgeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const restoredRef = useRef(false);
+
+  // Restore from localStorage on mount
+  useEffect(() => {
+    if (!draftKey || restoredRef.current) return;
+    try {
+      const raw = localStorage.getItem(draftKey);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Record<string, DxRow>;
+        if (parsed && typeof parsed === "object") {
+          setRows((cur) => ({ ...cur, ...parsed }));
+        }
+      }
+    } catch {
+      /* corrupt draft — ignore */
+    }
+    restoredRef.current = true;
+  }, [draftKey]);
+
+  const update = (k: string, patch: Partial<DxRow>) => {
+    setRows((cur) => {
+      const next = { ...cur, [k]: { ...cur[k], ...patch } };
+      if (draftKey) {
+        try {
+          localStorage.setItem(draftKey, JSON.stringify(next));
+          setSavedBadge(true);
+          if (badgeTimerRef.current) clearTimeout(badgeTimerRef.current);
+          badgeTimerRef.current = setTimeout(() => setSavedBadge(false), 1500);
+        } catch {
+          /* quota — ignore */
+        }
+      }
+      return next;
+    });
+  };
 
   const submit = () => {
     const filled = Object.values(rows).filter((r) => r.text.trim().length > 0);
@@ -50,6 +90,13 @@ export function StepDiagnosis() {
       return `${r.label}（${SEVERITY_LABEL[r.severity]}）：${r.text.trim() || "—"}`;
     }).join("\n");
     setDiagnosis(serialized);
+    if (draftKey) {
+      try {
+        localStorage.removeItem(draftKey);
+      } catch {
+        /* ignore */
+      }
+    }
     setStep("summary");
   };
 
@@ -61,7 +108,7 @@ export function StepDiagnosis() {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="max-w-3xl mx-auto"
     >
-      <div className="mb-8">
+      <div className="mb-8 relative">
         <p className="text-[10px] uppercase tracking-widest font-bold text-ink-muted mb-2">
           Step 5 / 6
         </p>
@@ -71,6 +118,22 @@ export function StepDiagnosis() {
         <p className="text-ink-muted text-sm">
           依優先序填寫三項，並標註該診斷的嚴重度。
         </p>
+        <AnimatePresence>
+          {savedBadge && (
+            <motion.div
+              key="saved"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="absolute right-0 top-0 inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold px-2.5 py-1"
+              aria-live="polite"
+            >
+              <Save size={11} />
+              草稿已自動儲存
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="space-y-4 mb-8">

@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class AuditEventType(str, Enum):
     SESSION_STARTED = "session.started"
+    SESSION_COMPLETED = "session.completed"
     TRANSCRIPT_APPENDED = "transcript.appended"
     DUAT_E_EXTRACTED = "duat.e_extracted"
     DUAT_S_SCORED = "duat.s_scored"

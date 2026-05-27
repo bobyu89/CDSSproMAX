@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FileDown, FileText } from "lucide-react";
+import { CheckCircle, FileDown, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import type { DuatScore, SessionRecord } from "@ticdss/shared-types";
-import { fetchSessionDetail } from "@/lib/api";
+import { completeSession, fetchSessionDetail } from "@/lib/api";
 import { dimensionLabel } from "@/lib/mock";
 
 interface Props {
   sessionId: string;
+  onSessionCompleted?: () => void;
 }
 
 function arbiterPill(d: DuatScore["arbiterDecision"]) {
@@ -20,12 +21,36 @@ function arbiterPill(d: DuatScore["arbiterDecision"]) {
   return { cls: "bg-slate-100 text-slate-600", label: "未裁決" };
 }
 
-export function SessionDetail({ sessionId }: Props) {
+export function SessionDetail({ sessionId, onSessionCompleted }: Props) {
   const [data, setData] = useState<{
     session: SessionRecord;
     scores: DuatScore[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [completing, setCompleting] = useState(false);
+
+  const handleComplete = async () => {
+    setCompleting(true);
+    try {
+      await completeSession(sessionId);
+      toast.success("session 已標記完成");
+      // Update local state optimistically
+      setData((d) =>
+        d
+          ? {
+              ...d,
+              session: { ...d.session, endedAt: new Date().toISOString() },
+            }
+          : d,
+      );
+      onSessionCompleted?.();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "標記失敗";
+      toast.error(msg);
+    } finally {
+      setCompleting(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -153,6 +178,21 @@ export function SessionDetail({ sessionId }: Props) {
 
       {/* Action buttons */}
       <div className="flex flex-wrap gap-3 pt-2">
+        {data.session.endedAt === null && (
+          <button
+            type="button"
+            onClick={handleComplete}
+            disabled={completing}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-60"
+          >
+            {completing ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <CheckCircle size={16} />
+            )}
+            標記為已完成
+          </button>
+        )}
         <button
           type="button"
           onClick={() => toast("PDF 匯出尚未實作")}

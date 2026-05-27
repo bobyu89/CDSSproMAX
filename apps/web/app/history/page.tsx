@@ -110,7 +110,14 @@ export default function HistoryPage() {
                   setExpandedId(expandedId === s.id ? null : s.id)
                 }
               >
-                {expandedId === s.id && <SessionDetail sessionId={s.id} />}
+                {expandedId === s.id && (
+                <SessionDetail
+                  sessionId={s.id}
+                  onSessionCompleted={() => {
+                    fetchSessions().then(setSessions);
+                  }}
+                />
+              )}
               </SessionRow>
             </motion.div>
           ))}

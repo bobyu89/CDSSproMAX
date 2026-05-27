@@ -20,13 +20,19 @@ import {
   Plus,
 } from "lucide-react";
 import { useAuthStore } from "@/lib/authStore";
-import { fetchCases, type CaseSummary } from "@/lib/api";
 import {
-  MOCK_ADMIN_DASHBOARD,
-  MOCK_PARTICIPANTS,
-} from "@/lib/mock";
+  fetchCases,
+  fetchAdminDashboard,
+  fetchAdminParticipants,
+  toggleCaseWithheld,
+  type AdminDashboard,
+  type AdminParticipant,
+  type CaseSummary,
+} from "@/lib/api";
+import { MOCK_ADMIN_DASHBOARD, MOCK_PARTICIPANTS } from "@/lib/mock";
 import { StatCard } from "@/components/admin/StatCard";
 import { ParticipantTable } from "@/components/admin/ParticipantTable";
+import { AddParticipantModal } from "@/components/admin/AddParticipantModal";
 
 type Tab = "overview" | "participants" | "cases";
 
@@ -43,13 +49,39 @@ export default function AdminPage() {
   const hydrated = useAuthStore((s) => s.hydrated);
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
+
+  const [dash, setDash] = useState<AdminDashboard>(MOCK_ADMIN_DASHBOARD);
+  const [participants, setParticipants] =
+    useState<AdminParticipant[]>(MOCK_PARTICIPANTS);
+  const [participantsLoaded, setParticipantsLoaded] = useState(false);
+
   const [cases, setCases] = useState<CaseSummary[] | null>(null);
   const [enabledMap, setEnabledMap] = useState<Record<string, boolean>>({});
+  const [showAdd, setShowAdd] = useState(false);
 
   useEffect(() => {
     if (!hydrated) return;
     if (role !== "admin") router.replace("/home");
   }, [hydrated, role, router]);
+
+  // Load dashboard on mount
+  useEffect(() => {
+    if (role === "admin") {
+      fetchAdminDashboard().then(setDash).catch(() => {
+        /* mock fallback already inside fetcher */
+      });
+    }
+  }, [role]);
+
+  // Load participants when tab opens
+  useEffect(() => {
+    if (activeTab === "participants" && !participantsLoaded && role === "admin") {
+      fetchAdminParticipants().then((rows) => {
+        setParticipants(rows);
+        setParticipantsLoaded(true);
+      });
+    }
+  }, [activeTab, participantsLoaded, role]);
 
   useEffect(() => {
     if (activeTab === "cases" && cases === null) {
@@ -60,9 +92,28 @@ export default function AdminPage() {
     }
   }, [activeTab, cases]);
 
-  if (!hydrated || role !== "admin") return null;
+  const refreshParticipants = () => {
+    fetchAdminParticipants().then(setParticipants);
+  };
 
-  const dash = MOCK_ADMIN_DASHBOARD;
+  const handleToggleCase = async (caseId: string) => {
+    const current = enabledMap[caseId] ?? true;
+    const nextEnabled = !current;
+    const nextWithheld = !nextEnabled;
+    // Optimistic
+    setEnabledMap((m) => ({ ...m, [caseId]: nextEnabled }));
+    try {
+      await toggleCaseWithheld(caseId, nextWithheld);
+      toast.success(nextEnabled ? "案例已啟用" : "案例已停用");
+    } catch (e) {
+      // Revert
+      setEnabledMap((m) => ({ ...m, [caseId]: current }));
+      const msg = e instanceof Error ? e.message : "切換失敗";
+      toast.error(msg);
+    }
+  };
+
+  if (!hydrated || role !== "admin") return null;
 
   return (
     <div className="max-w-6xl mx-auto py-8 lg:py-12 px-6">
@@ -181,7 +232,19 @@ export default function AdminPage() {
       )}
 
       {activeTab === "participants" && (
-        <ParticipantTable participants={MOCK_PARTICIPANTS} />
+        <div className="space-y-4">
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setShowAdd(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-500 text-white text-sm font-semibold hover:opacity-90 active:scale-[0.97] transition-all"
+            >
+              <Plus size={16} />
+              新增參與者
+            </button>
+          </div>
+          <ParticipantTable participants={participants} />
+        </div>
       )}
 
       {activeTab === "cases" && (
@@ -251,17 +314,13 @@ export default function AdminPage() {
                         <td className="px-4 py-3">
                           <button
                             type="button"
-                            onClick={() =>
-                              setEnabledMap((m) => ({
-                                ...m,
-                                [c.id]: !enabled,
-                              }))
-                            }
+                            onClick={() => handleToggleCase(c.id)}
                             className={
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors " +
                               (enabled ? "bg-brand-500" : "bg-bg-muted")
                             }
-                            aria-label="切換啟用"
+                            aria-label={enabled ? "停用案例" : "啟用案例"}
+                            aria-pressed={enabled}
                           >
                             <span
                               className={
@@ -280,6 +339,12 @@ export default function AdminPage() {
           </div>
         </div>
       )}
+
+      <AddParticipantModal
+        open={showAdd}
+        onClose={() => setShowAdd(false)}
+        onCreated={() => refreshParticipants()}
+      />
     </div>
   );
 }

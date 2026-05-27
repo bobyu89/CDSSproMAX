@@ -9,10 +9,14 @@ import type {
 } from "@ticdss/shared-types";
 import { useAuthStore } from "./authStore";
 import {
+  MOCK_ADMIN_DASHBOARD,
   MOCK_DUAT_SCORES,
+  MOCK_PARTICIPANTS,
   MOCK_RUBRIC,
   MOCK_SESSIONS,
   MOCK_TRANSCRIPTS,
+  type MockAdminDashboard,
+  type MockParticipant,
 } from "./mock";
 
 export const API_URL =
@@ -293,6 +297,112 @@ export async function gradeItem(
   return request(`/sessions/${sessionId}/scores/${scoreId}/grade`, {
     method: "POST",
     body: JSON.stringify(payload),
+  });
+}
+
+// ─── Session lifecycle ───────────────────────────────────────────────────
+
+export async function completeSession(sessionId: string): Promise<{ id: string; ended_at: string | null }> {
+  return request(`/sessions/${sessionId}/complete`, { method: "POST" });
+}
+
+// ─── Admin ───────────────────────────────────────────────────────────────
+
+export type AdminDashboard = MockAdminDashboard;
+export type AdminParticipant = MockParticipant;
+
+interface ApiAdminDashboard {
+  total_participants: number;
+  total_sessions: number;
+  mean_score: number;
+  completion_rate: number;
+  per_participant_scores: { code: string; name: string; mean_score: number }[];
+}
+
+export async function fetchAdminDashboard(): Promise<AdminDashboard> {
+  try {
+    const r = await request<ApiAdminDashboard>("/admin/dashboard");
+    return {
+      totalParticipants: r.total_participants,
+      totalSessions: r.total_sessions,
+      meanScore: r.mean_score,
+      completionRate: r.completion_rate,
+      perParticipantScores: r.per_participant_scores.map((p) => ({
+        code: p.code,
+        name: p.name,
+        meanScore: p.mean_score,
+      })),
+    };
+  } catch {
+    return MOCK_ADMIN_DASHBOARD;
+  }
+}
+
+interface ApiAdminParticipant {
+  id: string;
+  code: string;
+  name: string;
+  role: "student" | "teacher" | "admin";
+  session_count: number;
+  mean_score: number;
+  last_login_at: string;
+}
+
+export async function fetchAdminParticipants(): Promise<AdminParticipant[]> {
+  try {
+    const rows = await request<ApiAdminParticipant[]>("/admin/participants");
+    return rows.map((r) => ({
+      id: r.id,
+      code: r.code,
+      name: r.name,
+      role: r.role,
+      sessionCount: r.session_count,
+      meanScore: r.mean_score,
+      lastLoginAt: r.last_login_at,
+    }));
+  } catch {
+    return MOCK_PARTICIPANTS;
+  }
+}
+
+export interface CreateParticipantInput {
+  code: string;
+  name: string;
+  role: "student" | "teacher" | "admin";
+  password: string;
+  email?: string;
+}
+
+export async function createParticipant(
+  input: CreateParticipantInput,
+): Promise<AdminParticipant> {
+  const r = await request<Partial<ApiAdminParticipant> & {
+    id: string;
+    code: string;
+    name: string;
+    role: "student" | "teacher" | "admin";
+  }>("/admin/participants", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+  return {
+    id: r.id,
+    code: r.code,
+    name: r.name,
+    role: r.role,
+    sessionCount: r.session_count ?? 0,
+    meanScore: r.mean_score ?? 0,
+    lastLoginAt: r.last_login_at ?? new Date().toISOString(),
+  };
+}
+
+export async function toggleCaseWithheld(
+  caseId: string,
+  isWithheld: boolean,
+): Promise<{ id: string; is_withheld: boolean }> {
+  return request(`/admin/cases/${caseId}/withheld`, {
+    method: "PATCH",
+    body: JSON.stringify({ is_withheld: isWithheld }),
   });
 }
 

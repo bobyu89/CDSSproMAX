@@ -323,6 +323,9 @@ export default function OscePage() {
             onClick={() => setAbandonOpen(false)}
           >
             <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="osce-abandon-title"
               initial={{ scale: 0.96, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.96, opacity: 0 }}
@@ -330,7 +333,10 @@ export default function OscePage() {
               onClick={(e) => e.stopPropagation()}
               className="bg-white rounded-2xl border border-faint shadow-xl max-w-md w-full p-6"
             >
-              <h3 className="text-lg font-bold text-ink mb-2">
+              <h3
+                id="osce-abandon-title"
+                className="text-lg font-bold text-ink mb-2"
+              >
                 確定要中止考試？
               </h3>
               <p className="text-sm text-ink-muted leading-relaxed mb-6">

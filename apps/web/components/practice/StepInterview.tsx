@@ -81,6 +81,35 @@ export function StepInterview() {
   const [sending, setSending] = useState(false);
   const listRef = useRef<HTMLOListElement>(null);
 
+  const draftKey = sessionId ? `ticdss-draft-${sessionId}-interview` : null;
+  const restoredRef = useRef(false);
+
+  // Restore draft once on mount
+  useEffect(() => {
+    if (!draftKey || restoredRef.current) return;
+    try {
+      const raw = localStorage.getItem(draftKey);
+      if (raw) setFreeText(raw);
+    } catch {
+      /* ignore */
+    }
+    restoredRef.current = true;
+  }, [draftKey]);
+
+  // Persist on change
+  useEffect(() => {
+    if (!draftKey) return;
+    try {
+      if (freeText) {
+        localStorage.setItem(draftKey, freeText);
+      } else {
+        localStorage.removeItem(draftKey);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [draftKey, freeText]);
+
   useEffect(() => {
     if (listRef.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;

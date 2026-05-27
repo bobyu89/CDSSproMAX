@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, Home } from "lucide-react";
+import { ChevronLeft, HelpCircle, Home } from "lucide-react";
 import { useCdssStore, type CdssStep } from "@/lib/cdssStore";
 import { useAuthStore } from "@/lib/authStore";
 import { StepIndicator, type StepDef } from "@/components/practice/StepIndicator";
@@ -32,6 +32,15 @@ const PREV_STEP: Record<CdssStep, CdssStep | null> = {
   summary: "diagnosis",
 };
 
+const NEXT_STEP: Record<CdssStep, CdssStep | null> = {
+  symptom: "system",
+  system: "interview",
+  interview: "pe",
+  pe: "diagnosis",
+  diagnosis: "summary",
+  summary: null,
+};
+
 export default function PracticePage() {
   const router = useRouter();
   const mode = useCdssStore((s) => s.mode);
@@ -45,7 +54,31 @@ export default function PracticePage() {
 
   const participantId = useAuthStore((s) => s.participantId);
 
+  const selectedSystem = useCdssStore((s) => s.selectedSystem);
+  const interviewTurns = useCdssStore((s) => s.interviewTurns);
+  const peSelections = useCdssStore((s) => s.peSelections);
+  const diagnosis = useCdssStore((s) => s.diagnosis);
+
   const [confirmLeave, setConfirmLeave] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+
+  // Pragmatic step-complete check — used to gate Alt/Ctrl+→
+  const isStepComplete = (step: CdssStep): boolean => {
+    switch (step) {
+      case "symptom":
+        return !!sessionId;
+      case "system":
+        return !!selectedSystem;
+      case "interview":
+        return interviewTurns.length > 0;
+      case "pe":
+        return peSelections.length > 0;
+      case "diagnosis":
+        return !!diagnosis;
+      default:
+        return false;
+    }
+  };
 
   // Auto-init on mount.
   useEffect(() => {
@@ -80,6 +113,63 @@ export default function PracticePage() {
       router.push("/home");
     }
   };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Skip when user is typing in inputs
+      const tgt = e.target as HTMLElement | null;
+      const tag = tgt?.tagName;
+      const isEditable =
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT" ||
+        tgt?.isContentEditable;
+
+      if (e.key === "Escape") {
+        if (showShortcuts) {
+          setShowShortcuts(false);
+          return;
+        }
+        if (isMidSession && !confirmLeave) {
+          e.preventDefault();
+          setConfirmLeave(true);
+        }
+        return;
+      }
+
+      const mod = e.altKey || e.ctrlKey;
+      if (!mod) return;
+      if (isEditable) return;
+
+      if (e.key === "ArrowRight") {
+        const next = NEXT_STEP[currentStep];
+        if (next && isStepComplete(currentStep)) {
+          e.preventDefault();
+          setStep(next);
+        }
+      } else if (e.key === "ArrowLeft") {
+        const prev = PREV_STEP[currentStep];
+        if (prev) {
+          e.preventDefault();
+          setStep(prev);
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentStep,
+    isMidSession,
+    confirmLeave,
+    showShortcuts,
+    sessionId,
+    selectedSystem,
+    interviewTurns.length,
+    peSelections.length,
+    diagnosis,
+  ]);
 
   const confirmLeaveAndGo = () => {
     setConfirmLeave(false);
@@ -121,6 +211,49 @@ export default function PracticePage() {
           </button>
           <div className="flex-1 min-w-0 overflow-x-auto">
             <StepIndicator steps={STEPS} current={currentStep} />
+          </div>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowShortcuts((v) => !v)}
+              aria-label="鍵盤捷徑說明"
+              aria-expanded={showShortcuts}
+              className="inline-flex items-center justify-center text-xs font-bold text-ink-soft hover:text-brand-600 transition-colors p-1.5 rounded-md hover:bg-bg-surface"
+            >
+              <HelpCircle size={14} />
+            </button>
+            <AnimatePresence>
+              {showShortcuts && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15 }}
+                  role="dialog"
+                  aria-modal="false"
+                  aria-label="鍵盤捷徑"
+                  className="absolute right-0 top-full mt-2 w-64 z-40 rounded-lg bg-white border border-subtle shadow-lg p-3"
+                >
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-ink-muted mb-2">
+                    鍵盤捷徑
+                  </p>
+                  <ul className="space-y-1.5 text-xs text-ink">
+                    <li className="flex justify-between">
+                      <span>下一步</span>
+                      <kbd className="font-mono text-[10px] bg-bg-surface px-1.5 py-0.5 rounded">Alt / Ctrl + →</kbd>
+                    </li>
+                    <li className="flex justify-between">
+                      <span>上一步</span>
+                      <kbd className="font-mono text-[10px] bg-bg-surface px-1.5 py-0.5 rounded">Alt / Ctrl + ←</kbd>
+                    </li>
+                    <li className="flex justify-between">
+                      <span>中止練習</span>
+                      <kbd className="font-mono text-[10px] bg-bg-surface px-1.5 py-0.5 rounded">Esc</kbd>
+                    </li>
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           <button
             type="button"
