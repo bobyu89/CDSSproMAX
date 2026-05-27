@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-tests:
+    name: Backend pytest (no live LLM)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Sync deps
+        working-directory: apps/api
+        run: uv sync --frozen --all-extras --dev || uv sync
+
+      - name: Run pytest
+        working-directory: apps/api
+        env:
+          # Stub keys so settings load; tests don't actually call the APIs.
+          ANTHROPIC_API_KEY: stub
+          GOOGLE_API_KEY: stub
+          DATABASE_URL: "sqlite+aiosqlite:///:memory:"
+        run: uv run pytest -v -m "not live"
+
+  evaluation-tests:
+    name: Evaluation harness tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Sync deps
+        working-directory: evaluation
+        run: uv sync || true
+
+      - name: Run pytest
+        working-directory: evaluation
+        run: uv run pytest -v
+
+  frontend-typecheck:
+    name: Frontend typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: pnpm install
+        run: pnpm install --frozen-lockfile || pnpm install
+
+      - name: Typecheck shared-types
+        run: pnpm -F @ticdss/shared-types typecheck
+
+      - name: Typecheck web
+        run: pnpm -F web typecheck
+
+  lint:
+    name: Ruff lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Lint apps/api
+        run: ruff check apps/api
+
+      - name: Lint evaluation
+        run: ruff check evaluation
