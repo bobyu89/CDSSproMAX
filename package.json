@@ -1,0 +1,19 @@
+{
+  "name": "ticdss",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Technology-Integrated CDSS — multi-agent OSCE assessment for nurse practitioners",
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "cd apps/api && uv run uvicorn src.main:app --reload --port 8001",
+    "dev:asr": "cd apps/asr && uv run uvicorn src.main:app --reload --port 8002",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

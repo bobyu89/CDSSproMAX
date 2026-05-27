@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.turbo/
+*.log
+.pnpm-store/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# DB / data
+*.sqlite
+*.sqlite3
+*.db
+postgres-data/
+langfuse-data/
+
+# Audit logs (volume mount)
+audit_logs/
+
+# ASR model cache
+asr-cache/
+
+# Evaluation outputs
+evaluation/reports/*.csv
+evaluation/reports/*.json
+evaluation/golden_sessions/raw/
+
+# Misc
+*.pid
+coverage/
+.coverage
+htmlcov/
