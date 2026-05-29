@@ -15,7 +15,7 @@ from src.agents.e_agent import EAgentInput
 from src.agents.pipeline import DuatItemResult, DuatPipeline
 from src.db.models import DuatScore, Participant, Session, Transcript
 from src.db.session import get_db
-from src.routers.auth import get_current_participant, require_role
+from src.routers.auth import get_current_participant
 from src.rubric.loader import load_lqqopera_default
 
 router = APIRouter(prefix="/sessions/{session_id}/duat", tags=["duat"])
@@ -89,16 +89,29 @@ async def _persist(
     return row
 
 
+def _assert_can_score(participant: Participant, session: Session) -> None:
+    """Students may trigger DUAT scoring only on their own sessions.
+    Teachers and admins may score any session (for review / re-grading)."""
+    if participant.role in ("teacher", "admin"):
+        return
+    if session.participant_id != participant.id:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            detail="students may only score their own sessions",
+        )
+
+
 @router.post("/score-item", response_model=ScoreItemResponse)
 async def score_item(
     session_id: uuid.UUID,
     payload: ScoreItemRequest,
     db: AsyncSession = Depends(get_db),
-    _: Participant = Depends(require_role("teacher", "admin")),
+    participant: Participant = Depends(get_current_participant),
 ) -> ScoreItemResponse:
     session = await db.scalar(select(Session).where(Session.id == session_id))
     if session is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="session not found")
+    _assert_can_score(participant, session)
 
     rubric = load_lqqopera_default()
     item = next((it for it in rubric.items if it.id == payload.rubric_item_id), None)
@@ -139,12 +152,13 @@ async def score_all_lqqopera(
     session_id: uuid.UUID,
     payload: ScoreItemRequest | None = None,
     db: AsyncSession = Depends(get_db),
-    _: Participant = Depends(require_role("teacher", "admin")),
+    participant: Participant = Depends(get_current_participant),
 ) -> list[ScoreItemResponse]:
     """Score all 8 LQQOPERA dimensions in parallel."""
     session = await db.scalar(select(Session).where(Session.id == session_id))
     if session is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="session not found")
+    _assert_can_score(participant, session)
 
     transcript_text = await _build_transcript_text(db, session_id)
     case_context = payload.case_context if payload else ""

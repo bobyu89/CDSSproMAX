@@ -110,6 +110,7 @@ class VAgentResponse(BaseModel):
 
 _TRACKERS: dict[uuid.UUID, dict[int, float]] = {}
 _OCCLUSION_THRESHOLD_S = 1.5
+_MAX_TOUCH_WINDOW_S = 8.0  # upper bound — see marker_detector.occluded_regions
 
 
 def _tracker(session_id: uuid.UUID) -> dict[int, float]:
@@ -197,7 +198,12 @@ async def track_sample(
     for aid in payload.visible_marker_ids:
         tracker[aid] = now
 
-    touched = occluded_regions(tracker, now, _OCCLUSION_THRESHOLD_S)
+    touched = occluded_regions(
+        tracker,
+        now,
+        occlusion_threshold_s=_OCCLUSION_THRESHOLD_S,
+        max_touch_window_s=_MAX_TOUCH_WINDOW_S,
+    )
     return TrackSampleResponse(
         touched_regions=[r.value for r in touched],
         last_seen={aid: ts for aid, ts in tracker.items()},

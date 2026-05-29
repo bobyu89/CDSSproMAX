@@ -20,7 +20,9 @@ from src.routers import (
     health,
     physio,
     sessions,
+    training,
     transcripts,
+    vision,
 )
 
 
@@ -28,6 +30,10 @@ from src.routers import (
 async def lifespan(_: FastAPI):
     settings = get_settings()
     # NOTE: keep startup side effects minimal — DB and LLM clients are lazy.
+    # Hot-plug the builder StageAgents into the registry at startup.
+    from src.agents.stage_registry import register_stage_agents
+
+    register_stage_agents()
     print(f"[ticdss-api] starting in {settings.app_env} on port {settings.api_port}")
     yield
     print("[ticdss-api] shutting down")
@@ -60,6 +66,8 @@ def create_app() -> FastAPI:
     app.include_router(admin.router)
     app.include_router(physio.router)
     app.include_router(handout.router)
+    app.include_router(vision.router)
+    app.include_router(training.router)
     return app
 
 
